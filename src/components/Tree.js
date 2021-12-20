@@ -16,6 +16,7 @@ function Tree(props) {
         ]
     );
     const [hoveredPath, setHoveredPath] = useState([]);
+    const [pinnedPath, setPinnedPath] = useState([[], []]);
 
     function getGenerations(text, nodeId) {
         var data = { text: text }
@@ -69,7 +70,7 @@ function Tree(props) {
     }
 
     function handleGenerate(nodeId) {
-        getTestGenerations(textify(nodeId), nodeId);
+        getGenerations(textify(nodeId), nodeId);
         // getTestGenerations(textify(nodeId), nodeId);
     }
 
@@ -110,12 +111,21 @@ function Tree(props) {
         setTreeData(treeDataCopy);
     }
 
+    function handleNodePin(pinIdx, nodeId) {
+        props.handlePin(pinIdx, textify(nodeId));
+        var pinnedPathCopy = [...pinnedPath];
+        pinnedPathCopy[pinIdx] = getPath(nodeId);
+        setPinnedPath(pinnedPathCopy);
+    }
+
     function renderTree(currentNode, depth) {
         const tree = [
             <Node nodeId={currentNode.id} depth={depth} text={currentNode.text} isNew={currentNode.isNew}
-                isBordered={hoveredPath.includes(currentNode.id)}
+                isBordered={hoveredPath.includes(currentNode.id)} 
+                pinIdx={pinnedPath[0].includes(currentNode.id) ? 0 : (pinnedPath[1].includes(currentNode.id) ? 1 : -1)}
                 handleGenerate={handleGenerate} onNodeHover={handleNodeHover}
-                handleEdit={handleNodeEdit} handleMaxMinimize={handleMaxMinimize}/>
+                handleEdit={handleNodeEdit} handleMaxMinimize={handleMaxMinimize}
+                handleNodePin={handleNodePin}/>
         ];
 
         if(currentNode.isMaximized) {

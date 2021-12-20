@@ -11,9 +11,16 @@ import Col from 'react-bootstrap/Col';
 
 function App() {
   const [selectedText, setSelectedText] = useState('');
+  const [pinnedText, setPinnedText] = useState(['', '']);
 
   const handleSelection = (text) => {
     setSelectedText(text);
+  }
+
+  const handlePin = (pinIdx, text) => {
+    const pinnedTextCopy = [...pinnedText];
+    pinnedTextCopy[pinIdx] = text;
+    setPinnedText(pinnedTextCopy);
   }
 
   return (
@@ -21,10 +28,10 @@ function App() {
       <Container>
         <Row>
           <Col style={{position: "relative"}}>
-            <Tree handleSelection={handleSelection}/>
+            <Tree handleSelection={handleSelection} handlePin={handlePin}/>
           </Col>
           <Col>
-            <Editor selectedText={selectedText}/>
+            <Editor selectedText={selectedText} pinnedText={pinnedText}/>
           </Col>
         </Row>
       </Container>
