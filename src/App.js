@@ -20,7 +20,7 @@ function App() {
     <div className="App">
       <Container>
         <Row>
-          <Col>
+          <Col style={{position: "relative"}}>
             <Tree handleSelection={handleSelection}/>
           </Col>
           <Col>

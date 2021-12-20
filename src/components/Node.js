@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagic } from '@fortawesome/free-solid-svg-icons'
+import { faMagic, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 
 function Node(props) {
     const [nodeText, setNodeText] = useState(props.text);
@@ -43,10 +43,17 @@ function Node(props) {
         props.handleEdit(props.nodeId, e.currentTarget.textContent);
     }
 
+    function handleMinimize() {
+        props.handleMaxMinimize(props.nodeId);
+    }
 
     return (
-        <div style={{position: "relative"}} onMouseEnter={handleHover} onMouseLeave={handleNotHover}>
-            <NodeCont 
+        <div id={"node-" + props.nodeId} key={"node-" + props.nodeId} 
+            style={{position: "relative"}} onMouseEnter={handleHover} onMouseLeave={handleNotHover}>
+            <MinimizeBtn attr={{depth: props.depth}} onClick={handleMinimize}>
+                <FontAwesomeIcon icon={faChevronUp}/>
+            </MinimizeBtn>
+            <NodeCont
                 attr={{depth: props.depth, isBordered: props.isBordered, isHovered: isHovered, isEdit: isEdit, isNew: props.isNew}}
                 contentEditable={isEdit} onClick={handleClick} onKeyDown={handleKeyDown}
                 onBlur={handleBlur}>
@@ -68,9 +75,11 @@ const NodeCont = styled.div`
     font-size: 14px;
     width: calc(100% - ${props => props.attr.depth*40 + "px"});
     padding: 6px 12px;
-    padding-right: ${props => props.attr.isHovered ? "40px" : "16px"};
+    padding-right: ${props => props.attr.isHovered ? "32px" : "12px"};
+    padding-left: 32px;
     border-radius: 4px;
-    background-color: ${props => props.attr.isEdit ? "#fff" : (props.attr.isNew ? "#c9e3f3" : "#eee" )};
+    background-color: ${props => props.attr.isEdit ? "#fff" : "#eee" };
+    font-weight: ${props => props.attr.isNew ? "bold" : "normal"};
     margin: 2px 0px;
     margin-left: ${props => props.attr.depth*40 + "px"};
     border: solid 2px ${props => props.attr.isBordered ? "#0179be" : "#fff"};
@@ -92,16 +101,34 @@ const NodeInput = styled.textarea`
 const GenerateBtn = styled.div`
     position: absolute;
     background-color: #0179be;
-    width: 40px;
+    width: 32px;
     top: 4px;
     right: 0px;
     z-index: 2;
     height: calc(100% - 8px);
-    border-radius: 4px;
+    border: solid 2px #0179be;
+    border-radius: 0 4px 4px 0;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
 `;
+
+const MinimizeBtn = styled.div`
+    position: absolute;
+    background-color: #ccc;
+    color: #999;
+    width: 20px;
+    top: 4px;
+    left: ${props => props.attr.depth*40 + 2}px;
+    z-index: 2;
+    height: calc(100% - 8px);
+    border-radius: 2px 0 0 2px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
 
 export default Node;
