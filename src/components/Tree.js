@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from "axios";
 
 import Node from './Node';
+import MaxMinNode from './MaxMinNode';
 import { loremipsum } from './LoremIpsum';
 import { propTypes } from 'react-bootstrap/esm/Image';
 
@@ -9,7 +10,7 @@ function Tree(props) {
     const storyStarter = "Suddenly, icy fingers grabbed my arm as I inched through the darkness."
     const [treeData, setTreeData] = useState(
         [
-            { id: 0, text: storyStarter, parent: -1, children: [] }
+            { id: 0, text: storyStarter, parent: -1, children: [], isNew: true, isMaximized: false }
         ]
     );
     const [hoveredPath, setHoveredPath] = useState([]);
@@ -22,13 +23,18 @@ function Tree(props) {
             console.log(response.data);
 
             var treeDataCopy = [...treeData];
+            treeDataCopy.forEach((value, idx) => {
+                treeDataCopy[idx].isNew = false;
+            });
             for(var i = 0; i < response.data.length; i++) {
                 var newNodeId = treeDataCopy.length;
                 var newNode = {
                     id: newNodeId,
                     text: response.data[i].text + ".",
                     parent: nodeId,
-                    children: []
+                    children: [],
+                    isNew: true,
+                    isMaximized: false
                 }
                 treeDataCopy[nodeId].children.push(newNodeId);
                 treeDataCopy.push(newNode);
@@ -41,13 +47,18 @@ function Tree(props) {
 
     function getTestGenerations(text, nodeId) {
         var treeDataCopy = [...treeData];
+        treeDataCopy.forEach((value, idx) => {
+            treeDataCopy[idx].isNew = false;
+        });
         for(var i = 0; i < 3; i++) {
             var newNodeId = treeDataCopy.length;
             var newNode = {
                 id: newNodeId,
                 text: loremipsum[Math.floor(Math.random() * loremipsum.length)] + ".",
                 parent: nodeId,
-                children: []
+                children: [],
+                isNew: true,
+                isMaximized: false
             }
             treeDataCopy[nodeId].children.push(newNodeId);
             treeDataCopy.push(newNode);
@@ -56,7 +67,8 @@ function Tree(props) {
     }
 
     function handleGenerate(nodeId) {
-        getGenerations(textify(nodeId), nodeId);
+        getTestGenerations(textify(nodeId), nodeId);
+        // getTestGenerations(textify(nodeId), nodeId);
     }
 
     function textify (nodeId) {
@@ -90,17 +102,40 @@ function Tree(props) {
         setTreeData(treeDataCopy);
     }
 
+    function handleMaxMinimize(nodeId) {
+        var treeDataCopy = [...treeData];
+        treeDataCopy[nodeId].isMaximized = !treeDataCopy[nodeId].isMaximized;
+        setTreeData(treeDataCopy);
+    }
+
     function renderTree(currentNode, depth) {
         const tree = [
-            <Node nodeId={currentNode.id} depth={depth} text={currentNode.text} 
+            <Node key={"node-" + currentNode.id} nodeId={currentNode.id} depth={depth} text={currentNode.text} isNew={currentNode.isNew}
                 isBordered={hoveredPath.includes(currentNode.id)}
                 handleGenerate={handleGenerate} onNodeHover={handleNodeHover}
                 handleEdit={handleNodeEdit}/>
         ];
         console.log(currentNode);
+
+        var minimizedChildren = 0;
         for (let i = 0; i < currentNode.children.length; i++) {
-            tree.push(renderTree(treeData[currentNode.children[i]], depth + 1));
+            var child = treeData[currentNode.children[i]];
+            if(child.children.length != 0 || child.isNew || currentNode.isMaximized) {
+                tree.push(renderTree(child, depth + 1));
+            } else {
+                minimizedChildren += 1;
+            }
         }
+        
+        if(currentNode.children.length != 0 && !treeData[currentNode.children[0]].isNew) {
+            tree.splice(
+                tree.length - (currentNode.children.length - minimizedChildren),
+                0,
+                <MaxMinNode nodeId={currentNode.id} depth={depth+1} isMinimized={!currentNode.isMaximized}
+                    handleMaxMinimize={handleMaxMinimize}/>
+            );
+        }
+
         return tree;
     }
     

@@ -46,12 +46,13 @@ function Node(props) {
 
     return (
         <div style={{position: "relative"}} onMouseEnter={handleHover} onMouseLeave={handleNotHover}>
-            <NodeCont attr={{depth: props.depth, isBordered: props.isBordered, isHovered: isHovered, isEdit: isEdit}}
+            <NodeCont 
+                attr={{depth: props.depth, isBordered: props.isBordered, isHovered: isHovered, isEdit: isEdit, isNew: props.isNew}}
                 contentEditable={isEdit} onClick={handleClick} onKeyDown={handleKeyDown}
                 onBlur={handleBlur}>
                 {nodeText}
             </NodeCont>
-            { !isHovered ? "" : 
+            { !isHovered || isEdit ? "" : 
                 <GenerateBtn onClick={handleGenerate}>
                     <FontAwesomeIcon icon={faMagic} color="white"/>
                 </GenerateBtn>
@@ -69,10 +70,10 @@ const NodeCont = styled.div`
     padding: 6px 12px;
     padding-right: ${props => props.attr.isHovered ? "40px" : "16px"};
     border-radius: 4px;
-    background-color: ${props => props.attr.isEdit ? "#fff" : "#eee"};
-    margin: 4px 0px;
+    background-color: ${props => props.attr.isEdit ? "#fff" : (props.attr.isNew ? "#c9e3f3" : "#eee" )};
+    margin: 2px 0px;
     margin-left: ${props => props.attr.depth*40 + "px"};
-    border: solid 2px ${props => props.attr.isBordered ? "#0179be" : "#eee"};
+    border: solid 2px ${props => props.attr.isBordered ? "#0179be" : "#fff"};
 `;
 
 const NodeInput = styled.textarea`
