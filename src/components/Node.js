@@ -11,15 +11,16 @@ function Node(props) {
     const [isHovered, setIsHovered] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
+    useEffect(() => {
+        setNodeText(props.text);
+    }, [props.text])
+
     function handleGenerate() {
         props.handleGenerate(props.nodeId);
     }
 
-    function handleClick(e) {
-        if(e.detail == 2) {
-            console.log("double click");
-            setIsEdit(true);
-        }
+    function handleDoubleClick(e) {
+        setIsEdit(true);
     }
     
     function handleHover() {
@@ -64,6 +65,15 @@ function Node(props) {
         }
     }
 
+    var nodeAttr = {
+        depth: props.depth, 
+        isBordered: props.isBordered, 
+        isHovered: isHovered, 
+        isEdit: isEdit, 
+        isNew: props.isNew, 
+        pinIdx: props.pinIdx
+    };
+
     return (
         <div id={"node-" + props.nodeId} key={"node-" + props.nodeId} 
             style={{position: "relative"}} onMouseEnter={handleHover} onMouseLeave={handleNotHover}>
@@ -71,9 +81,8 @@ function Node(props) {
                 <FontAwesomeIcon icon={faChevronUp}/>
             </MinimizeBtn>
             {pins}
-            <NodeCont
-                attr={{depth: props.depth, isBordered: props.isBordered, isHovered: isHovered, isEdit: isEdit, isNew: props.isNew, pinIdx: props.pinIdx}}
-                contentEditable={isEdit} onClick={handleClick} onKeyDown={handleKeyDown}
+            <NodeCont id={"innernode-" + props.nodeId} attr={nodeAttr} contentEditable={isEdit}
+                onDoubleClick={handleDoubleClick} onKeyDown={handleKeyDown} 
                 onBlur={handleBlur}>
                 {nodeText}
             </NodeCont>
@@ -101,6 +110,7 @@ const NodeCont = styled.div`
     margin: 2px 0px;
     margin-left: ${props => props.attr.depth*40 + "px"};
     border: solid 2px ${props => props.attr.isBordered ? "#0179be" : "#fff"};
+    user-select: none;
 `;
 
 // border: solid 2px ${props => props.attr.pinIdx != -1 ? pinColors[props.attr.pinIdx] : (props.attr.isBordered ? "#0179be" : "#fff")};
