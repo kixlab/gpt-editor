@@ -44,8 +44,8 @@ function Tree(props) {
                 treeDataCopy[nodeId].children.push(newNodeId);
                 treeDataCopy[newNodeId] = newNode;
             }
-            setMaxNodeId(maxId);
             setTreeData(treeDataCopy);
+            setMaxNodeId(maxId);
 
             return response.data;
         });
@@ -76,8 +76,8 @@ function Tree(props) {
     }
 
     function handleGenerate(nodeId) {
-        //getGenerations(textify(nodeId), nodeId);
-        getTestGenerations(textify(nodeId), nodeId);
+        getGenerations(textify(nodeId), nodeId);
+        //getTestGenerations(textify(nodeId), nodeId);
     }
 
     function textify (nodeId) {
@@ -144,12 +144,23 @@ function Tree(props) {
     }
 
     function handleMouseUp(e) {
-        if(e.target.id.includes("innernode")) {
+        if(e.target.id.includes("innernode") && dragPoints) {
             var nodeId = parseInt(e.target.id.split("-")[1]);
-            if(dragPoints[0][2] !== nodeId)
+            if(dragPoints[0][2] !== nodeId && !isChild(dragPoints[0][2], nodeId))
                 mergeNodes(dragPoints[0][2], nodeId);
         }
         setDragPoints(null);
+    }
+
+    function isChild(parent, child) {
+        console.log(parent, child)
+        if(treeData[child].parent == -1) {
+            return false;
+        } else if(treeData[child].parent === parent) {
+            return true;
+        } else {
+            return isChild(parent, treeData[child].parent);
+        }
     }
 
     function mergeNodes(startNode, endNode) {

@@ -19,6 +19,10 @@ function Node(props) {
         props.handleGenerate(props.nodeId);
     }
 
+    function preventMouse(e) {
+        if(isEdit) e.stopPropagation();
+    }
+
     function handleDoubleClick(e) {
         setIsEdit(true);
     }
@@ -83,7 +87,8 @@ function Node(props) {
             {pins}
             <NodeCont id={"innernode-" + props.nodeId} attr={nodeAttr} contentEditable={isEdit}
                 onDoubleClick={handleDoubleClick} onKeyDown={handleKeyDown} 
-                onBlur={handleBlur}>
+                onBlur={handleBlur} onMouseDown={preventMouse} onMouseMove={preventMouse} 
+                onMouseUp={preventMouse}>
                 {nodeText}
             </NodeCont>
             { !isHovered || isEdit ? "" : 
