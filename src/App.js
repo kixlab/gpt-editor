@@ -2,8 +2,7 @@ import './public/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState } from 'react';
-import Tree from './components/Tree';
-import Editor from './components/Editor';
+import TreeFlow from './components/TreeFlow';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -25,27 +24,9 @@ function App() {
 
   return (
     <div className="App">
-      <Container>
-        <Row>
-          <Col style={{position: "relative"}}>
-            <Tree handleSelection={handleSelection} handlePin={handlePin}/>
-          </Col>
-          <Col>
-            <Editor selectedText={selectedText} pinnedText={pinnedText}/>
-          </Col>
-        </Row>
-      </Container>
+      <TreeFlow/>
     </div>
   );
 }
-
-{/* <div className="App">
-<Container>
-  <Editor selectedText={selectedText} pinnedText={pinnedText}/>
-  <Row style={{position: "relative", padding: "0 128px"}}>
-    <Tree handleSelection={handleSelection} handlePin={handlePin}/>
-  </Row>
-</Container>
-</div> */}
 
 export default App;
