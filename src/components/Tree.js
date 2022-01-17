@@ -10,7 +10,7 @@ import { loremipsum } from './LoremIpsum';
 import { propTypes } from 'react-bootstrap/esm/Image';
 
 function Tree(props) {
-    const storyStarter = "Suddenly, icy fingers grabbed my arm as I inched through the darkness."
+    const storyStarter = "Double Click Here to Start Your Story."
     const [treeData, setTreeData] = useState(
         {0: { id: 0, text: storyStarter, parent: -1, children: [], isNew: true, isMaximized: true }}
     );
@@ -77,7 +77,7 @@ function Tree(props) {
 
     function handleGenerate(nodeId) {
         getGenerations(textify(nodeId), nodeId);
-        //getTestGenerations(textify(nodeId), nodeId);
+        // getTestGenerations(textify(nodeId), nodeId);
     }
 
     function textify (nodeId) {
@@ -108,6 +108,7 @@ function Tree(props) {
     function handleNodeEdit(nodeId, text) {
         var treeDataCopy = {...treeData};
         treeDataCopy[nodeId].text = text;
+        treeDataCopy[nodeId].isNew = false;
         setTreeData(treeDataCopy);
     }
 
@@ -218,7 +219,8 @@ function Tree(props) {
     }
     
     return (
-        <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}>
+        <div onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
+            style={{borderRight: "solid 1px #ccc", paddingRight: "24px" }}>
             {renderTree(treeData[0], 0)}
             {dragPoints ? <Elastic startPoint={dragPoints[0]} endPoint={dragPoints[1]}/> : ""}
             <EdgeBackground treeData={treeData}/>

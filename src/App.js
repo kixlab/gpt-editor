@@ -39,4 +39,13 @@ function App() {
   );
 }
 
+{/* <div className="App">
+<Container>
+  <Editor selectedText={selectedText} pinnedText={pinnedText}/>
+  <Row style={{position: "relative", padding: "0 128px"}}>
+    <Tree handleSelection={handleSelection} handlePin={handlePin}/>
+  </Row>
+</Container>
+</div> */}
+
 export default App;

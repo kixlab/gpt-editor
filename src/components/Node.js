@@ -25,6 +25,9 @@ function Node(props) {
 
     function handleDoubleClick(e) {
         setIsEdit(true);
+        if(props.nodeId === 0 && props.isNew) {
+            setNodeText("");
+        }
     }
     
     function handleHover() {
@@ -70,6 +73,7 @@ function Node(props) {
     }
 
     var nodeAttr = {
+        nodeId: props.nodeId,
         depth: props.depth, 
         isBordered: props.isBordered, 
         isHovered: isHovered, 
@@ -91,13 +95,14 @@ function Node(props) {
                 onMouseUp={preventMouse}>
                 {nodeText}
             </NodeCont>
-            { !isHovered || isEdit ? "" : 
+            { (props.nodeId == 0 && props.isNew) || (!isHovered || isEdit) ? "" : 
                 <GenerateBtn onClick={handleGenerate}>
                     <FontAwesomeIcon icon={faMagic} color="white"/>
                 </GenerateBtn>
             }
         </div>
     )
+
 }
 
 
@@ -111,11 +116,12 @@ const NodeCont = styled.div`
     padding-left: 32px;
     border-radius: 4px;
     background-color: ${props => props.attr.isEdit ? "#fff" : (props.attr.pinIdx != -1 ? pinColors[props.attr.pinIdx]+"30" : "#eee") };
-    font-weight: ${props => props.attr.isNew ? "bold" : "normal"};
+    font-weight: ${props => props.attr.isNew && !props.attr.isEdit ? "bold" : "normal"};
     margin: 2px 0px;
     margin-left: ${props => props.attr.depth*40 + "px"};
     border: solid 2px ${props => props.attr.isBordered ? "#0179be" : "#fff"};
     user-select: none;
+    font-style: ${props => !props.attr.isEdit && (props.attr.nodeId == 0 && props.attr.isNew) ? "italic" : "normal"};
 `;
 
 // border: solid 2px ${props => props.attr.pinIdx != -1 ? pinColors[props.attr.pinIdx] : (props.attr.isBordered ? "#0179be" : "#fff")};

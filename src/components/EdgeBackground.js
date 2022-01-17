@@ -34,7 +34,7 @@ function EdgeBackground(props) {
     useEffect(() => {
         setTimeout(() => {
             setEdges(createEdges(props.treeData[0], 0));
-        }, 50);
+        }, 10);
     }, [props.treeData]);
 
     return (

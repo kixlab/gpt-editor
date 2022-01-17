@@ -16,7 +16,7 @@ router.post("/generate", (req, res) => {
     var data = {
         prompt: req.body.text,
         max_tokens: 64,
-        temperature: 0.7,
+        temperature: 0.70,
         n: 3,
         stop: ['.', '!', '?']
     };

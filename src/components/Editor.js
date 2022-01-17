@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from "styled-components";
 
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,30 +13,36 @@ const pinColors = ["#FFB30F", "#C1292E", "#5F0A87"];
 function Editor(props) {
     return (
         <>
-            <Form>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>Hovered On Text</Form.Label>
-                    <Form.Control as="textarea" rows={10} value={props.selectedText}/>
-                </Form.Group>
-            </Form>
-            <Form style={{position: "relative"}}>
-                <PinBtn attr={{pinIdx: 0}}>
-                    <FontAwesomeIcon icon={faThumbtack}/>
-                </PinBtn>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>Pin 1 Text</Form.Label>
-                    <Form.Control as="textarea" rows={10} value={props.pinnedText[0]}/>
-                </Form.Group>
-            </Form>
-            <Form style={{position: "relative"}}>
-                <PinBtn attr={{pinIdx: 1}}>
-                    <FontAwesomeIcon icon={faThumbtack}/>
-                </PinBtn>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>Pin 2 Text</Form.Label>
-                    <Form.Control as="textarea" rows={10} value={props.pinnedText[1]}/>
-                </Form.Group>
-            </Form>
+            <Row>
+                <Form>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Form.Label>Hovered On Text</Form.Label>
+                        <Form.Control as="textarea" rows={10} value={props.selectedText}/>
+                    </Form.Group>
+                </Form>
+            </Row>
+            <Row>
+                <Col>
+                <Form style={{position: "relative", paddingTop: "12px"}}>
+                    <PinBtn attr={{pinIdx: 0}}>
+                        <FontAwesomeIcon icon={faThumbtack}/>
+                    </PinBtn>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Form.Control as="textarea" rows={15} value={props.pinnedText[0]}/>
+                    </Form.Group>
+                </Form>
+                </Col>
+                <Col>
+                <Form style={{position: "relative", paddingTop: "12px"}}>
+                    <PinBtn attr={{pinIdx: 1}}>
+                        <FontAwesomeIcon icon={faThumbtack}/>
+                    </PinBtn>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Form.Control as="textarea" rows={15} value={props.pinnedText[1]}/>
+                    </Form.Group>
+                </Form>
+                </Col>
+            </Row>
         </>
     );
 }
@@ -43,12 +51,12 @@ const PinBtn = styled.div`
     position: absolute;
     background-color: ${props => pinColors[props.attr.pinIdx]};
     color: white;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    top: 24px;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    top: 0px;
     border-radius: 50%;
-    left: -8px;
+    left: -12px;
     display: flex;
     justify-content: center;
     align-items: center;
