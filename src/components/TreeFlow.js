@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import ReactFlow, {
     ReactFlowProvider,
     addEdge,
@@ -82,6 +82,7 @@ const TreeFlow = () => {
     const [elements, setElements] = useState(layoutedElements);
     const [nextEleIdx, setNextEleIdx] = useState(1);
     const [cursor, setCursor] = useState('0');
+    const [keyPressed, setKeyPressed] = useState(null);
 
     const onLoad = useCallback((instance) => {
         instance.fitView();
@@ -206,8 +207,7 @@ const TreeFlow = () => {
     }
 
     const onElementClick = (event, element) => {
-        // TRUE --> USE GPT, FALSE --> USE LOREM IPSUM
-        addChildren(element.id);
+        setCursor(element.id);
     };
 
     const handleCursorMove = (type) => {
@@ -242,8 +242,13 @@ const TreeFlow = () => {
                 }
                 break;
             case "DOWN":
+                console.log(cursorNode);
                 if (cursorNode.children.length > 0) {
-                    newCursor = cursorNode.children[1];
+                    if(cursorNode.children.length < 3) {
+                        newCursor = cursorNode.children[0];
+                    } else {
+                        newCursor = cursorNode.children[1];
+                    }
                 }
                 break;
         }
@@ -256,17 +261,91 @@ const TreeFlow = () => {
         setElements(copyElements);
     }
 
-    const handleKeyPress = (event) => {
+    const lengthenBranch = () => {
+        const copyElements = [];
+        elements.forEach((el) => {
+            if (el.id[0] === 'e') {
+                copyElements.push(el);
+            } else {
+                el.type = 'default';
+                copyElements.push(el);
+            };
+        });
+        var currId = cursor;
+        var currNode = copyElements[parseInt(currId)];
+        
+        console.log(elements);
+
+        // TODO: fix this shit
+        while(currNode.children.length > 0) {
+            currId = currNode.children[0];
+            currNode = copyElements[parseInt(currId)];
+        }
+        var childId = '' + nextEleIdx;
+        currId = '' + currNode.id;
+        copyElements[parseInt(currId)].children.push(childId);
+
+        copyElements.splice(parseInt(childId), 0, {
+            id: childId,
+            data: { label: loremipsum[Math.floor(Math.random() * loremipsum.length)].trim() + "." },
+            position,
+            type: 'output',
+            parentId: currId,
+            children: []
+        });
+        copyElements.push({
+            id: 'e' + currId + '-' + childId,
+            source: currId,
+            target: childId,
+            type: edgeType,
+            animated: false
+        });
+
+        console.log(copyElements);
+
+        setElements(getLayoutedElements(copyElements));
+        setNextEleIdx(nextEleIdx + 1);
+    };
+
+    const keyTimer = useRef(null);
+
+    const handleKeyDown = (event) => {
         console.log(event.key);
         if(["ArrowDown", "ArrowRight", "ArrowLeft", "ArrowUp"].includes(event.key)) {
             handleCursorMove(event.key.replace("Arrow", "").toUpperCase());
         } else if(event.key === "Enter") {
             addChildren(cursor);
+        } else if(keyPressed == null) {
+            setKeyPressed({key: event.key, count: 0});
         }
     }
 
+    const handleKeyUp = (event) => {
+        if(["ArrowDown", "ArrowRight", "ArrowLeft", "ArrowUp", "Enter"].includes(event.key)) {
+            return;
+        } else if(keyPressed != null) {
+            setKeyPressed(null);
+            //clearInterval(keyPressed.timer);
+           //setKeyPressed(null);
+        }
+    }
+
+    useEffect(() => {
+        if(keyPressed != null) {
+            keyTimer.current = setTimeout(() => {
+                lengthenBranch();
+                setKeyPressed({
+                    key: keyPressed.key,
+                    count: keyPressed.count + 1
+                });
+            }, 1000);
+        } else {
+            clearTimeout(keyTimer.current);
+        }
+    }, [keyPressed]);
+
     return (
-        <div className="layoutflow" tabIndex="0" onKeyDown={handleKeyPress}>
+        <div className="layoutflow" tabIndex="0" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <ReactFlowProvider>
                 <ReactFlow
                     elements={elements}
