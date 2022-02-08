@@ -99,7 +99,6 @@ const TreeFlow = () => {
         setElements((els) => removeElements(elementsToRemove, els));
     }
 
-    //TODO: FIX SMOOTHING
     const handleTransform = useCallback((transform) => {
         if(!rfInstance) return;
 
@@ -311,12 +310,14 @@ const TreeFlow = () => {
 
     const handleKeyDown = (event) => {
         console.log(event.key);
-        if(["ArrowDown", "ArrowRight", "ArrowLeft", "ArrowUp"].includes(event.key)) {
-            handleCursorMove(event.key.replace("Arrow", "").toUpperCase());
-        } else if(event.key === "Enter") {
-            addChildren(cursor);
-        } else if(keyPressed == null) {
-            setKeyPressed({key: event.key, count: 0});
+        if(keyPressed == null) {
+            if(["ArrowDown", "ArrowRight", "ArrowLeft", "ArrowUp"].includes(event.key)) {
+                handleCursorMove(event.key.replace("Arrow", "").toUpperCase());
+            } else if(event.key === "Enter") {
+                addChildren(cursor);
+            } else {
+                setKeyPressed({key: event.key, count: 0});
+            }
         }
     }
 
@@ -325,8 +326,6 @@ const TreeFlow = () => {
             return;
         } else if(keyPressed != null) {
             setKeyPressed(null);
-            //clearInterval(keyPressed.timer);
-           //setKeyPressed(null);
         }
     }
 
