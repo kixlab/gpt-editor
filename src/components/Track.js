@@ -4,6 +4,7 @@ import axios from "axios";
 
 import NodeArea from './NodeArea';
 import { loremipsum } from './LoremIpsum';
+import { parse } from '@fortawesome/fontawesome-svg-core';
 
 const storyStarter = "Suddenly, icy fingers grabbed my arm as I inched through the darkness."
 
@@ -12,25 +13,28 @@ function Track() {
         {0: {text: storyStarter, isEdited: false}}
     );
     const [ nodes, setNodes ] = useState(
-        [
-            [0]
-        ]
+        [{id: 0, sentences: [0]}]
     )
     const [ focusedNode, setFocusedNode ] = useState(-1);
     const [ isAlt, setIsAlt ] = useState(false);
 
     function updateSentences(nodeId, generatedSentences) { 
         var nextSentenceId = parseInt(Object.keys(sentences).at(-1)) + 1;
+        var maxNodeId = Math.max.apply(null, Object.keys(nodes).map(id => parseInt(id)));
 
         var newSentences = {...sentences};
         for(var i = 0; i < generatedSentences.length; i++) {
             newSentences[nextSentenceId + i] = {text: generatedSentences[i], isEdited: false};
         }
         var newNodes = JSON.parse(JSON.stringify(nodes));
+        var nodeIdx = newNodes.findIndex(node => node.id === nodeId);
+        var node = newNodes[nodeIdx];
         for(i = 1; i < generatedSentences.length; i++) {
-            newNodes.splice(nodeId + 1, 0, [...newNodes[nodeId], nextSentenceId + i]);
+            newNodes.splice(nodeIdx + i, 0, {id: maxNodeId + i, sentences: [...node.sentences, nextSentenceId + i]});
         }
-        newNodes[nodeId].push(nextSentenceId);
+        newNodes[nodeIdx].sentences.push(nextSentenceId);
+
+        console.log(newNodes);
 
         setSentences(newSentences);
         setNodes(newNodes);
@@ -38,9 +42,9 @@ function Track() {
 
     function textify(nodeId) {
         var text = "";
-        var node = nodes[nodeId];
-        for (var i = 0; i < node.length; i++) {
-            text += sentences[node[i]];
+        var node = nodes.find(node => node.id === nodeId);
+        for (var i = 0; i < node.sentences.length; i++) {
+            text += sentences[node.sentences[i]];
         }
         return text;
     }
@@ -68,17 +72,18 @@ function Track() {
     }
 
     function handleFocus(nodeId, change) {
-        console.log(nodeId, change);
         if(nodeId == null)
             setFocusedNode(-1);
 
-        var newFocusNode = nodeId + change;
-        if(newFocusNode < 0) 
-            newFocusNode = nodes.length - 1;
-        else if(newFocusNode >= nodes.length)
-            newFocusNode = 0;
+        var nodeIdx = nodes.findIndex(node => node.id === nodeId);
 
-        setFocusedNode(newFocusNode);
+        var newFocusIdx = nodeIdx + change;
+        if(newFocusIdx < 0) 
+            newFocusIdx = nodes.length - 1;
+        else if(newFocusIdx >= nodes.length)
+            newFocusIdx = 0;
+        
+        setFocusedNode(nodes[newFocusIdx].id);
     }
 
 
@@ -108,14 +113,16 @@ function Track() {
 
     function handleDelete(nodeId) {
         var newNodes = [...nodes];
-        newNodes.splice(nodeId, 1);
+        var nodeIdx = newNodes.findIndex(node => node.id === nodeId);
+        newNodes.splice(nodeIdx, 1);
         setNodes(newNodes);
     }
 
     function handleEditNode(nodeId, changedIdx, changedText) {
         var newSentences = {...sentences};
-        var newNodes = [...nodes];
-        var changedSentenceId = newNodes[nodeId][changedIdx];
+        var newNodes = JSON.parse(JSON.stringify(nodes));
+        var nodeIdx = newNodes.findIndex(node => node.id === nodeId);
+        var changedSentenceId = newNodes[nodeIdx].sentences[changedIdx];
         var changedSentence = sentences[changedSentenceId];
 
         if(changedSentence.isEdited) {
@@ -124,7 +131,7 @@ function Track() {
         } else {
             var nextSentenceId = parseInt(Object.keys(sentences).at(-1)) + 1;
             newSentences[nextSentenceId] = {text: changedText, isEdited: true};
-            newNodes[nodeId][changedIdx] = nextSentenceId;
+            newNodes[nodeIdx].sentences[changedIdx] = nextSentenceId;
             setSentences(newSentences);
             setNodes(newNodes);
         }
@@ -134,11 +141,11 @@ function Track() {
     for(var i = 0; i < nodes.length; i++) {
         trackHTML.push(
             <NodeArea 
-                key={i} nodeId={i} isAlt={isAlt}
-                sentenceIds={nodes[i]} sentencesText={sentences} 
+                key={nodes[i].id} nodeId={nodes[i].id} isAlt={isAlt}
+                sentenceIds={nodes[i].sentences} sentencesText={sentences} 
                 handleGenerate={handleGenerate} handleFocus={handleFocus}
                 handleDelete={handleDelete} handleEditNode={handleEditNode}
-                isFocused={i === focusedNode}
+                isFocused={nodes[i].id === focusedNode}
             />
         )
     }
