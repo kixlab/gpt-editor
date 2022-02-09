@@ -2,12 +2,7 @@ import './public/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState } from 'react';
-import Tree from './components/Tree';
-import Editor from './components/Editor';
-
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Track from './components/Track';
 
 function App() {
   const [selectedText, setSelectedText] = useState('');
@@ -25,16 +20,7 @@ function App() {
 
   return (
     <div className="App">
-      <Container>
-        <Row>
-          <Col style={{position: "relative"}}>
-            <Tree handleSelection={handleSelection} handlePin={handlePin}/>
-          </Col>
-          <Col>
-            <Editor selectedText={selectedText} pinnedText={pinnedText}/>
-          </Col>
-        </Row>
-      </Container>
+      <Track/>
     </div>
   );
 }
