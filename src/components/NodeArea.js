@@ -4,7 +4,7 @@ import styled from "styled-components";
 import CaretPositioning from './EditCaretPositioning'
 
 const colors = [
-    '#ffd3ad', '#ddb6c0', '#b2e4f7', '#96e5ac', '#d3aaeb', '#e5ccdf', '#b8b8eb', '#afc3e9', '#9feb87'
+    '#ffd3ad', '#ddb6c0', '#b2e4f7', '#96e5ac', '#d3aaeb', '#b8b8eb', '#afc3e9', '#9feb87'
 ];
 
 function NodeArea(props) {
@@ -12,6 +12,7 @@ function NodeArea(props) {
     const keyTimer = useRef(null);
 
     const [spans, setSpans] = useState([]);
+    const [placeholderSpans, setPlaceholderSpans] = useState([]);
     const [caretPosition, setCaretPosition] = useState({start: 0, end: 0});
     const [keyPressed, setKeyPressed] = useState(null);
 
@@ -30,6 +31,7 @@ function NodeArea(props) {
         }
 
         setSpans(newSpans);
+        setPlaceholderSpans([]);
     }, [props.sentenceIds, props.sentencesText]);
 
     useEffect(() => {
@@ -37,18 +39,17 @@ function NodeArea(props) {
     }, [props.isFocused])
 
     useEffect(() => {
-        CaretPositioning.restoreSelection(document.getElementById("editable"), caretPosition);
+        CaretPositioning.restoreSelection(document.getElementById("editable-" + props.nodeId), caretPosition);
     }, [caretPosition])
 
     useEffect(() => {
         if(keyPressed != null) {
             keyTimer.current = setTimeout(() => {
-                console.log(keyPressed.count);
+                placeholderGenerate(keyPressed.count + 1);
                 setKeyPressed({
                     key: keyPressed.key,
                     count: keyPressed.count + 1
                 });
-                placeholderGenerate(keyPressed.count + 1);
             }, 1000);
         } else {
             clearTimeout(keyTimer.current);
@@ -81,8 +82,8 @@ function NodeArea(props) {
     function handleKeyDown(e) {
         if(props.isAlt) {
             if (e.key === "Enter" && keyPressed == null) {
+                placeholderGenerate(0);
                 setKeyPressed({key: e.key, count: 0});
-                //props.handleGenerate(props.nodeId, false);
             } else if (e.key === "Backspace") {
                 props.handleDelete(props.nodeId);
             }
@@ -91,32 +92,33 @@ function NodeArea(props) {
 
     function handleKeyUp(e) {
         if(keyPressed != null && e.key === "Enter") {
+            props.handleGenerate(props.nodeId, keyPressed.count, true);
             setKeyPressed(null);
         }
     }
 
     function placeholderWord() {
-        return " " + "_".repeat(Math.floor(Math.random() * 4) + 3);  
+        return " " + "\u00a0".repeat(Math.floor(Math.random() * 4) + 3);  
     }
 
     function placeholderGenerate(count) {
-        const nextSentenceId = parseInt(Object.keys(props.sentencesText).at(-1)) + count;
-        var newSpans = [...spans];
+        const nextSentenceId = parseInt(Object.keys(props.sentencesText).at(-1)) + 1;
+        var newSpans = [...placeholderSpans];
         var placeholder = placeholderWord();
         if(count > 0) {
-            placeholder += placeholderWord().repeat(Math.floor(Math.random() * 10) + 16) + ".";
+            placeholder += placeholderWord().repeat(Math.floor(Math.random() * 8) + 12) + ".";
         }
 
         newSpans.push(
-            <span key={nextSentenceId} style={{backgroundColor: colors[nextSentenceId % colors.length]}}>{placeholder}</span>
+            <span key={count + "-" + nextSentenceId} style={{backgroundColor: colors[nextSentenceId % colors.length]}}>{placeholder}</span>
         )
         
-        setSpans(newSpans);
+        setPlaceholderSpans(newSpans);
     }
 
     return (
         <TextContainer 
-            id="editable"
+            id={"editable-" + props.nodeId}
             ref={containerRef} 
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
@@ -126,6 +128,7 @@ function NodeArea(props) {
             suppressContentEditableWarning={true}
         >
             {spans}
+            {placeholderSpans}
         </TextContainer>
     )
 

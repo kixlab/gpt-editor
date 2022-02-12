@@ -44,29 +44,41 @@ function Track() {
         var text = "";
         var node = nodes.find(node => node.id === nodeId);
         for (var i = 0; i < node.sentences.length; i++) {
-            text += sentences[node.sentences[i]];
+            text += sentences[node.sentences[i]].text;
         }
         return text;
     }
 
-    function handleGenerate(nodeId, isGPT) {
+    function handleGenerate(nodeId, count, isGPT) {
         if(isGPT) {
-            var data = { text: textify(nodeId) };
+            var data = { text: textify(nodeId), count: count };
             axios
             .post(`http://localhost:5000/api/generate`, data)
             .then((response) => {
                 var generatedSentences = [];
                 for(var i = 0; i < response.data.length; i++) {
-                    generatedSentences.push(response.data[i].text + ".");
+                    generatedSentences.push(response.data[i].text);
                 }
                 updateSentences(nodeId, generatedSentences);
             });
         } else {
             var generatedSentences = [];
-            for(var i = 0; i < 3; i++) {
-                generatedSentences.push(loremipsum[Math.floor(Math.random() * loremipsum.length)] + ".");
+            if(count === 0) {
+                for(var i = 0; i < 3; i++) {
+                    var words = loremipsum[Math.floor(Math.random() * loremipsum.length)].split(" ");
+                    words.shift();
+                    generatedSentences.push(" " + words[Math.floor(Math.random() * words.length)]);
+                }
+                console.log(generatedSentences);
+            } else {
+                for(var i = 0; i < 3; i++) {
+                    var sentence = "";
+                    for(var j = 0; j < count; j++) {
+                        sentence += loremipsum[Math.floor(Math.random() * loremipsum.length)] + "."
+                    }
+                    generatedSentences.push(sentence);
+                }
             }
-            console.log(generatedSentences);
             updateSentences(nodeId, generatedSentences);
         }
     }
@@ -135,6 +147,8 @@ function Track() {
             setSentences(newSentences);
             setNodes(newNodes);
         }
+        console.log(newNodes);
+        console.log(newSentences);
     }
 
     var trackHTML = [];
