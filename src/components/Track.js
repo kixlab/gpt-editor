@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from "styled-components";
 import axios from "axios";
 
-import NodeArea from './NodeArea';
+import NodeArea from './SlateArea';
 import { loremipsum } from './LoremIpsum';
 import { parse } from '@fortawesome/fontawesome-svg-core';
 
@@ -33,9 +33,7 @@ function Track() {
             newNodes.splice(nodeIdx + i, 0, {id: maxNodeId + i, sentences: [...node.sentences, nextSentenceId + i]});
         }
         newNodes[nodeIdx].sentences.push(nextSentenceId);
-
-        console.log(newNodes);
-
+        
         setSentences(newSentences);
         setNodes(newNodes);
     }
@@ -50,6 +48,7 @@ function Track() {
     }
 
     function handleGenerate(nodeId, count, isGPT) {
+        console.log("generate")
         if(isGPT) {
             var data = { text: textify(nodeId), count: count };
             axios
@@ -130,25 +129,54 @@ function Track() {
         setNodes(newNodes);
     }
 
-    function handleEditNode(nodeId, changedIdx, changedText) {
+    function handleEditNode(nodeId, changedIdxList, changedTextList, deletedIdxList) {
         var newSentences = {...sentences};
         var newNodes = JSON.parse(JSON.stringify(nodes));
         var nodeIdx = newNodes.findIndex(node => node.id === nodeId);
-        var changedSentenceId = newNodes[nodeIdx].sentences[changedIdx];
-        var changedSentence = sentences[changedSentenceId];
+        var isNodesChanged = false;
 
-        if(changedSentence.isEdited) {
-            newSentences[changedSentenceId].text = changedText;
-            setSentences(newSentences);
-        } else {
-            var nextSentenceId = parseInt(Object.keys(sentences).at(-1)) + 1;
-            newSentences[nextSentenceId] = {text: changedText, isEdited: true};
-            newNodes[nodeIdx].sentences[changedIdx] = nextSentenceId;
-            setSentences(newSentences);
+        for(var i = 0; i < changedIdxList.length; i++) {
+            var changedIdx = changedIdxList[i];
+            var changedText = changedTextList[i];
+            var changedSentenceId = newNodes[nodeIdx].sentences[changedIdx];
+            var changedSentence = sentences[changedSentenceId];
+
+            if(changedSentence.isEdited) {
+                newSentences[changedSentenceId].text = changedText;
+            } else {
+                var nextSentenceId = parseInt(Object.keys(newSentences).at(-1)) + 1;
+                newSentences[nextSentenceId] = {text: changedText, isEdited: true};
+                newNodes[nodeIdx].sentences[changedIdx] = nextSentenceId;
+                isNodesChanged = true;
+            }
+        }
+        for(i = deletedIdxList.length - 1; i >= 0; i--) {
+            var deletedIdx = deletedIdxList[i];
+            newNodes[nodeIdx].sentences.splice(deletedIdx, 1);
+            isNodesChanged = true;
+        }
+        /*
+        for(i = 0; i < deletedIdxList.length; i++) {
+            console.log(deletedIdxList);
+            var deletedIdx = deletedIdxList[i];
+            var deletedSentenceId = newNodes[nodeIdx].sentences[deletedIdx];
+            var deletedSentence = sentences[deletedSentenceId];
+
+            if(deletedSentence.isEdited) {
+                newSentences[deletedSentenceId].text = "";
+            } else {
+                var nextSentenceId = parseInt(Object.keys(newSentences).at(-1)) + 1;
+                newSentences[nextSentenceId] = {text: "", isEdited: true};
+                newNodes[nodeIdx].sentences[deletedIdx] = nextSentenceId;
+                isNodesChanged = true;
+            }
+        }
+        */
+        
+        setSentences(newSentences);
+        if(isNodesChanged) {
             setNodes(newNodes);
         }
-        console.log(newNodes);
-        console.log(newSentences);
     }
 
     var trackHTML = [];

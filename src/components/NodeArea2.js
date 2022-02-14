@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from "styled-components";
 
+import ContentEditable from 'react-contenteditable';
 import CaretPositioning from './EditCaretPositioning'
 
 const colors = [
@@ -15,8 +16,13 @@ function NodeArea(props) {
     const [placeholderSpans, setPlaceholderSpans] = useState([]);
     const [caretPosition, setCaretPosition] = useState({start: 0, end: 0});
     const [keyPressed, setKeyPressed] = useState(null);
+    const [isAltSpan, setIsAltSpan] = useState([]);
 
-    useEffect(() => {
+    useEffect(() => {     
+        if(props.sentenceIds.length == spans.length) return;
+
+        console.log("hey");
+
         var newSpans = [];
         for(var i = 0; i < props.sentenceIds.length; i++) {
             var sentenceId = props.sentenceIds[i];
@@ -24,13 +30,21 @@ function NodeArea(props) {
             var sentence = props.sentencesText[sentenceId];
 
             newSpans.push(
-                <span key={i} sentenceidx={i} style={!sentence.isEdited ? {backgroundColor: color} : {}}>{sentence.text}</span>
+                `<span sentenceidx="${i}" style="${!sentence.isEdited ? `background-color: ${color}` : ""}">${sentence.text}</span>`
             )
         }
 
         setSpans(newSpans);
         setPlaceholderSpans([]);
     }, [props.sentenceIds, props.sentencesText]);
+
+    useEffect(() => {
+        if(props.isAlt) {
+            setIsAltSpan([`<span></span>`]);
+        } else {
+            setIsAltSpan([]);
+        }
+    }, [props.isAlt]);
 
     useEffect(() => {
         if(props.isFocused) containerRef.current.focus();
@@ -63,9 +77,10 @@ function NodeArea(props) {
         var changedIdxList = [];
         var changedTextList = [];
         var deletedIdxList = [];
+
         for(var i = 0; i < sentences.length; i++) {
             var node = sentenceNodes[i - deletedIdxList.length];
-            if(node == undefined || parseInt(node.getAttribute("sentenceidx")) != i) {
+            if(node == undefined || node.textContent == "" || parseInt(node.getAttribute("sentenceidx")) != i) {
                 deletedIdxList.push(i);
                 continue;
             }
@@ -82,7 +97,7 @@ function NodeArea(props) {
 
         var newSpans = [...spans];
         for(i = 0; i < changedIdxList.length; i++) {
-            newSpans[changedIdxList[i]] = <span key={changedIdxList[i]} sentenceidx={changedIdxList[i]}>{changedTextList[i]}</span>
+            newSpans[changedIdxList[i]] = `<span sentenceidx=${changedIdxList[i]}>${changedTextList[i]}</span>`
         }
 
         setSpans(newSpans);
@@ -90,18 +105,19 @@ function NodeArea(props) {
     }
 
     function handleKeyDown(e) {
+        console.log(e.code, props.isAlt)
         if(props.isAlt) {
-            if (e.key === "Enter" && keyPressed == null) {
+            if (e.code === "Enter" && keyPressed == null) {
                 placeholderGenerate(0);
                 setKeyPressed({key: e.key, count: 0});
-            } else if (e.key === "Backspace") {
+            } else if (e.code === "Backspace") {
                 props.handleDelete(props.nodeId);
             }
         }
     }
 
     function handleKeyUp(e) {
-        if(keyPressed != null && e.key === "Enter") {
+        if(keyPressed != null && e.code === "Enter") {
             props.handleGenerate(props.nodeId, keyPressed.count, false);
             setKeyPressed(null);
         }
@@ -120,30 +136,34 @@ function NodeArea(props) {
         }
 
         newSpans.push(
-            <span key={count + "-" + nextSentenceId} style={{backgroundColor: colors[nextSentenceId % colors.length]}}>{placeholder}</span>
+            `<span key="${count + "-" + nextSentenceId}" style="${`background-color: ${colors[nextSentenceId % colors.length]}`}">${placeholder}</span>`
         )
         
         setPlaceholderSpans(newSpans);
     }
 
     return (
-        <TextContainer 
+        <ContentEditable 
             id={"editable-" + props.nodeId}
-            ref={containerRef} 
+            innerRef={containerRef}
+            style={ContainerStyle}
+            html={[...spans, ...isAltSpan, ...placeholderSpans].join("")}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
             onFocus={() => props.handleFocus(props.nodeId, 0)}
-            onInput={handleChange}
-            contentEditable={true}
-            suppressContentEditableWarning={true}
-        >
-            {spans}
-            {placeholderSpans}
-        </TextContainer>
+            onChange={handleChange}
+        />
     )
 
 }
 
+const ContainerStyle = {
+    flex: "0 0 400px",
+    height: "100%",
+    padding: "8px",
+    border: "solid 1px #ccc",
+    borderRadius: "12px",
+}
 const TextContainer = styled.div`
     flex: 0 0 400px;
     height: 100%;
