@@ -4,7 +4,7 @@ import styled from "styled-components";
 import CaretPositioning from './EditCaretPositioning'
 
 import { createEditor, Transforms, Editor, Element as SlateElement } from 'slate'
-import { Slate, Editable, withReact } from 'slate-react'
+import { Slate, Editable, withReact, ReactEditor } from 'slate-react'
 
 const colors = [
     '#ffd3ad', '#ddb6c0', '#b2e4f7', '#96e5ac', '#d3aaeb', '#b8b8eb', '#afc3e9', '#9feb87'
@@ -17,62 +17,62 @@ const isSpan = editor => {
     return !!span;
 }
 
-function NodeArea(props) {
-    const withInlines = editor => {
-        const { insertText, isInline } = editor
-      
-        editor.isInline = element =>
-          ['span'].includes(element.type) || isInline(element)
-        
-        editor.insertText = text => {
-            if(isSpan(editor)) {
+const withInlines = editor => {
+    const { insertText, isInline } = editor
+  
+    editor.isInline = element =>
+      ['span'].includes(element.type) || isInline(element)
+    
+    editor.insertText = text => {
+        console.log(text);
+        if(isSpan(editor)) {
+            Transforms.setNodes(
+                editor,
+                { style: {}, isEdited: true },
+                { match: n => !Editor.isEditor(n) && SlateElement.isElement(n) &&  n.style !== undefined && n.style.backgroundColor !== undefined }
+            )
+            insertText(text);
+        } else {
+            const { selection } = editor;
+
+            if(selection.anchor.path[1]  === 0) {
+                Transforms.insertText(
+                    editor,
+                    text,
+                    { at: { path: [0, 1, 0], offset: 0}}
+                )
                 Transforms.setNodes(
                     editor,
                     { style: {}, isEdited: true },
-                    { match: n => !Editor.isEditor(n) && SlateElement.isElement(n) &&  n.style !== undefined && n.style.backgroundColor !== undefined }
+                    { at: [0, 1] }
                 )
-                insertText(text);
             } else {
-                const { selection } = editor;
-
-                if(selection.anchor.path[1]  === 0) {
+                var { children } = editor;
+                var lastSpanLocation = children[0].children.length - 1 - 1;
+                var lastSpan = children[0].children[lastSpanLocation];
+                var isEdited = lastSpan.isEdited;
+                var newSpanIdx = lastSpan.sentenceidx + 1;
+                if(isEdited) {
                     Transforms.insertText(
                         editor,
-                        text,
-                        { at: { path: [0, 1, 0], offset: 0}}
-                    )
-                    Transforms.setNodes(
-                        editor,
-                        { style: {}, isEdited: true },
-                        { at: [0, 1] }
+                        text, 
+                        { at: { path: [0, lastSpanLocation, 0], offset: lastSpan.children[0].text.length}}
                     )
                 } else {
-                    var { children } = editor;
-                    var lastSpanLocation = children[0].children.length - 1 - 1;
-                    console.log(children, lastSpanLocation);
-                    var lastSpan = children[0].children[lastSpanLocation];
-                    var isEdited = lastSpan.isEdited;
-                    var newSpanIdx = lastSpan.sentenceidx + 1;
-                    if(isEdited) {
-                        Transforms.insertText(
-                            editor,
-                            text, 
-                            { at: { path: [0, lastSpanLocation, 0], offset: lastSpan.children[0].text.length}}
-                        )
-                    } else {
-                        Transforms.insertNodes(
-                            editor,
-                            { type: 'span', children: [{ text: text }], sentenceidx: newSpanIdx, style: {}, isEdited: true },
-                            { at: selection.anchor.path }
-                        )
-                    }
+                    Transforms.insertNodes(
+                        editor,
+                        { type: 'span', children: [{ text: text }], sentenceidx: newSpanIdx, style: {}, isEdited: true },
+                        { at: selection.anchor.path }
+                    )
                 }
             }
         }
-    
-        return editor;
     }
 
+    return editor;
+}
+
+function NodeArea(props) {
     const editor = useMemo(() => withInlines(withReact(createEditor())), []);
     const [value, setValue] = useState([
         {
@@ -83,8 +83,19 @@ function NodeArea(props) {
         }
     ]);
 
+    const [placeholders, setPlaceholders] = useState([]);
+    const [keyPressed, setKeyPressed] = useState(null);
+    const keyTimer = useRef(null);
+    
+
     useEffect(() => { 
         if(props.sentenceIds.length > (value[0].children.length - 1)/2) {
+            for(var i = placeholders.length - 1; i >= 0; i--) {
+                Transforms.removeNodes(
+                    editor,
+                    { at: [0, placeholders[i]] }
+                )
+            }
             var nodesToInsert = [];
             for(var i = (value[0].children.length - 1)/2; i < props.sentenceIds.length; i++) {
                 var sentenceId = props.sentenceIds[i];
@@ -104,9 +115,33 @@ function NodeArea(props) {
                 editor,
                 nodesToInsert,
                 {at: [0, value[0].children.length - 1]}
-            )   
+            )
+            setPlaceholders([]);   
         }
     }, [props.sentenceIds, props.sentencesText]);
+
+    useEffect(() => {
+        console.log(props.isFocused);
+        if(props.isFocused) { 
+            ReactEditor.focus(editor);
+            Transforms.select(editor, {anchor: Editor.end(editor, []), focus: Editor.end(editor, [])})
+        }
+    }, [props.isFocused])
+
+    useEffect(() => {
+        if(keyPressed != null) {
+            keyTimer.current = setTimeout(() => {
+                console.log("hey");
+                placeholderGenerate(keyPressed.count + 1);
+                setKeyPressed({
+                    key: keyPressed.key,
+                    count: keyPressed.count + 1
+                });
+            }, 1000);
+        } else {
+            clearTimeout(keyTimer.current);
+        }
+    }, [keyPressed]);
 
     function valueToText(value) {
         var text = "";
@@ -120,8 +155,7 @@ function NodeArea(props) {
     }
 
     function handleChange(newValue) {
-        if(valueToText(value) === valueToText(newValue)) return;
-        console.log(newValue);
+        if(valueToText(value) === valueToText(newValue) || placeholders.length > 0) return;
         setValue(newValue);
 
         var children = [...newValue[0].children];
@@ -172,16 +206,57 @@ function NodeArea(props) {
     }
 
     function handleKeyDown(e) {
+        if(keyPressed) {
+            e.preventDefault();
+            return;
+        }
+
         if(e.key === "Enter") {
             e.preventDefault();
-            props.handleGenerate(props.nodeId, 1, false);
+            if(props.isAlt) { 
+                placeholderGenerate(0);
+                setKeyPressed({key: e.key, count: 0});
+            } else {
+                editor.insertText('\n');
+            }
+        } else if(e.key === 'Backspace' && props.isAlt) {
+            e.preventDefault();
+            props.handleDelete(props.nodeId);
+        } else if(['ArrowLeft', 'ArrowRight'].includes(e.key) && props.isAlt) {
+            e.preventDefault();
+            props.handleFocus(props.nodeId, e.key === 'ArrowLeft' ? -1 : 1);
         }
         console.log(e.key);
     }
-
+    
     function handleKeyUp(e) {
-        e.preventDefault();
-        console.log(e.key);
+        if(keyPressed != null && e.key === "Enter") {
+            props.handleGenerate(props.nodeId, keyPressed.count, false);
+            setKeyPressed(null);
+        }
+    }
+
+    function placeholderWord() {
+        return " " + "\u00a0".repeat(Math.floor(Math.random() * 4) + 3);  
+    }
+
+    function placeholderGenerate(count) {
+        const nextSentenceId = parseInt(Object.keys(props.sentencesText).at(-1)) + 1;
+        var placeholderText = placeholderWord();
+        if(count > 0) {
+            placeholderText += placeholderWord().repeat(Math.floor(Math.random() * 8) + 12) + ".";
+        }
+
+        var placeholderPosition = editor.children[0].children.length - 1;
+        Transforms.insertNodes(
+            editor,
+            { type: 'span', children: [{ text: placeholderText }], style: {backgroundColor: colors[nextSentenceId % colors.length]} },
+            { at: [0, placeholderPosition] }
+        )
+
+        const newPlaceholders = [...placeholders];
+        newPlaceholders.push(placeholderPosition + 1);
+        setPlaceholders(newPlaceholders);
     }
 
     return (
@@ -192,7 +267,8 @@ function NodeArea(props) {
         >
             <Editable 
                 id={"editable-" + props.nodeId}
-                style={ContainerStyle}
+                onFocus={() => props.handleFocus(props.nodeId, 0)}
+                style={props.isFocused ? FocusedContainerStyle : ContainerStyle}
                 renderElement={props => <Element {...props} />}
                 renderLeaf={props => <Text {...props} />}
                 onKeyDown={handleKeyDown}
@@ -260,6 +336,17 @@ const ContainerStyle = {
     padding: "8px",
     border: "solid 1px #ccc",
     borderRadius: "12px",
+    overflowY: "scroll"
+}
+
+const FocusedContainerStyle = {
+    flex: "0 0 400px",
+    height: "100%",
+    padding: "8px",
+    borderRadius: "12px",
+    border: "1px solid #38a9f0",
+    boxShadow: "0px 0px 5px rgba(56, 169, 240, 0.75)",
+    overflowY: "scroll"
 }
 
 export default NodeArea;

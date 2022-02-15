@@ -21,6 +21,7 @@ function Track() {
     function updateSentences(nodeId, generatedSentences) { 
         var nextSentenceId = parseInt(Object.keys(sentences).at(-1)) + 1;
         var maxNodeId = Math.max.apply(null, Object.keys(nodes).map(id => parseInt(id)));
+        console.log(nodes, maxNodeId);
 
         var newSentences = {...sentences};
         var generatedIds = [];
@@ -124,16 +125,6 @@ function Track() {
             console.log("ALT DOWN");
             setIsAlt(true);
         }
-        
-        if(isAlt) {
-            if(e.key === "ArrowLeft") {
-                e.preventDefault();
-                handleFocus(focusedNode, -1);
-            } else if(e.key === "ArrowRight") {
-                e.preventDefault();
-                handleFocus(focusedNode, 1);
-            }
-        }
     }
 
     function handleKeyUp(e) {
@@ -148,6 +139,7 @@ function Track() {
         var nodeIdx = newNodes.findIndex(node => node.id === nodeId);
         newNodes.splice(nodeIdx, 1);
         setNodes(newNodes);
+        setFocusedNode(newNodes[nodeIdx - 1 >= 0 ? nodeIdx -1 : 0].id);
     }
 
     function handleEditNode(nodeId, changedIdxList, changedTextList, deletedIdxList) {
@@ -184,23 +176,6 @@ function Track() {
             newNodes[nodeIdx].sentences.splice(deletedIdx, 1);
             isNodesChanged = true;
         }
-        /*
-        for(i = 0; i < deletedIdxList.length; i++) {
-            console.log(deletedIdxList);
-            var deletedIdx = deletedIdxList[i];
-            var deletedSentenceId = newNodes[nodeIdx].sentences[deletedIdx];
-            var deletedSentence = sentences[deletedSentenceId];
-
-            if(deletedSentence.isEdited) {
-                newSentences[deletedSentenceId].text = "";
-            } else {
-                var nextSentenceId = parseInt(Object.keys(newSentences).at(-1)) + 1;
-                newSentences[nextSentenceId] = {text: "", isEdited: true};
-                newNodes[nodeIdx].sentences[deletedIdx] = nextSentenceId;
-                isNodesChanged = true;
-            }
-        }
-        */
 
         setSentences(newSentences);
         if(isNodesChanged) {
