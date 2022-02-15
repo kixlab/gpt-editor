@@ -24,7 +24,6 @@ const withInlines = editor => {
       ['span'].includes(element.type) || isInline(element)
     
     editor.insertText = text => {
-        console.log(text);
         if(isSpan(editor)) {
             Transforms.setNodes(
                 editor,
@@ -121,7 +120,6 @@ function NodeArea(props) {
     }, [props.sentenceIds, props.sentencesText]);
 
     useEffect(() => {
-        console.log(props.isFocused);
         if(props.isFocused) { 
             ReactEditor.focus(editor);
             Transforms.select(editor, {anchor: Editor.end(editor, []), focus: Editor.end(editor, [])})
@@ -131,7 +129,6 @@ function NodeArea(props) {
     useEffect(() => {
         if(keyPressed != null) {
             keyTimer.current = setTimeout(() => {
-                console.log("hey");
                 placeholderGenerate(keyPressed.count + 1);
                 setKeyPressed({
                     key: keyPressed.key,
@@ -226,13 +223,12 @@ function NodeArea(props) {
             e.preventDefault();
             props.handleFocus(props.nodeId, e.key === 'ArrowLeft' ? -1 : 1);
         }
-        console.log(e.key);
     }
     
     function handleKeyUp(e) {
         if(keyPressed != null && e.key === "Enter") {
             // GENERATE
-            props.handleGenerate(props.nodeId, keyPressed.count, true);
+            props.handleGenerate(props.nodeId, keyPressed.count, false);
             setKeyPressed(null);
         }
     }
@@ -261,21 +257,26 @@ function NodeArea(props) {
     }
 
     return (
-        <Slate 
-            editor={editor}
-            value={value}
-            onChange={handleChange}
-        >
-            <Editable 
-                id={"editable-" + props.nodeId}
-                onFocus={() => props.handleFocus(props.nodeId, 0)}
-                style={props.isFocused ? FocusedContainerStyle : ContainerStyle}
-                renderElement={props => <Element {...props} />}
-                renderLeaf={props => <Text {...props} />}
-                onKeyDown={handleKeyDown}
-                onKeyUp={handleKeyUp}
-            />
-        </Slate>
+        <div style={{flex: "0 0 400px"}}>
+            <div style={{textAlign: "center", fontSize: "20px", fontWeight: "bold"}}>
+                {props.nodeId}
+            </div>
+            <Slate 
+                editor={editor}
+                value={value}
+                onChange={handleChange}
+            >
+                <Editable 
+                    id={"editable-" + props.nodeId}
+                    onFocus={() => props.handleFocus(props.nodeId, 0)}
+                    style={props.isFocused ? FocusedContainerStyle : ContainerStyle}
+                    renderElement={props => <Element {...props} />}
+                    renderLeaf={props => <Text {...props} />}
+                    onKeyDown={handleKeyDown}
+                    onKeyUp={handleKeyUp}
+                />
+            </Slate>
+        </div>
     )
 }
 
@@ -332,8 +333,7 @@ const Text = props => {
   }
 
 const ContainerStyle = {
-    flex: "0 0 400px",
-    height: "100%",
+    height: "calc(100% - 30px)",
     padding: "8px",
     border: "solid 1px #ccc",
     borderRadius: "12px",
@@ -341,8 +341,7 @@ const ContainerStyle = {
 }
 
 const FocusedContainerStyle = {
-    flex: "0 0 400px",
-    height: "100%",
+    height: "calc(100% - 30px)",
     padding: "8px",
     borderRadius: "12px",
     border: "1px solid #38a9f0",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from "styled-components";
 import axios from "axios";
 
@@ -9,6 +9,8 @@ import { parse } from '@fortawesome/fontawesome-svg-core';
 const storyStarter = "Suddenly, icy fingers grabbed my arm as I inched through the darkness."
 
 function Track() {
+    const trackRef = useRef(null);
+
     const [ sentences, setSentences ] = useState(
         {0: {text: storyStarter, isEdited: false}}
     );
@@ -69,7 +71,6 @@ function Track() {
     }
 
     function handleGenerate(nodeId, count, isGPT) {
-        console.log("generate")
         if(isGPT) {
             var data = { text: textify(nodeId), count: count };
             axios
@@ -89,7 +90,6 @@ function Track() {
                     words.shift();
                     generatedSentences.push(" " + words[Math.floor(Math.random() * words.length)]);
                 }
-                console.log(generatedSentences);
             } else {
                 for(var i = 0; i < 3; i++) {
                     var sentence = "";
@@ -104,31 +104,38 @@ function Track() {
     }
 
     function handleFocus(nodeId, change) {
-        if(nodeId == null)
+
+        if(nodeId == null) {
             setFocusedNode(-1);
+            return;
+        }
 
         var nodeIdx = nodes.findIndex(node => node.id === nodeId);
 
         var newFocusIdx = nodeIdx + change;
-        if(newFocusIdx < 0) 
+        if(newFocusIdx < 0) {
             newFocusIdx = nodes.length - 1;
-        else if(newFocusIdx >= nodes.length)
+        } else if(newFocusIdx >= nodes.length) {
             newFocusIdx = 0;
-        
+        }
+
+        if(nodes[newFocusIdx].id === focusedNode) return;
+
+        var newScroll = 412*(newFocusIdx - 1);
+        trackRef.current.scrollLeft = newScroll;
+
         setFocusedNode(nodes[newFocusIdx].id);
     }
 
 
     function handleKeyDown(e) {
         if (e.key === "Alt") {
-            console.log("ALT DOWN");
             setIsAlt(true);
         }
     }
 
     function handleKeyUp(e) {
         if(e.key === "Alt") {
-            console.log("ALT UP");
             setIsAlt(false);
         }
     }
@@ -197,7 +204,7 @@ function Track() {
     
     return (
         <>
-            <TrackContainer onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+            <TrackContainer ref={trackRef} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
                 {trackHTML}
             </TrackContainer>
         </>
@@ -211,7 +218,8 @@ const TrackContainer = styled.div`
     height: 800px;
     gap: 12px;
     overflow-x: scroll;
-    padding: 12px;
+    padding: 0 12px;
+    scroll-behavior: smooth;
 `;
 
 export default Track;
