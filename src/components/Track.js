@@ -159,15 +159,23 @@ function Track() {
         for(var i = 0; i < changedIdxList.length; i++) {
             var changedIdx = changedIdxList[i];
             var changedText = changedTextList[i];
-            var changedSentenceId = newNodes[nodeIdx].sentences[changedIdx];
-            var changedSentence = sentences[changedSentenceId];
 
-            if(changedSentence.isEdited) {
-                newSentences[changedSentenceId].text = changedText;
+            if(changedIdx < newNodes[nodeIdx].sentences.length) {
+                var changedSentenceId = newNodes[nodeIdx].sentences[changedIdx];
+                var changedSentence = sentences[changedSentenceId];
+
+                if(changedSentence.isEdited) {
+                    newSentences[changedSentenceId].text = changedText;
+                } else {
+                    var nextSentenceId = parseInt(Object.keys(newSentences).at(-1)) + 1;
+                    newSentences[nextSentenceId] = {text: changedText, isEdited: true};
+                    newNodes[nodeIdx].sentences[changedIdx] = nextSentenceId;
+                    isNodesChanged = true;
+                }
             } else {
                 var nextSentenceId = parseInt(Object.keys(newSentences).at(-1)) + 1;
                 newSentences[nextSentenceId] = {text: changedText, isEdited: true};
-                newNodes[nodeIdx].sentences[changedIdx] = nextSentenceId;
+                newNodes[nodeIdx].sentences.push(nextSentenceId);
                 isNodesChanged = true;
             }
         }

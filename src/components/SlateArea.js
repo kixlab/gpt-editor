@@ -25,7 +25,6 @@ function NodeArea(props) {
           ['span'].includes(element.type) || isInline(element)
         
         editor.insertText = text => {
-            console.log(isSpan(editor), text);
             if(isSpan(editor)) {
                 Transforms.setNodes(
                     editor,
@@ -44,23 +43,26 @@ function NodeArea(props) {
                     )
                     Transforms.setNodes(
                         editor,
-                        { style: {} },
+                        { style: {}, isEdited: true },
                         { at: [0, 1] }
                     )
                 } else {
-                    var isEdited = false; // find if edited
+                    var { children } = editor;
+                    var lastSpanLocation = children[0].children.length - 1 - 1;
+                    console.log(children, lastSpanLocation);
+                    var lastSpan = children[0].children[lastSpanLocation];
+                    var isEdited = lastSpan.isEdited;
+                    var newSpanIdx = lastSpan.sentenceidx + 1;
                     if(isEdited) {
-                        // find final id
                         Transforms.insertText(
                             editor,
                             text, 
-                            { at: { path: [0, props.sentenceIds.length*2 + 1, 0], offset: 0}}
+                            { at: { path: [0, lastSpanLocation, 0], offset: lastSpan.children[0].text.length}}
                         )
                     } else {
-                        // find new sentenceId
                         Transforms.insertNodes(
                             editor,
-                            { type: 'span', children: [{ text: text }], sentenceidx: props.sentenceIds.length, style: {} },
+                            { type: 'span', children: [{ text: text }], sentenceidx: newSpanIdx, style: {}, isEdited: true },
                             { at: selection.anchor.path }
                         )
                     }
@@ -103,8 +105,6 @@ function NodeArea(props) {
                 nodesToInsert,
                 {at: [0, value[0].children.length - 1]}
             )   
-        } else if(props.sentenceIds.length < (value[0].children.length - 1)/2) {
-            // updateAllSentenceIdxs
         }
     }, [props.sentenceIds, props.sentencesText]);
 
@@ -133,7 +133,7 @@ function NodeArea(props) {
         for(var i = 0; i < props.sentenceIds.length; i++) {
             var sentenceId = props.sentenceIds[i];
             var sentence = props.sentencesText[sentenceId];
-            var span = children[i*2 + 1 - deletedTextList.length];
+            var span = children[(i - deletedTextList.length)*2 + 1];
             
             if(span === undefined || i != span.sentenceidx) {
                 deletedTextList.push(i);
@@ -145,6 +145,22 @@ function NodeArea(props) {
                 changedIdxList.push(i);
                 changedTextList.push(text);
                 continue;
+            }
+        }
+
+        if((children.length - 1)/2 > props.sentenceIds.length) {
+            var addedText = children[children.length - 1 - 1].children[0].text;
+            changedIdxList.push(props.sentenceIds.length);
+            changedTextList.push(addedText);
+        }
+
+        if(deletedTextList.length > 0) {
+            for(i = deletedTextList[0]; i < props.sentenceIds.length - deletedTextList.length; i++) {
+                Transforms.setNodes(
+                    editor,
+                    { sentenceidx: i},
+                    { at: [0, i*2 + 1] }
+                )
             }
         }
 
