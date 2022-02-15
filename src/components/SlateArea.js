@@ -231,7 +231,8 @@ function NodeArea(props) {
     
     function handleKeyUp(e) {
         if(keyPressed != null && e.key === "Enter") {
-            props.handleGenerate(props.nodeId, keyPressed.count, false);
+            // GENERATE
+            props.handleGenerate(props.nodeId, keyPressed.count, true);
             setKeyPressed(null);
         }
     }

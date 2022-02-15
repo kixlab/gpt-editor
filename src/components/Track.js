@@ -20,8 +20,7 @@ function Track() {
 
     function updateSentences(nodeId, generatedSentences) { 
         var nextSentenceId = parseInt(Object.keys(sentences).at(-1)) + 1;
-        var maxNodeId = Math.max.apply(null, Object.keys(nodes).map(id => parseInt(id)));
-        console.log(nodes, maxNodeId);
+        var maxNodeId = Math.max.apply(null, nodes.map(node => parseInt(node.id)));
 
         var newSentences = {...sentences};
         var generatedIds = [];
