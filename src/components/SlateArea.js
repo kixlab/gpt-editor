@@ -29,18 +29,42 @@ function NodeArea(props) {
             if(isSpan(editor)) {
                 Transforms.setNodes(
                     editor,
-                    { style: {}},
+                    { style: {}, isEdited: true },
                     { match: n => !Editor.isEditor(n) && SlateElement.isElement(n) &&  n.style !== undefined && n.style.backgroundColor !== undefined }
                 )
                 insertText(text);
             } else {
                 const { selection } = editor;
-                console.log(selection);
-                Transforms.insertNodes(
-                    editor,
-                    { type: 'span', children: [{ text: text }], sentenceidx: props.sentenceIds.length, style: {} },
-                    { at: selection.anchor.path }
-                )
+
+                if(selection.anchor.path[1]  === 0) {
+                    Transforms.insertText(
+                        editor,
+                        text,
+                        { at: { path: [0, 1, 0], offset: 0}}
+                    )
+                    Transforms.setNodes(
+                        editor,
+                        { style: {} },
+                        { at: [0, 1] }
+                    )
+                } else {
+                    var isEdited = false; // find if edited
+                    if(isEdited) {
+                        // find final id
+                        Transforms.insertText(
+                            editor,
+                            text, 
+                            { at: { path: [0, props.sentenceIds.length*2 + 1, 0], offset: 0}}
+                        )
+                    } else {
+                        // find new sentenceId
+                        Transforms.insertNodes(
+                            editor,
+                            { type: 'span', children: [{ text: text }], sentenceidx: props.sentenceIds.length, style: {} },
+                            { at: selection.anchor.path }
+                        )
+                    }
+                }
             }
         }
     
@@ -68,7 +92,8 @@ function NodeArea(props) {
                     {
                         type: 'span',
                         children: [{ text: sentence.text }],
-                        style: {backgroundColor: color},
+                        style: sentence.isEdited ? {} : {backgroundColor: color},
+                        isEdited: sentence.isEdited,
                         sentenceidx: i
                     }
                 );
@@ -78,23 +103,29 @@ function NodeArea(props) {
                 nodesToInsert,
                 {at: [0, value[0].children.length - 1]}
             )   
+        } else if(props.sentenceIds.length < (value[0].children.length - 1)/2) {
+            // updateAllSentenceIdxs
         }
     }, [props.sentenceIds, props.sentencesText]);
 
+    function valueToText(value) {
+        var text = "";
+        for(var i = 0; i < value[0].children.length; i++) {
+            var child = value[0].children[i];
+            if(child.type === 'span') {
+                text += child.children[0].text;
+            }
+        }
+        return text;
+    }
+
     function handleChange(newValue) {
+        if(valueToText(value) === valueToText(newValue)) return;
         console.log(newValue);
-        if(JSON.stringify(value) === JSON.stringify(newValue)) return;
         setValue(newValue);
 
         var children = [...newValue[0].children];
         
-        // TODO: check if added at beginning or end, and update sentences
-        if(children[0].text !== '') {
-            console.log("new beginning");
-        } else if(children[children.length - 1].text !== '') {
-            console.log("new end");
-        }
-
         // check changes in spans
         var changedIdxList = [];
         var changedTextList = [];
@@ -120,8 +151,6 @@ function NodeArea(props) {
         if(changedIdxList.length > 0 || deletedTextList.length > 0) {
             props.handleEditNode(props.nodeId, changedIdxList, changedTextList, deletedTextList);
         }
-
-        // TODO: reset beginning and end text
 
         return;
     }
@@ -155,12 +184,6 @@ function NodeArea(props) {
             />
         </Slate>
     )
-    /*
-                innerRef={containerRef}
-            onKeyDown={handleKeyDown}
-            onKeyUp={handleKeyUp}
-            onFocus={() => props.handleFocus(props.nodeId, 0)}
-            */
 }
 
 const Element = props => {

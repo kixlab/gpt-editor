@@ -23,16 +23,37 @@ function Track() {
         var maxNodeId = Math.max.apply(null, Object.keys(nodes).map(id => parseInt(id)));
 
         var newSentences = {...sentences};
+        var generatedIds = [];
         for(var i = 0; i < generatedSentences.length; i++) {
-            newSentences[nextSentenceId + i] = {text: generatedSentences[i], isEdited: false};
+            newSentences[nextSentenceId] = {text: generatedSentences[i], isEdited: false};
+            generatedIds.push(nextSentenceId);
+            nextSentenceId += 1;
         }
+
         var newNodes = JSON.parse(JSON.stringify(nodes));
         var nodeIdx = newNodes.findIndex(node => node.id === nodeId);
         var node = newNodes[nodeIdx];
         for(i = 1; i < generatedSentences.length; i++) {
-            newNodes.splice(nodeIdx + i, 0, {id: maxNodeId + i, sentences: [...node.sentences, nextSentenceId + i]});
+            var copiedSentenceIds = [];
+            for(var j = 0; j < node.sentences.length; j++) {
+                var copiedId = node.sentences[j];
+                var sentence = newSentences[copiedId];
+                if(sentence.isEdited) {
+                    var text = sentence.text;
+                    newSentences[nextSentenceId] = {text: text, isEdited: true};
+                    copiedSentenceIds.push(nextSentenceId);
+                    nextSentenceId += 1;
+                } else {
+                    copiedSentenceIds.push(copiedId);
+                }
+            }
+            copiedSentenceIds.push(generatedIds[i])
+            newNodes.splice(nodeIdx + i, 0, {id: maxNodeId + i, sentences: copiedSentenceIds});
         }
-        newNodes[nodeIdx].sentences.push(nextSentenceId);
+        newNodes[nodeIdx].sentences.push(generatedIds[0]);
+
+        console.log(newSentences);
+        console.log(newNodes);
         
         setSentences(newSentences);
         setNodes(newNodes);
@@ -172,7 +193,7 @@ function Track() {
             }
         }
         */
-        
+
         setSentences(newSentences);
         if(isNodesChanged) {
             setNodes(newNodes);
