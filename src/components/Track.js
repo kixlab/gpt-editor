@@ -215,11 +215,19 @@ const TrackContainer = styled.div`
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 800px;
+    height: 100%;
     gap: 12px;
     overflow-x: scroll;
     padding: 0 12px;
+    padding-bottom: 8px;
     scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        background-color: #ccc;
+    }
 `;
 
 export default Track;

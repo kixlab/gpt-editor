@@ -6,6 +6,8 @@ import CaretPositioning from './EditCaretPositioning'
 import { createEditor, Transforms, Editor, Element as SlateElement } from 'slate'
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react'
 
+const isGPT = true;
+
 const colors = [
     '#ffd3ad', '#ddb6c0', '#b2e4f7', '#96e5ac', '#d3aaeb', '#b8b8eb', '#afc3e9', '#9feb87'
 ];
@@ -227,8 +229,7 @@ function NodeArea(props) {
     
     function handleKeyUp(e) {
         if(keyPressed != null && e.key === "Enter") {
-            // GENERATE
-            props.handleGenerate(props.nodeId, keyPressed.count, false);
+            props.handleGenerate(props.nodeId, keyPressed.count, isGPT);
             setKeyPressed(null);
         }
     }
@@ -269,6 +270,7 @@ function NodeArea(props) {
                 <Editable 
                     id={"editable-" + props.nodeId}
                     onFocus={() => props.handleFocus(props.nodeId, 0)}
+                    class="TextEditor"
                     style={props.isFocused ? FocusedContainerStyle : ContainerStyle}
                     renderElement={props => <Element {...props} />}
                     renderLeaf={props => <Text {...props} />}
@@ -333,20 +335,13 @@ const Text = props => {
   }
 
 const ContainerStyle = {
-    height: "calc(100% - 30px)",
-    padding: "8px",
     border: "solid 1px #ccc",
     borderRadius: "12px",
-    overflowY: "scroll"
 }
 
 const FocusedContainerStyle = {
-    height: "calc(100% - 30px)",
-    padding: "8px",
-    borderRadius: "12px",
     border: "1px solid #38a9f0",
-    boxShadow: "0px 0px 5px rgba(56, 169, 240, 0.75)",
-    overflowY: "scroll"
+    boxShadow: "0px 0px 5px rgba(56, 169, 240, 0.75)"
 }
 
 export default NodeArea;
