@@ -6,7 +6,7 @@ import CaretPositioning from './EditCaretPositioning'
 import { createEditor, Transforms, Editor, Element as SlateElement } from 'slate'
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react'
 
-const isGPT = true;
+const isGPT = false;
 
 const colors = [
     '#ffd3ad', '#ddb6c0', '#b2e4f7', '#96e5ac', '#d3aaeb', '#b8b8eb', '#afc3e9', '#9feb87'
@@ -209,7 +209,7 @@ function NodeArea(props) {
             e.preventDefault();
             return;
         }
-
+        console.log(e.key, e.key === ' ', props.isAlt);
         if(e.key === "Enter") {
             e.preventDefault();
             if(props.isAlt) { 
@@ -224,6 +224,10 @@ function NodeArea(props) {
         } else if(['ArrowLeft', 'ArrowRight'].includes(e.key) && props.isAlt) {
             e.preventDefault();
             props.handleFocus(props.nodeId, e.key === 'ArrowLeft' ? -1 : 1);
+        } else if(e.key === ' ' && props.isAlt) {
+            console.log('he');
+            e.preventDefault();
+            props.handleCopy(props.nodeId);
         }
     }
     
@@ -270,7 +274,7 @@ function NodeArea(props) {
                 <Editable 
                     id={"editable-" + props.nodeId}
                     onFocus={() => props.handleFocus(props.nodeId, 0)}
-                    class="TextEditor"
+                    className="TextEditor"
                     style={props.isFocused ? FocusedContainerStyle : ContainerStyle}
                     renderElement={props => <Element {...props} />}
                     renderLeaf={props => <Text {...props} />}

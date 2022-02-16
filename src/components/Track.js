@@ -8,6 +8,10 @@ import { parse } from '@fortawesome/fontawesome-svg-core';
 
 const storyStarter = "Suddenly, icy fingers grabbed my arm as I inched through the darkness."
 
+// "It all started when I accidentally picked up the wrong suitcase at the airport." 
+// "Lately, Katie felt that there was something missing from her life."
+// "Walking through the graveyard, Adam couldn't shake the feeling that he was being watched."
+
 function Track() {
     const trackRef = useRef(null);
 
@@ -189,6 +193,35 @@ function Track() {
         }
     }
 
+    function handleCopy(nodeId) {
+        var nextSentenceId = parseInt(Object.keys(sentences).at(-1)) + 1;
+        var maxNodeId = Math.max.apply(null, nodes.map(node => parseInt(node.id)));
+
+        var newSentences = {...sentences};
+
+        var newNodes = JSON.parse(JSON.stringify(nodes));
+        var nodeIdx = newNodes.findIndex(node => node.id === nodeId);
+        var node = newNodes[nodeIdx];
+
+        var copiedSentenceIds = [];
+        for(var j = 0; j < node.sentences.length; j++) {
+            var copiedId = node.sentences[j];
+            var sentence = newSentences[copiedId];
+            if(sentence.isEdited) {
+                var text = sentence.text;
+                newSentences[nextSentenceId] = {text: text, isEdited: true};
+                copiedSentenceIds.push(nextSentenceId);
+                nextSentenceId += 1;
+            } else {
+                copiedSentenceIds.push(copiedId);
+            }
+        }
+        newNodes.splice(nodeIdx + 1, 0, {id: maxNodeId + 1, sentences: copiedSentenceIds});
+        
+        setSentences(newSentences);
+        setNodes(newNodes);
+    }
+
     var trackHTML = [];
     for(var i = 0; i < nodes.length; i++) {
         trackHTML.push(
@@ -197,6 +230,7 @@ function Track() {
                 sentenceIds={nodes[i].sentences} sentencesText={sentences} 
                 handleGenerate={handleGenerate} handleFocus={handleFocus}
                 handleDelete={handleDelete} handleEditNode={handleEditNode}
+                handleCopy={handleCopy}
                 isFocused={nodes[i].id === focusedNode}
             />
         )
