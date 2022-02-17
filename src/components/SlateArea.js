@@ -20,13 +20,17 @@ const isSpan = editor => {
 }
 
 const withInlines = editor => {
-    const { insertText, isInline } = editor
+    const { insertText, insertFragment, isInline } = editor
   
     editor.isInline = element =>
       ['span'].includes(element.type) || isInline(element)
-    
+
     editor.insertText = text => {
+        console.log(text);
         if(isSpan(editor)) {
+            const { selection } = editor;
+            console.log("text: " + text + ", isspan");
+            console.log(selection);
             Transforms.setNodes(
                 editor,
                 { style: {}, isEdited: true },
@@ -35,6 +39,8 @@ const withInlines = editor => {
             insertText(text);
         } else {
             const { selection } = editor;
+            console.log("text: " + text + ", notspan");
+            console.log(selection);
 
             if(selection.anchor.path[1]  === 0) {
                 Transforms.insertText(
@@ -68,6 +74,16 @@ const withInlines = editor => {
                 }
             }
         }
+    }
+
+    editor.insertFragment = node => {
+        var textCopied = "";
+        for(var i = 0; i < node[0].children.length; i++) {
+            var child = node[0].children[i];
+            if(child.type === 'span')
+                textCopied += child.children[0].text;
+        }
+        editor.insertText(textCopied);
     }
 
     return editor;
@@ -212,27 +228,26 @@ function NodeArea(props) {
         console.log(e.key, e.key === ' ', props.isAlt);
         if(e.key === "Enter") {
             e.preventDefault();
-            if(props.isAlt) { 
-                placeholderGenerate(0);
-                setKeyPressed({key: e.key, count: 0});
-            } else {
-                editor.insertText('\n');
-            }
-        } else if(e.key === 'Backspace' && props.isAlt) {
+            editor.insertText('\n');
+        } else if(e.key === 'g' && props.isAlt) {
+            e.preventDefault();
+            placeholderGenerate(0);
+            setKeyPressed({key: e.key, count: 0});   
+        } else if(e.key === 'd' && props.isAlt) {
             e.preventDefault();
             props.handleDelete(props.nodeId);
         } else if(['ArrowLeft', 'ArrowRight'].includes(e.key) && props.isAlt) {
             e.preventDefault();
             props.handleFocus(props.nodeId, e.key === 'ArrowLeft' ? -1 : 1);
-        } else if(e.key === ' ' && props.isAlt) {
-            console.log('he');
+        } else if(e.key === 'p' && props.isAlt) {
             e.preventDefault();
             props.handleCopy(props.nodeId);
         }
     }
     
     function handleKeyUp(e) {
-        if(keyPressed != null && e.key === "Enter") {
+        console.log(e);
+        if(keyPressed != null && e.key === "Meta") {
             props.handleGenerate(props.nodeId, keyPressed.count, isGPT);
             setKeyPressed(null);
         }

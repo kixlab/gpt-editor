@@ -6,7 +6,8 @@ import NodeArea from './SlateArea';
 import { loremipsum } from './LoremIpsum';
 import { parse } from '@fortawesome/fontawesome-svg-core';
 
-const storyStarter = "Suddenly, icy fingers grabbed my arm as I inched through the darkness."
+const storyStarter = "Lately, Katie felt that there was something missing from her life." 
+//"Suddenly, icy fingers grabbed my arm as I inched through the darkness."
 
 // "It all started when I accidentally picked up the wrong suitcase at the airport." 
 // "Lately, Katie felt that there was something missing from her life."
@@ -133,13 +134,13 @@ function Track() {
 
 
     function handleKeyDown(e) {
-        if (e.key === "Alt") {
+        if (e.key === "Meta") {
             setIsAlt(true);
         }
     }
 
     function handleKeyUp(e) {
-        if(e.key === "Alt") {
+        if(e.key === "Meta") {
             setIsAlt(false);
         }
     }
