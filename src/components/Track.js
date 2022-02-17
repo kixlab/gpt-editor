@@ -6,12 +6,11 @@ import NodeArea from './SlateArea';
 import { loremipsum } from './LoremIpsum';
 import { parse } from '@fortawesome/fontawesome-svg-core';
 
-const storyStarter = "Lately, Katie felt that there was something missing from her life." 
-//"Suddenly, icy fingers grabbed my arm as I inched through the darkness."
+const storyStarter = "It all started when I accidentally picked up the wrong suitcase at the airport." 
 
 // "It all started when I accidentally picked up the wrong suitcase at the airport." 
-// "Lately, Katie felt that there was something missing from her life."
-// "Walking through the graveyard, Adam couldn't shake the feeling that he was being watched."
+// "She broke open the fortune cookie, but there was a map on the tiny slip of paper."
+// "Suddenly, icy fingers grabbed my arm as I inched through the darkness."
 
 function Track() {
     const trackRef = useRef(null);
@@ -126,8 +125,10 @@ function Track() {
 
         if(nodes[newFocusIdx].id === focusedNode) return;
 
-        var newScroll = 412*(newFocusIdx - 1);
-        trackRef.current.scrollLeft = newScroll;
+        if(change != 0) {
+            var newScroll = 412*(newFocusIdx - 1);
+            trackRef.current.scrollLeft = newScroll;
+        }
 
         setFocusedNode(nodes[newFocusIdx].id);
     }

@@ -6,7 +6,7 @@ import CaretPositioning from './EditCaretPositioning'
 import { createEditor, Transforms, Editor, Element as SlateElement } from 'slate'
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react'
 
-const isGPT = false;
+const isGPT = true;
 
 const colors = [
     '#ffd3ad', '#ddb6c0', '#b2e4f7', '#96e5ac', '#d3aaeb', '#b8b8eb', '#afc3e9', '#9feb87'
@@ -171,6 +171,8 @@ function NodeArea(props) {
 
     function handleChange(newValue) {
         if(valueToText(value) === valueToText(newValue) || placeholders.length > 0) return;
+        console.log(editor.selection);
+        console.log(newValue);
         setValue(newValue);
 
         var children = [...newValue[0].children];
@@ -246,7 +248,6 @@ function NodeArea(props) {
     }
     
     function handleKeyUp(e) {
-        console.log(e);
         if(keyPressed != null && e.key === "Meta") {
             props.handleGenerate(props.nodeId, keyPressed.count, isGPT);
             setKeyPressed(null);
