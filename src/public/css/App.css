@@ -1,5 +1,10 @@
+#root {
+  height: 100%;
+}
+
 .App {
-  padding: 20px;
+  height: 100%;
+  padding: 20px 20px 32px 20px;
 }
 
 .App-logo {
@@ -36,4 +41,20 @@
   100% {
     transform: translateY(0px);
   }
+}
+
+.TextEditor {
+  height: calc(100% - 30px);
+  padding: 8px;
+  border-radius: 12px;
+  overflow-y: scroll;
+}
+
+.TextEditor::-webkit-scrollbar {
+  width: 6px;
+}
+
+.TextEditor::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: #ccc;
 }
