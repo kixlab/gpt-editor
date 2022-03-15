@@ -1,12 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import styled from "styled-components";
 
-import CaretPositioning from './EditCaretPositioning'
-
 import { createEditor, Transforms, Editor, Element as SlateElement } from 'slate'
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react'
 
-const isGPT = true;
+const isGPT = false;
 
 const colors = [
     '#ffd3ad', '#ddb6c0', '#b2e4f7', '#96e5ac', '#d3aaeb', '#b8b8eb', '#afc3e9', '#9feb87'

@@ -6,7 +6,7 @@ import NodeArea from './SlateArea';
 import { loremipsum } from './LoremIpsum';
 import { parse } from '@fortawesome/fontawesome-svg-core';
 
-const storyStarter = "It all started when I accidentally picked up the wrong suitcase at the airport." 
+const storyStarter = "It all started when I accidentally picked up the wrong suitcase at the airport.";
 
 // "It all started when I accidentally picked up the wrong suitcase at the airport." 
 // "She broke open the fortune cookie, but there was a map on the tiny slip of paper."
