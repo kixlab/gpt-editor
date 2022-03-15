@@ -4,7 +4,10 @@
 
 .App {
   height: 100%;
-  padding: 20px 20px 32px 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  background-color: #EEE;
 }
 
 .App-logo {
@@ -44,10 +47,11 @@
 }
 
 .TextEditor {
-  height: calc(100% - 30px);
-  padding: 8px;
-  border-radius: 12px;
+  background-color: #fff;
+  padding: 32px;
+  height: 100%;
   overflow-y: scroll;
+  font-size: 18px;
 }
 
 .TextEditor::-webkit-scrollbar {
