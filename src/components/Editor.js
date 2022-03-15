@@ -83,7 +83,7 @@ function TextEditor(props) {
             )
         }
         var nodesToInsert = [];
-        var currentNode = props.pipe;
+        var currentNode = props.slots;
         var currentPath = ""
         for(var i = 0; i < props.path.length; i++) {
             currentNode = currentNode.children[props.path[i]];
@@ -136,7 +136,7 @@ function TextEditor(props) {
         var changedPathList = [];
         var changedTextList = [];
 
-        var currentNode = props.pipe;
+        var currentNode = props.slots;
         var currentPath = [];
         for(var i = 0; i < props.path.length; i++) {
             currentNode = currentNode.children[props.path[i]];
@@ -150,7 +150,7 @@ function TextEditor(props) {
             }
         }
 
-        props.changePipe(changedPathList, changedTextList);
+        props.changeSlots(changedPathList, changedTextList);
 
         return;
     }

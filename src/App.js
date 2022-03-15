@@ -7,7 +7,7 @@ import WidgetArea from './components/WidgetArea';
 import { propTypes } from 'react-bootstrap/esm/Image';
 
 function App() {
-  const [pipe, setPipe] = useState({
+  const [slots, setSlots] = useState({
     children: [
       {text: "Hello.", children: [
         {text: " World.", children: []},
@@ -32,7 +32,7 @@ function App() {
 
   function changePath() {
     var newPath = [];
-    var currentNode = pipe;
+    var currentNode = slots;
     while(currentNode.children.length != 0) {
       if(newPath.length == 1) {
         newPath.push(path[1] == 1 ? 0 : 1);
@@ -45,23 +45,23 @@ function App() {
     setPath(newPath);
   }
 
-  function changePipe(changedPathList, changedTextList) {
-    var newPipe = {...pipe};
+  function changeSlots(changedPathList, changedTextList) {
+    var newSlots = {...slots};
     for(var i = 0; i < changedPathList.length; i++) {
-        var node = newPipe;
+        var node = newSlots;
         for(var j = 0; j < changedPathList[i].length; j++) {
             node = node.children[changedPathList[i][j]];
         }
         node.text = changedTextList[i];
     }
-    setPipe(newPipe);
+    setSlots(newSlots);
   }
 
   function handleGenerate(value) {
-    var newPipe = {...pipe};
+    var newSlots = {...slots};
     var newPath = [...path];
     
-    var currentNode = newPipe;
+    var currentNode = newSlots;
     for(var i = 0; i < path.length; i++) {
       currentNode = currentNode.children[path[i]]
     }
@@ -69,21 +69,21 @@ function App() {
     newPath.push(currentNode.children.length);
     currentNode.children.push({text: value, children: []});
 
-    console.log(newPipe);
+    console.log(newSlots);
     console.log(newPath);
 
-    setPipe(newPipe);
+    setSlots(newSlots);
     setPath(newPath);
   }
 
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
-        isMeta={isMeta} pipe={pipe} path={path} 
-        changePipe={changePipe} handleGenerate={handleGenerate}
+        isMeta={isMeta} slots={slots} path={path} 
+        changeSlots={changeSlots} handleGenerate={handleGenerate}
       />
       <WidgetArea 
-        pipe={pipe}
+        slots={slots}
         changePath={changePath}
       />
     </div>

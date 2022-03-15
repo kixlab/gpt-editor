@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import styled from "styled-components";
 
 function WidgetArea(props) {
-    function recursivePipeDrawing(node, path, depth, numInLevel) {
+    function recursiveSlotDrawing(node, path, depth, numInLevel) {
         var children = node.children;
         if(children.length == 0) {
             if(depth !== -1 && numInLevel[depth] == undefined)
@@ -18,7 +18,7 @@ function WidgetArea(props) {
                 numInLevel.push(0);
             
             for(var i = 0; i < children.length; i++) {
-                var [svgs, newNumInLevel] = recursivePipeDrawing(children[i], path + " " + i, depth + 1, numInLevel);
+                var [svgs, newNumInLevel] = recursiveSlotDrawing(children[i], path + " " + i, depth + 1, numInLevel);
                 elements = elements.concat(svgs);
                 for(var j = depth + 1; j < newNumInLevel; j++) {
                     if(numInLevel[j] == undefined) 
@@ -40,7 +40,7 @@ function WidgetArea(props) {
 
     return (
         <Container>
-            {recursivePipeDrawing(props.pipe, "", -1, [])[0]}
+            {recursiveSlotDrawing(props.slots, "", -1, [])[0]}
         </Container>
     )
 }
