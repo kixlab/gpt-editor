@@ -82,7 +82,10 @@ function App() {
         isMeta={isMeta} pipe={pipe} path={path} 
         changePipe={changePipe} handleGenerate={handleGenerate}
       />
-      <WidgetArea changePath={changePath}/>
+      <WidgetArea 
+        pipe={pipe}
+        changePath={changePath}
+      />
     </div>
   );
 }
