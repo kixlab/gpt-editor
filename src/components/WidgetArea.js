@@ -114,8 +114,22 @@ function WidgetArea(props) {
         return [elements, numInLevel];
     }
 
+    function handleKeyDown(e) {
+        if(selected === null) return;
+        switch(e.key) {
+            case "Backspace":
+                if(selected.type === "slot") {
+                    props.removeSlot(selected.data.split(",").map(x => parseInt(x)));
+                    setSelected(null);
+                }
+                break;
+            default:
+                console.log(e.key);
+        }
+    }
+
     return (
-        <Container onClick={handleCanvasClick}>
+        <Container onClick={handleCanvasClick} tabIndex="0" onKeyDown={handleKeyDown}>
             <filter id="shadow">
                 <feDropShadow dx="0" dy="0" stdDeviation="2"
                     floodColor="#00C2FF"/>
@@ -128,6 +142,7 @@ function WidgetArea(props) {
 const Container = styled.svg`
     height: 100%;
     flex-grow: 1;
+    outline: none;
 `;
 
 export default WidgetArea;

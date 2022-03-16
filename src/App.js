@@ -73,6 +73,19 @@ function App() {
     setCurrentDepth(depth);
   }
 
+  function removeSlot(slotPath) {
+    var newSlots = {...slots};
+    var newPath = [...path];
+    var currentNode = newSlots;
+    for(var i = 0; i < slotPath.length - 1; i++) {
+      currentNode = currentNode.children[slotPath[i]]
+    }
+    currentNode.children.splice(slotPath[slotPath.length - 1], 1);
+    console.log(newSlots);
+    setSlots(newSlots);
+    setPath(newPath.slice(0, slotPath.length - 1));
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
@@ -81,7 +94,7 @@ function App() {
       />
       <WidgetArea 
         slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert}
-        changePath={changePath} changeDepth={changeDepth}
+        changePath={changePath} changeDepth={changeDepth} removeSlot={removeSlot}
       />
     </div>
   );
