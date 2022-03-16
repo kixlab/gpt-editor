@@ -18,7 +18,7 @@ const isSpan = editor => {
 }
 
 const withInlines = editor => {
-    const { insertText, isInline, deleteBackward, deleteForward } = editor
+    const { insertText, isInline, deleteBackward, deleteFragment } = editor
   
     editor.isInline = element =>
       ['span'].includes(element.type) || isInline(element)
@@ -58,7 +58,66 @@ const withInlines = editor => {
         editor.insertText(textCopied);
     }
 
-    // TODO: Prevent deleting spans
+    editor.deleteBackward = n => {
+        const { selection, children } = editor;
+
+        var childIdx = selection.anchor.path[1];
+        var offset = selection.anchor.offset;
+        var child = children[0].children[childIdx];
+
+        if(child.text !== undefined) {
+            childIdx = selection.anchor.path[1] - 1;
+            if(childIdx < 0) return;
+            child = children[0].children[childIdx];
+            offset = child.children[0].text.length;
+            Transforms.select(editor, {
+                anchor: { path: [0, childIdx, 0], offset: offset},
+                focus: { path: [0, childIdx, 0], offset: offset}
+            })
+        }
+
+        const currentChildText = child.children[0].text;
+
+        if(selection.anchor.offset === 1 && currentChildText.length === 1) return;
+
+        console.log(n);
+
+        switch(n) {
+            case "word":
+                var words = currentChildText.split(" ").filter(word => word !== "");
+                if(currentChildText[0] !== "" && words.length === 1) {
+                    Transforms.delete(editor, { unit: "character", distance: currentChildText.length - 1, reverse: true });
+                    return;
+                }
+                break;
+            case "line":
+                console.log("hey");
+                Transforms.delete(editor, { unit: "character", distance: currentChildText.length - 1, reverse: true });
+                return;
+        }
+
+        deleteBackward(n);
+    }
+
+    editor.deleteFragment = n => {
+        const { selection, children } = editor;
+        const { anchor, focus } = selection;
+        if(Math.abs(focus.path[1] - anchor.path[1]) > 2) return;
+        
+        if(anchor.path[1] > focus.path[1]) {
+            if(anchor.offset === children[0].children[anchor.path[1]].children[0].text.length) return;
+            if(focus.offset === 0) return;
+        } else if(anchor.path[1] < focus.path[1]) {
+            if(focus.offset === children[0].children[focus.path[1]].children[0].text.length) return;
+            if(anchor.offset === 0) return;
+        } else {
+            var child = children[0].children[anchor.path[1]];
+            if(child.children[0].text.length === Math.abs(anchor.offset-focus.offset)) return;
+        }
+
+        console.log(n, selection);
+        deleteFragment(n);
+    }
 
     return editor;
 }

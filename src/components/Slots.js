@@ -66,7 +66,6 @@ function Slots(props) {
                     />
                 );
             } else {
-                console.log(slotId);
                 elements.push(
                     <circle 
                         key={slotId} data-id={slotId}
@@ -97,7 +96,7 @@ function Slots(props) {
 
             var [svgs, newNumInLevel] = recursiveSlotDrawing(childSlotId, depth + 1, numInLevel, slotPath, slotHoverPath);
             elements = elements.concat(svgs);
-            
+
             if(depth === -1)
                 continue;
             
