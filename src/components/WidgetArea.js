@@ -10,6 +10,11 @@ const SLOT_SIZE = 8;
 function WidgetArea(props) {
     const [selected, setSelected] = useState(null);
 
+    function handleCanvasClick(e) {
+        if(e.target.tagName !== "svg") return;
+        setSelected(null);
+    }
+
     function handleClick(e) {
         let data = e.target.getAttribute("data-path");
         if(data.split("-").length == 1) {
@@ -109,10 +114,8 @@ function WidgetArea(props) {
         return [elements, numInLevel];
     }
 
-    console.log(props.isInsert);
-
     return (
-        <Container>
+        <Container onClick={handleCanvasClick}>
             <filter id="shadow">
                 <feDropShadow dx="0" dy="0" stdDeviation="2"
                     floodColor="#00C2FF"/>
