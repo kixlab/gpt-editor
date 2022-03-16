@@ -169,7 +169,7 @@ function App() {
       <TextEditor 
         isMeta={isMeta} slots={slots} lastSlot={lastSlot} currentDepth={currentDepth} hoverSlot={hoverSlot}
         changeSlots={changeSlots} handleGenerate={handleGenerate} setIsInsert={setIsInsert}
-        getSlotPath={getSlotPath}
+        getSlotPath={getSlotPath} setCurrentDepth={setCurrentDepth}
       />
       <WidgetArea 
         slots={slots} lastSlot={lastSlot} currentDepth={currentDepth} isInsert={isInsert} 

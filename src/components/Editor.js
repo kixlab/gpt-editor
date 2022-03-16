@@ -18,7 +18,7 @@ const isSpan = editor => {
 }
 
 const withInlines = editor => {
-    const { insertText, insertFragment, isInline, deleteBackward, deleteForward } = editor
+    const { insertText, isInline, deleteBackward, deleteForward } = editor
   
     editor.isInline = element =>
       ['span'].includes(element.type) || isInline(element)
@@ -174,7 +174,7 @@ function TextEditor(props) {
             var spanText = span.children[0].text;
             var slotId = span.slotId;
             var slot = props.slots[parseInt(slotId)];
-            
+
             if(slot.text !== spanText) {
                 changedPathList.push(slotId);
                 changedTextList.push(spanText);
@@ -205,6 +205,16 @@ function TextEditor(props) {
         return;
     }
 
+    function handleClick(e) {
+        const { selection, children } = editor;
+
+        var lastSpanLocation = children[0].children.length - 1 - 1;
+        if(selection.anchor.path[1] === lastSpanLocation || selection.anchor.path[1] === lastSpanLocation + 1) return;
+        var selectedDepth = Math.floor((selection.anchor.path[1] - 1)/2);
+        if(selectedDepth !== props.currentDepth) {
+            props.setCurrentDepth(selectedDepth);
+        }
+    }
 
     return (
         <SuperContainer>
@@ -220,6 +230,7 @@ function TextEditor(props) {
                     renderLeaf={props => <Text {...props} />}
                     onKeyDown={handleKeyDown}
                     onKeyUp={handleKeyUp}
+                    onClick={handleClick}
                 />
             </Slate>
         </SuperContainer>
