@@ -23,6 +23,12 @@ function WidgetArea(props) {
                     setSelected(null);
                 }
                 break;
+            case "c":
+                if(!props.isMeta) break;
+                if(selected.type === "slot") {
+                    props.copySlot(selected.data.split(",").map(x => parseInt(x)));
+                }
+                break;
             default:
                 console.log(e.key);
         }

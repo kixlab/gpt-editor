@@ -124,6 +124,17 @@ function App() {
     setPath(newPath);
   }
 
+  function copySlot(slotPath) {
+    var newSlots = {...slots};
+    var currentNode = newSlots;
+    for(var i = 0; i < slotPath.length - 1; i++) {
+      currentNode = currentNode.children[slotPath[i]]
+    }
+    var toCopy = currentNode.children[slotPath[slotPath.length - 1]];
+    currentNode.children.push({type: "text", text: toCopy.text, children: []});
+    setSlots(newSlots);
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
@@ -131,9 +142,10 @@ function App() {
         changeSlots={changeSlots} handleGenerate={handleGenerate} setIsInsert={setIsInsert}
       />
       <WidgetArea 
-        slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert} hoverPath={hoverPath}
+        slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert} 
+        isMeta={isMeta} hoverPath={hoverPath}
         changePath={changePath} setHoverPath={setHoverPath} changeDepth={changeDepth} 
-        removeSlot={removeSlot} detatchSlot={detatchSlot}
+        removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
       />
     </div>
   );
