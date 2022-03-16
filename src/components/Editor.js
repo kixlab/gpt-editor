@@ -48,8 +48,6 @@ const withInlines = editor => {
         }
     }
 
-    // TODO: Prevent deleting spans
-
     editor.insertFragment = node => {
         var textCopied = "";
         for(var i = 0; i < node[0].children.length; i++) {
@@ -59,6 +57,8 @@ const withInlines = editor => {
         }
         editor.insertText(textCopied);
     }
+
+    // TODO: Prevent deleting spans
 
     return editor;
 }
@@ -143,6 +143,7 @@ function TextEditor(props) {
 
     function handleChange(newValue) {
         if(valueToText(value) === valueToText(newValue)) return;
+
         setValue(newValue);
 
         var children = [...newValue[0].children];
@@ -167,6 +168,9 @@ function TextEditor(props) {
         }
 
         props.changeSlots(changedPathList, changedTextList);
+
+        var lastSpan = children[children.length - 2];
+        props.setIsInsert(lastSpan.children[0].text !== "");
 
         return;
     }

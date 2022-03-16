@@ -19,6 +19,7 @@ function App() {
   const [path, setPath] = useState([0, 1]);
   const [isMeta, setIsMeta] = useState(false);
   const [currentDepth, setCurrentDepth] = useState(0);
+  const [isInsert, setIsInsert] = useState(false);
 
   function handleKeyDown(e) {
       if (e.key === "Meta") {
@@ -65,6 +66,7 @@ function App() {
 
     setSlots(newSlots);
     setPath(newPath);
+    setIsInsert(false);
   }
 
   function changeDepth(depth) {
@@ -75,10 +77,10 @@ function App() {
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
         isMeta={isMeta} slots={slots} path={path} currentDepth={currentDepth}
-        changeSlots={changeSlots} handleGenerate={handleGenerate}
+        changeSlots={changeSlots} handleGenerate={handleGenerate} setIsInsert={setIsInsert}
       />
       <WidgetArea 
-        slots={slots} path={path} currentDepth={currentDepth}
+        slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert}
         changePath={changePath} changeDepth={changeDepth}
       />
     </div>
