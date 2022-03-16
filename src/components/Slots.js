@@ -97,13 +97,7 @@ function Slots(props) {
 
             var [svgs, newNumInLevel] = recursiveSlotDrawing(childSlotId, depth + 1, numInLevel, slotPath, slotHoverPath);
             elements = elements.concat(svgs);
-            for(var j = depth + 1; j < newNumInLevel; j++) {
-                if(numInLevel[j] == undefined) 
-                    numInLevel.push(newNumInLevel[j]);
-                else
-                    numInLevel[j] += newNumInLevel[j];
-            }
-
+            
             if(depth === -1)
                 continue;
             

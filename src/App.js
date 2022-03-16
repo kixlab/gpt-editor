@@ -109,7 +109,6 @@ function App() {
   function detatchSlot(slotId) {
     var newSlots = {...slots};
 
-    // create anchors for (slotPath.length - 1) times and then attach detatched
     var parentSlotId = newSlots[slotId].parent;
     var parentSlot = newSlots[parentSlotId];
     var children = parentSlot.children;
@@ -119,6 +118,8 @@ function App() {
     var slot = newSlots[slotId];
     slot.parent = 0;
     newSlots[0].children.push(slotId);
+
+    console.log(newSlots);
 
     setSlots(newSlots);
   }
