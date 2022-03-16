@@ -74,7 +74,7 @@ function TextEditor(props) {
         }
     ]);
 
-    useEffect(() => {
+    function displayPath(path, isHover) {
         var totalNodes = editor.children[0].children.length;
         for(var i = totalNodes - 1; i >= 0; i--) {
             Transforms.removeNodes(
@@ -85,9 +85,9 @@ function TextEditor(props) {
         var nodesToInsert = [];
         var currentNode = props.slots;
         var currentPath = ""
-        for(var i = 0; i < props.path.length; i++) {
-            currentNode = currentNode.children[props.path[i]];
-            currentPath += props.path[i];
+        for(var i = 0; i < path.length; i++) {
+            currentNode = currentNode.children[path[i]];
+            currentPath += path[i];
 
             if(currentNode.type === "anchor") continue;
             
@@ -95,7 +95,10 @@ function TextEditor(props) {
                 {
                     type: 'span',
                     children: [{ text: currentNode.text }],
-                    style: props.currentDepth === i ? {backgroundColor: "rgba(0, 102, 255, 0.2)"} : {},
+                    style: {
+                        backgroundColor: props.currentDepth === i ? "rgba(0, 102, 255, 0.2)" : "",
+                        color: isHover ? "#0066FF" : ""
+                    },
                     path: currentPath
                 }
             );
@@ -113,7 +116,19 @@ function TextEditor(props) {
             nodesToInsert,
             {at: [0, 0]}
         ) 
+    }
+
+    useEffect(() => {
+        displayPath(props.path, false);
     }, [props.path]);
+
+    useEffect(() => {
+        if(props.hoverPath) {
+            displayPath(props.hoverPath, true);
+        } else {
+            displayPath(props.path, false);
+        }
+    }, [props.hoverPath])
 
     useEffect(() => {
         for(var i = 0; i < props.path.length; i++) {
@@ -145,7 +160,7 @@ function TextEditor(props) {
     }
 
     function handleChange(newValue) {
-        if(valueToText(value) === valueToText(newValue)) return;
+        if(valueToText(value) === valueToText(newValue) || props.hoverPath) return;
 
         setValue(newValue);
 
@@ -158,10 +173,17 @@ function TextEditor(props) {
 
         var currentNode = props.slots;
         var currentPath = [];
+        var numAnchorNodes = 0;
         for(var i = 0; i < props.path.length; i++) {
             currentNode = currentNode.children[props.path[i]];
             currentPath.push(props.path[i]);
-            var span = children[i*2 + 1];
+
+            if(currentNode.type === "anchor") {
+                numAnchorNodes++;
+                continue;
+            }
+
+            var span = children[(i - numAnchorNodes)*2 + 1];
 
             var text = span.children[0].text;
             if(text !== currentNode.text) {

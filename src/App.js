@@ -20,6 +20,7 @@ function App() {
   const [isMeta, setIsMeta] = useState(false);
   const [currentDepth, setCurrentDepth] = useState(0);
   const [isInsert, setIsInsert] = useState(false);
+  const [hoverPath, setHoverPath] = useState(null);
 
   function handleKeyDown(e) {
       if (e.key === "Meta") {
@@ -44,7 +45,6 @@ function App() {
         for(var j = 0; j < changedPathList[i].length; j++) {
             node = node.children[changedPathList[i][j]];
         }
-        if(node.type === "anchor") return;
         node.text = changedTextList[i];
     }
     setSlots(newSlots);
@@ -90,8 +90,6 @@ function App() {
   function detatchSlot(slotPath) {
     var newSlots = {...slots};
     var newPath = [...path];
-    
-    console.log(slots);
 
     var isIncluded = true;
     for(var i = 0; i < slotPath.length; i++) {
@@ -129,12 +127,13 @@ function App() {
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
-        isMeta={isMeta} slots={slots} path={path} currentDepth={currentDepth}
+        isMeta={isMeta} slots={slots} path={path} currentDepth={currentDepth} hoverPath={hoverPath}
         changeSlots={changeSlots} handleGenerate={handleGenerate} setIsInsert={setIsInsert}
       />
       <WidgetArea 
-        slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert}
-        changePath={changePath} changeDepth={changeDepth} removeSlot={removeSlot} detatchSlot={detatchSlot}
+        slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert} hoverPath={hoverPath}
+        changePath={changePath} setHoverPath={setHoverPath} changeDepth={changeDepth} 
+        removeSlot={removeSlot} detatchSlot={detatchSlot}
       />
     </div>
   );

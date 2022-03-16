@@ -27,7 +27,18 @@ function Slots(props) {
         }
     }
 
-    function recursiveSlotDrawing(node, currPath, depth, numInLevel, isPath) {
+    function handleMouseEnter(e) {
+        var hoverPathStr = "s" + e.target.getAttribute("data-path");
+        var currPathStr = "s" + props.path.join(",");
+        if(currPathStr.includes(hoverPathStr)) return;
+        props.setHoverPath(hoverPathStr.slice(1).split(",").map(x => parseInt(x)));
+    }
+
+    function handleMouseLeave(e) {
+        props.setHoverPath(null);
+    }
+
+    function recursiveSlotDrawing(node, currPath, depth, numInLevel, isPath, isHoverPath) {
         var elements = [];
 
         if(depth !== -1 && numInLevel[depth] == undefined) numInLevel.push(0);
@@ -41,9 +52,10 @@ function Slots(props) {
                 elements.push(
                     <circle 
                         key={currPathStr} data-path={currPathStr}
-                        onClick={handleClick}
+                        onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
                         cx={coords[0]} cy={coords[1]} r={currSize}
-                        fill={isPath ? "#0066FF" : "#fff"} stroke="#0066FF" strokeWidth="2px" style={{cursor: "pointer"}}
+                        fill={isPath ? "#0066FF" : (isHoverPath ? "rgba(0, 102, 255, 0.4)" : "#fff")} 
+                        stroke="#0066FF" strokeWidth="2px" style={{cursor: "pointer"}}
                     />
                 );
             } else {
@@ -74,7 +86,8 @@ function Slots(props) {
         for(var i = 0; i < childrenLen; i++) {
             var isTemp = i === children.length;
             var currIsPath = (isPath && props.path[depth + 1] == i) || isTemp;
-            var [svgs, newNumInLevel] = recursiveSlotDrawing(children[i], [...currPath, i], depth + 1, numInLevel, currIsPath);
+            var currIsHoverPath = props.hoverPath && isHoverPath && props.hoverPath[depth + 1] == i;
+            var [svgs, newNumInLevel] = recursiveSlotDrawing(children[i], [...currPath, i], depth + 1, numInLevel, currIsPath, currIsHoverPath);
             elements = elements.concat(svgs);
             for(var j = depth + 1; j < newNumInLevel; j++) {
                 if(numInLevel[j] == undefined) 
@@ -95,7 +108,7 @@ function Slots(props) {
                     <line
                         key={edgeStr} data-path={edgeStr} 
                         x1={coords[0]} y1={coords[1] + 8} x2={endCoords[0]} y2={endCoords[1] - 8}
-                        stroke={strokeColor} strokeWidth="2px" strokeDasharray={"5,5"}
+                        stroke={strokeColor} strokeWidth="2px" strokeDasharray={"3,3"}
                     />
                 )
             } else if(props.selected && props.selected.type === "slot-edge" && props.selected.data === edgeStr) {
@@ -130,7 +143,7 @@ function Slots(props) {
         return [elements, numInLevel];
     }
 
-    return recursiveSlotDrawing(props.slots, [], -1, [], true)[0];
+    return recursiveSlotDrawing(props.slots, [], -1, [], true, true)[0];
 }
 
 export default Slots;

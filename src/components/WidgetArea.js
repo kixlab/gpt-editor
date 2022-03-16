@@ -40,7 +40,8 @@ function WidgetArea(props) {
             <Slots 
                 slots={props.slots} path={props.path} currentDepth={props.currentDepth} isInsert={props.isInsert} 
                 changePath={props.changePath} changeDepth={props.changeDepth} 
-                selected={selected} setSelected={setSelected}
+                hoverPath={props.hoverPath} setHoverPath={props.setHoverPath}
+                selected={selected} setSelected={setSelected} 
             />
         </Container>
     )
