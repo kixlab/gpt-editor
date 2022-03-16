@@ -8,15 +8,17 @@ import { propTypes } from 'react-bootstrap/esm/Image';
 
 function App() {
   const [slots, setSlots] = useState({
+    type: "root",
     children: [
-      {text: "Hello.", children: [
-        {text: " World.", children: []},
-        {text: " Hey hey hey!", children: []},
+      {type: "text", text: "Hello.", children: [
+        {type: "text", text: " World.", children: []},
+        {type: "text", text: " Hey hey hey!", children: []},
       ]}
     ]
   });
   const [path, setPath] = useState([0, 1]);
   const [isMeta, setIsMeta] = useState(false);
+  const [currentDepth, setCurrentDepth] = useState(0);
 
   function handleKeyDown(e) {
       if (e.key === "Meta") {
@@ -30,19 +32,8 @@ function App() {
       }
   }
 
-  function changePath() {
-    var newPath = [];
-    var currentNode = slots;
-    while(currentNode.children.length != 0) {
-      if(newPath.length == 1) {
-        newPath.push(path[1] == 1 ? 0 : 1);
-        currentNode = currentNode.children[path[1] == 1 ? 0 : 1];
-      } else {
-        newPath.push(currentNode.children.length - 1);
-        currentNode = currentNode.children[currentNode.children.length - 1];
-      }
-    }
-    setPath(newPath);
+  function changePath(pathStr) {
+    setPath(pathStr.split(",").map(x => parseInt(x)));
   }
 
   function changeSlots(changedPathList, changedTextList) {
@@ -76,15 +67,19 @@ function App() {
     setPath(newPath);
   }
 
+  function changeDepth(depth) {
+    setCurrentDepth(depth);
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
-        isMeta={isMeta} slots={slots} path={path} 
+        isMeta={isMeta} slots={slots} path={path} currentDepth={currentDepth}
         changeSlots={changeSlots} handleGenerate={handleGenerate}
       />
       <WidgetArea 
-        slots={slots}
-        changePath={changePath}
+        slots={slots} path={path} currentDepth={currentDepth}
+        changePath={changePath} changeDepth={changeDepth}
       />
     </div>
   );

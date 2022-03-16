@@ -88,13 +88,11 @@ function TextEditor(props) {
         for(var i = 0; i < props.path.length; i++) {
             currentNode = currentNode.children[props.path[i]];
             currentPath += props.path[i];
-            var isSelected = false;
-            // TODO: var isSelected = path == selected.node  
             nodesToInsert.push(
                 {
                     type: 'span',
                     children: [{ text: currentNode.text }],
-                    style: isSelected ? {backgroundColor: "rgba(0, 102, 255, 0.2)"} : {},
+                    style: props.currentDepth === i ? {backgroundColor: "rgba(0, 102, 255, 0.2)"} : {},
                     path: currentPath
                 }
             );
@@ -113,6 +111,24 @@ function TextEditor(props) {
             {at: [0, 0]}
         ) 
     }, [props.path]);
+
+    useEffect(() => {
+        for(var i = 0; i < props.path.length; i++) {
+            if(i !== props.currentDepth) {
+                Transforms.setNodes(
+                    editor,
+                    { style: {}},
+                    { at: [0, i*2 + 1] }
+                )
+            } else {
+                Transforms.setNodes(
+                    editor,
+                    { style: {backgroundColor: "rgba(0, 102, 255, 0.2)"}},
+                    { at: [0, i*2 + 1] }
+                )
+            }
+        }
+    }, [props.currentDepth]);
 
     function valueToText(value) {
         var text = "";
