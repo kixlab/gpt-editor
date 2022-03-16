@@ -83,11 +83,8 @@ function TextEditor(props) {
             )
         }
         var nodesToInsert = [];
-        var currentNode = props.slots;
-        var currentPath = ""
         for(var i = 0; i < path.length; i++) {
-            currentNode = currentNode.children[path[i]];
-            currentPath += path[i];
+            var currentNode = props.slots[path[i]];
 
             if(currentNode.type === "anchor") continue;
             
@@ -99,10 +96,9 @@ function TextEditor(props) {
                         backgroundColor: props.currentDepth === i ? "rgba(0, 102, 255, 0.2)" : "",
                         color: isHover ? "#0066FF" : ""
                     },
-                    path: currentPath
+                    slotId: path[i]
                 }
             );
-            currentPath += ","
         }
         nodesToInsert.push(
             {
@@ -119,19 +115,19 @@ function TextEditor(props) {
     }
 
     useEffect(() => {
-        displayPath(props.path, false);
-    }, [props.path]);
+        displayPath(props.getSlotPath(props.lastSlot), false);
+    }, [props.lastSlot]);
 
     useEffect(() => {
-        if(props.hoverPath) {
-            displayPath(props.hoverPath, true);
+        if(props.hoverSlot) {
+            displayPath(props.getSlotPath(props.hoverSlot), true);
         } else {
-            displayPath(props.path, false);
+            displayPath(props.getSlotPath(props.lastSlot), false);
         }
-    }, [props.hoverPath])
+    }, [props.hoverSlot])
 
     useEffect(() => {
-        for(var i = 0; i < props.path.length; i++) {
+        for(var i = 0; i * 2 + 1 < editor.children[0].children.length; i++) {
             if(i !== props.currentDepth) {
                 Transforms.setNodes(
                     editor,
@@ -160,7 +156,7 @@ function TextEditor(props) {
     }
 
     function handleChange(newValue) {
-        if(valueToText(value) === valueToText(newValue) || props.hoverPath) return;
+        if(valueToText(value) === valueToText(newValue) || props.hoverSlot) return;
 
         setValue(newValue);
 
@@ -171,24 +167,17 @@ function TextEditor(props) {
         var changedPathList = [];
         var changedTextList = [];
 
-        var currentNode = props.slots;
-        var currentPath = [];
-        var numAnchorNodes = 0;
-        for(var i = 0; i < props.path.length; i++) {
-            currentNode = currentNode.children[props.path[i]];
-            currentPath.push(props.path[i]);
+        for(var i = 0; i*2 + 1 < children.length; i++) {
+            var span = children[i*2 + 1];
+            if(span.isLast) continue;
 
-            if(currentNode.type === "anchor") {
-                numAnchorNodes++;
-                continue;
-            }
-
-            var span = children[(i - numAnchorNodes)*2 + 1];
-
-            var text = span.children[0].text;
-            if(text !== currentNode.text) {
-                changedPathList.push([...currentPath]);
-                changedTextList.push(text);
+            var spanText = span.children[0].text;
+            var slotId = span.slotId;
+            var slot = props.slots[parseInt(slotId)];
+            
+            if(slot.text !== spanText) {
+                changedPathList.push(slotId);
+                changedTextList.push(spanText);
             }
         }
 
@@ -201,8 +190,6 @@ function TextEditor(props) {
     }
 
     function handleKeyDown(e) {
-        console.log("down: " + e.key);
-
         if(e.key === "Enter") {
             e.preventDefault();
             editor.insertText('\n');
@@ -215,7 +202,7 @@ function TextEditor(props) {
     }
     
     function handleKeyUp(e) {
-        console.log("up: " + e.key);
+        return;
     }
 
 

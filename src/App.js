@@ -8,19 +8,34 @@ import { propTypes } from 'react-bootstrap/esm/Image';
 
 function App() {
   const [slots, setSlots] = useState({
-    type: "root",
-    children: [
-      {type: "text", text: "Hello.", children: [
-        {type: "text", text: " World.", children: []},
-        {type: "text", text: " Hey hey hey!", children: []},
-      ]}
-    ]
+    0: {
+      type: "root",
+      children: [1]
+    },
+    1: {
+      parent: 0,
+      type: "text",
+      text: "Hello.",
+      children: [2, 3]
+    },
+    2: {
+      parent: 1,
+      type: "text",
+      text: " World.",
+      children: []
+    },
+    3: {
+      parent: 1,
+      type: "text",
+      text: " Hey hey hey!",
+      children: []
+    }
   });
-  const [path, setPath] = useState([0, 1]);
+  const [lastSlot, setLastSlot] = useState(2);
   const [isMeta, setIsMeta] = useState(false);
   const [currentDepth, setCurrentDepth] = useState(0);
   const [isInsert, setIsInsert] = useState(false);
-  const [hoverPath, setHoverPath] = useState(null);
+  const [hoverSlot, setHoverSlot] = useState(null);
 
   function handleKeyDown(e) {
       if (e.key === "Meta") {
@@ -34,17 +49,14 @@ function App() {
       }
   }
 
-  function changePath(pathStr) {
-    setPath(pathStr.split(",").map(x => parseInt(x)));
+  function changeLastSlot(slotId) {
+    setLastSlot(slotId);
   }
 
-  function changeSlots(changedPathList, changedTextList) {
+  function changeSlots(changedSlotList, changedTextList) {
     var newSlots = {...slots};
-    for(var i = 0; i < changedPathList.length; i++) {
-        var node = newSlots;
-        for(var j = 0; j < changedPathList[i].length; j++) {
-            node = node.children[changedPathList[i][j]];
-        }
+    for(var i = 0; i < changedSlotList.length; i++) {
+        var node = newSlots[changedSlotList[i]];
         node.text = changedTextList[i];
     }
     setSlots(newSlots);
@@ -52,100 +64,128 @@ function App() {
 
   function handleGenerate(value) {
     var newSlots = {...slots};
-    var newPath = [...path];
-    
-    var currentNode = newSlots;
-    for(var i = 0; i < path.length; i++) {
-      currentNode = currentNode.children[path[i]]
-    }
 
-    newPath.push(currentNode.children.length);
-    currentNode.children.push({text: value, children: []});
-
-    console.log(newSlots);
-    console.log(newPath);
+    var newSlotId = Math.max(...Object.keys(newSlots)) + 1;
+    newSlots[lastSlot].children.push(newSlotId);
+    newSlots[newSlotId] = {
+      parent: lastSlot,
+      type: "text",
+      text: value,
+      children: []
+    };
 
     setSlots(newSlots);
-    setPath(newPath);
+    setLastSlot(newSlotId);
     setIsInsert(false);
   }
 
-  function changeDepth(depth) {
-    setCurrentDepth(depth);
+  function changeDepth(slotId) {
+    var newDepth = 0;
+    var node = slots[slotId];
+    while(node.parent !== 0) {
+        node = slots[node.parent];
+        newDepth++;
+    }
+    setCurrentDepth(newDepth);
   }
 
-  function removeSlot(slotPath) {
+  function removeSlot(slotId) {
     var newSlots = {...slots};
-    var newPath = [...path];
     var currentNode = newSlots;
-    for(var i = 0; i < slotPath.length - 1; i++) {
-      currentNode = currentNode.children[slotPath[i]]
-    }
-    currentNode.children.splice(slotPath[slotPath.length - 1], 1);
-    console.log(newSlots);
+
+    var parentSlotId = currentNode[slotId].parent;
+    delete newSlots[slotId];
+
+    var parentSlot = newSlots[parentSlotId];
+    var children = parentSlot.children;
+    var index = children.indexOf(slotId);
+    children.splice(index, 1);
+
     setSlots(newSlots);
-    setPath(newPath.slice(0, slotPath.length - 1));
+    setLastSlot(parentSlotId);
   }
 
-  function detatchSlot(slotPath) {
+  function detatchSlot(slotId) {
     var newSlots = {...slots};
-    var newPath = [...path];
-
-    var isIncluded = true;
-    for(var i = 0; i < slotPath.length; i++) {
-      if(newPath[i] !== slotPath[i]) {
-        isIncluded = false;
-        break;
-      }
-    }
-
-    var currentNode = newSlots;
-    for(var i = 0; i < slotPath.length - 1; i++) {
-      currentNode = currentNode.children[slotPath[i]];
-    }
-    var detatched = currentNode.children.splice(slotPath[slotPath.length - 1], 1);
 
     // create anchors for (slotPath.length - 1) times and then attach detatched
-    currentNode = newSlots;
-    for(var i = 0; i < slotPath.length - 1; i++){
-      var index = currentNode.children.length;
-      currentNode.children.push({type: "anchor", children: []});
-      currentNode = currentNode.children[index];
-      if(isIncluded) {
-        newPath[i] = index;
-      }
+    var parentSlotId = newSlots[slotId].parent;
+    var parentSlot = newSlots[parentSlotId];
+    var children = parentSlot.children;
+    var index = children.indexOf(slotId);
+    children.splice(index, 1);
+
+    var slot = newSlots[slotId];
+    slot.parent = 0;
+
+    setSlots(newSlots);
+  }
+
+  function copySlot(slotId) {
+    var newSlots = {...slots};
+    var toCopy = newSlots[slotId];
+    var newSlotId = Math.max(...Object.keys(newSlots)) + 1;
+    newSlots[newSlotId] = {
+      parent: toCopy.parent,
+      type: toCopy.type,
+      text: toCopy.text,
+      children: []
+    };
+    newSlots[toCopy.parent].children.push(newSlotId);
+    setSlots(newSlots);
+  }
+
+
+  // TODO: make this function but improve checking if it is a valid path (not loop)
+  /*function reattachSlot(parentPath, childPath) {
+    console.log(parentPath, childPath);
+    var newSlots = {...slots};
+    var newPath = [];
+    var currentNode = newSlots;
+    for(var i = 0; i < childPath.length - 1; i++) {
+      currentNode = currentNode.children[childPath[i]]
     }
-    currentNode.children.push(detatched[0]);
-    newPath[slotPath.length - 1] = 0;
+    var childSlot = currentNode.children.splice(childPath[childPath.length - 1], 1);
+
+    currentNode = newSlots;
+    for(var i = 0; i < parentPath.length; i++) {
+      newPath.push(parentPath[i]);
+      currentNode = currentNode.children[parentPath[i]]
+    }
+    newPath.push(currentNode.children.length);
+    currentNode.children.push(childSlot[0]);
 
     console.log(newSlots);
-
     setSlots(newSlots);
     setPath(newPath);
   }
+  */
 
-  function copySlot(slotPath) {
-    var newSlots = {...slots};
-    var currentNode = newSlots;
-    for(var i = 0; i < slotPath.length - 1; i++) {
-      currentNode = currentNode.children[slotPath[i]]
+  function getSlotPath(slotId) {
+    var path = [];
+    var node = slots[slotId];
+    while(node.parent !== undefined) {
+        path.push(slotId);
+        slotId = node.parent;
+        node = slots[slotId];
     }
-    var toCopy = currentNode.children[slotPath[slotPath.length - 1]];
-    currentNode.children.push({type: "text", text: toCopy.text, children: []});
-    setSlots(newSlots);
+    path.reverse();
+    return path;
   }
 
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
-        isMeta={isMeta} slots={slots} path={path} currentDepth={currentDepth} hoverPath={hoverPath}
+        isMeta={isMeta} slots={slots} lastSlot={lastSlot} currentDepth={currentDepth} hoverSlot={hoverSlot}
         changeSlots={changeSlots} handleGenerate={handleGenerate} setIsInsert={setIsInsert}
+        getSlotPath={getSlotPath}
       />
       <WidgetArea 
-        slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert} 
-        isMeta={isMeta} hoverPath={hoverPath}
-        changePath={changePath} setHoverPath={setHoverPath} changeDepth={changeDepth} 
+        slots={slots} lastSlot={lastSlot} currentDepth={currentDepth} isInsert={isInsert} 
+        isMeta={isMeta} hoverSlot={hoverSlot}
+        changeLastSlot={changeLastSlot} setHoverSlot={setHoverSlot} changeDepth={changeDepth} 
         removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
+        getSlotPath={getSlotPath}
       />
     </div>
   );
