@@ -53,9 +53,7 @@ function WidgetArea(props) {
             if(dragging.data === e.target.getAttribute("data-id")) return;
             dragging.data = parseInt(dragging.data);
             dropObj.data = parseInt(e.target.getAttribute("data-id"));
-            if(dropObj.data.length <= dragging.data.length) {
-                props.reattachSlot(dropObj.data, dragging.data);
-            }
+            props.reattachSlot(dropObj.data, dragging.data);
         }
         setDragging(null);
     }

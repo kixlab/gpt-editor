@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import TextEditor from './components/Editor';
 import WidgetArea from './components/WidgetArea';
 import { propTypes } from 'react-bootstrap/esm/Image';
+import { onCompositionEnd } from 'draft-js/lib/DraftEditorCompositionHandler';
 
 function App() {
   const [slots, setSlots] = useState({
@@ -117,6 +118,7 @@ function App() {
 
     var slot = newSlots[slotId];
     slot.parent = 0;
+    newSlots[0].children.push(slotId);
 
     setSlots(newSlots);
   }
@@ -136,30 +138,18 @@ function App() {
   }
 
 
-  // TODO: make this function but improve checking if it is a valid path (not loop)
-  /*function reattachSlot(parentPath, childPath) {
-    console.log(parentPath, childPath);
+
+  function reattachSlot(parentSlot, childSlot) {
     var newSlots = {...slots};
-    var newPath = [];
-    var currentNode = newSlots;
-    for(var i = 0; i < childPath.length - 1; i++) {
-      currentNode = currentNode.children[childPath[i]]
-    }
-    var childSlot = currentNode.children.splice(childPath[childPath.length - 1], 1);
-
-    currentNode = newSlots;
-    for(var i = 0; i < parentPath.length; i++) {
-      newPath.push(parentPath[i]);
-      currentNode = currentNode.children[parentPath[i]]
-    }
-    newPath.push(currentNode.children.length);
-    currentNode.children.push(childSlot[0]);
-
-    console.log(newSlots);
+    if(getSlotPath(parentSlot).includes(childSlot)) return;
+    newSlots[parentSlot].children.push(childSlot);
+    var childParentId = newSlots[childSlot].parent; 
+    var childParent = newSlots[childParentId];
+    var index = childParent.children.indexOf(childSlot);
+    childParent.children.splice(index, 1);
+    newSlots[childSlot].parent = parentSlot;
     setSlots(newSlots);
-    setPath(newPath);
   }
-  */
 
   function getSlotPath(slotId) {
     var path = [];
@@ -185,7 +175,7 @@ function App() {
         isMeta={isMeta} hoverSlot={hoverSlot}
         changeLastSlot={changeLastSlot} setHoverSlot={setHoverSlot} changeDepth={changeDepth} 
         removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
-        getSlotPath={getSlotPath}
+        reattachSlot={reattachSlot} getSlotPath={getSlotPath}
       />
     </div>
   );
