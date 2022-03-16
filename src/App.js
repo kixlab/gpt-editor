@@ -44,6 +44,7 @@ function App() {
         for(var j = 0; j < changedPathList[i].length; j++) {
             node = node.children[changedPathList[i][j]];
         }
+        if(node.type === "anchor") return;
         node.text = changedTextList[i];
     }
     setSlots(newSlots);
@@ -86,6 +87,45 @@ function App() {
     setPath(newPath.slice(0, slotPath.length - 1));
   }
 
+  function detatchSlot(slotPath) {
+    var newSlots = {...slots};
+    var newPath = [...path];
+    
+    console.log(slots);
+
+    var isIncluded = true;
+    for(var i = 0; i < slotPath.length; i++) {
+      if(newPath[i] !== slotPath[i]) {
+        isIncluded = false;
+        break;
+      }
+    }
+
+    var currentNode = newSlots;
+    for(var i = 0; i < slotPath.length - 1; i++) {
+      currentNode = currentNode.children[slotPath[i]];
+    }
+    var detatched = currentNode.children.splice(slotPath[slotPath.length - 1], 1);
+
+    // create anchors for (slotPath.length - 1) times and then attach detatched
+    currentNode = newSlots;
+    for(var i = 0; i < slotPath.length - 1; i++){
+      var index = currentNode.children.length;
+      currentNode.children.push({type: "anchor", children: []});
+      currentNode = currentNode.children[index];
+      if(isIncluded) {
+        newPath[i] = index;
+      }
+    }
+    currentNode.children.push(detatched[0]);
+    newPath[slotPath.length - 1] = 0;
+
+    console.log(newSlots);
+
+    setSlots(newSlots);
+    setPath(newPath);
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
@@ -94,7 +134,7 @@ function App() {
       />
       <WidgetArea 
         slots={slots} path={path} currentDepth={currentDepth} isInsert={isInsert}
-        changePath={changePath} changeDepth={changeDepth} removeSlot={removeSlot}
+        changePath={changePath} changeDepth={changeDepth} removeSlot={removeSlot} detatchSlot={detatchSlot}
       />
     </div>
   );

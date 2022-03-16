@@ -88,6 +88,9 @@ function TextEditor(props) {
         for(var i = 0; i < props.path.length; i++) {
             currentNode = currentNode.children[props.path[i]];
             currentPath += props.path[i];
+
+            if(currentNode.type === "anchor") continue;
+            
             nodesToInsert.push(
                 {
                     type: 'span',
