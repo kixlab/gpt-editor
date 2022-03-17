@@ -12,11 +12,15 @@ function Switches(props) {
     const [hoverSwitch, setHoverSwitch] = useState(null);
 
     function handleMouseEnter(e) {
-        setHoverSwitch(parseInt(e.target.getAttribute('data-id')));
+        var hoverSwitch = parseInt(e.target.getAttribute('data-id'))
+        setHoverSwitch(hoverSwitch);
+        var hoverSlot = props.switches[hoverSwitch].slot;
+        props.setHoverSlot(hoverSlot);
     }
     
     function handleMouseLeave(e) {
         setHoverSwitch(null);
+        props.setHoverSlot(null);
     }
 
     function drawOneSwitch(switchesList, switchId, currSwitch, yPosition) {
@@ -37,6 +41,7 @@ function Switches(props) {
                 textAnchor="middle" alignmentBaseline="middle"
                 fontSize="12px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
                 style={{cursor: "pointer"}}
+                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
             >{currSwitch.model}</text>
         )
     }

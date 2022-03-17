@@ -129,7 +129,8 @@ function App() {
       parent: lastSlot,
       type: "text",
       text: value,
-      children: []
+      children: [],
+      switches: []
     };
 
     setSlots(newSlots);

@@ -62,7 +62,7 @@ function Slots(props) {
                     elements.push(
                         <rect
                             key={slotId+"-switch-"+switchId} id={slotId+"-switch-"+switchId}
-                            x={coords[0] + currSize + 2 + 1} y={coords[1] - currSize + i*9}
+                            x={coords[0] + currSize + 1 + 1} y={coords[1] - currSize + i*9}
                             width="8" height="8" fill={props.switches[switchId].color}
                             rx="1"
                         />
@@ -170,7 +170,10 @@ function Slots(props) {
     return (
         <>
             {elements}
-            {<Switches switches={props.switches} slots={props.slots} slotsInDepth={slotsInDepth}  />}
+            {<Switches 
+                switches={props.switches} slots={props.slots} slotsInDepth={slotsInDepth} 
+                setHoverSlot={props.setHoverSlot}
+            />}
         </>
     );
 }
