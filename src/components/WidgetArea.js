@@ -95,39 +95,48 @@ function WidgetArea(props) {
     }
 
     return (
-        <Container 
-            onClick={handleCanvasClick} 
-            onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
-            tabIndex="0" onKeyDown={handleKeyDown}
-        >
-            <filter id="shadow">
-                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-            </filter>
-            <filter id="switch-shadow">
-                <feDropShadow dx="0" dy="2" stdDeviation="1" floodColor="#000000" floodOpacity="0.3"/>
-            </filter>
-            {connectionSvg}
-            <Slots 
-                slots={props.slots} lastSlot={props.lastSlot} currentDepth={props.currentDepth} isInsert={props.isInsert} 
-                changeLastSlot={props.changeLastSlot} changeDepth={props.changeDepth} 
-                hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
-                selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
-                switches={props.switches}
-            />
+        <Container>
+            <SvgContainer 
+                onClick={handleCanvasClick} 
+                onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
+                tabIndex="0" onKeyDown={handleKeyDown}
+            >
+                <filter id="shadow">
+                    <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                <filter id="switch-shadow">
+                    <feDropShadow dx="0" dy="2" stdDeviation="1" floodColor="#000000" floodOpacity="0.3"/>
+                </filter>
+                {connectionSvg}
+                <Slots 
+                    slots={props.slots} lastSlot={props.lastSlot} currentDepth={props.currentDepth} isInsert={props.isInsert} 
+                    changeLastSlot={props.changeLastSlot} changeDepth={props.changeDepth} 
+                    hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
+                    selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
+                    switches={props.switches}
+                />
+            </SvgContainer>
         </Container>
     )
 }
 
-const Container = styled.svg`
+const Container = styled.div`
     min-height: inherit !important;
     height: auto;
     flex-grow: 1;
     outline: none;
     flex-basis: 55%;
+`;
+
+const SvgContainer = styled.svg`
+    min-height: inherit !important;
+    height: auto;
+    outline: none;
+    width: 100%;
 `;
 
 export default WidgetArea;

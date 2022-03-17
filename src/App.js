@@ -169,9 +169,17 @@ function App() {
 
   function removeSlot(slotId) {
     var newSlots = {...slots};
-    var currentNode = newSlots;
+    var newSwitches = {...switches};
 
-    var parentSlotId = currentNode[slotId].parent;
+    if(newSlots[slotId].switches.length > 0) {
+      for(var i = 0; i < newSlots[slotId].switches.length; i++) {
+        var switchId = newSlots[slotId].switches[i];
+        delete newSwitches[switchId];
+      }
+      setSwitches(newSwitches);
+    }
+
+    var parentSlotId = newSlots[slotId].parent;
     delete newSlots[slotId];
 
     var parentSlot = newSlots[parentSlotId];
