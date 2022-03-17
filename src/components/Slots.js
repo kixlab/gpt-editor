@@ -51,9 +51,23 @@ function Slots(props) {
         var node = props.slots[slotId];
         if(depth !== -1) {
             var currSize = SLOT_SIZE;
-            if(props.currentDepth == depth) {
-                currSize += 4;
+            // TODO: check if slot's switch's lens is pinned
+            var isPinned = false;
+            if(props.currentDepth == depth || isPinned) {
+                currSize += props.currentDepth === depth ? 4 : 0;
                 slotsInDepth.push(slotId);
+
+                for(var i = 0; i < node.switches.length; i++) {
+                    var switchId = node.switches[i];
+                    elements.push(
+                        <rect
+                            key={slotId+"-"+switchId}
+                            x={coords[0] + currSize + 2 + 1} y={coords[1] - currSize + i*9}
+                            width="8" height="8" fill={props.switches[switchId].color}
+                            rx="1"
+                        />
+                    )
+                }
             }
 
             if(node !== undefined) {

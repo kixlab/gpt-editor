@@ -19,25 +19,29 @@ function App() {
       parent: 0,
       type: "text",
       text: "Hello.",
-      children: [2, 3, 4]
+      children: [2, 3, 4],
+      switches: []
     },
     2: {
       parent: 1,
       type: "text",
       text: " World.",
-      children: []
+      children: [],
+      switches: [0]
     },
     3: {
       parent: 1,
       type: "text",
       text: " Hey hey hey!",
-      children: []
+      children: [],
+      switches: [1]
     },
     4: {
       parent: 1,
       type: "text",
       text: " Heyoooo!",
-      children: []
+      children: [],
+      switches: [2]
     }
   });
   const [lastSlot, setLastSlot] = useState(2);
