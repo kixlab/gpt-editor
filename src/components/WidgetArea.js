@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import styled from "styled-components";
 
-import Slots from './Slots'
+import Slots from './Slots';
 
 function WidgetArea(props) {
     const [selected, setSelected] = useState(null);
@@ -99,12 +99,16 @@ function WidgetArea(props) {
                     <feMergeNode in="SourceGraphic"/>
                 </feMerge>
             </filter>
+            <filter id="switch-shadow">
+                <feDropShadow dx="0" dy="2" stdDeviation="1" floodColor="#000000" floodOpacity="0.3"/>
+            </filter>
             {connectionSvg}
             <Slots 
                 slots={props.slots} lastSlot={props.lastSlot} currentDepth={props.currentDepth} isInsert={props.isInsert} 
                 changeLastSlot={props.changeLastSlot} changeDepth={props.changeDepth} 
                 hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
                 selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
+                switches={props.switches}
             />
         </Container>
     )

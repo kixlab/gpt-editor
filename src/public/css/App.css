@@ -65,3 +65,7 @@
   border-radius: 3px;
   background-color: #ccc;
 }
+
+.switch {
+  filter: url(#switch-shadow);
+}

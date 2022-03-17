@@ -1,0 +1,23 @@
+const SLOT_X_OFFSET = 20;
+const SLOT_Y_OFFSET = 108;
+const SLOT_X_SPACE = 40;
+const SLOT_Y_SPACE = 30;
+const SLOT_SIZE = 8;
+const SWITCH_X_OFFSET = SLOT_X_OFFSET + SLOT_X_SPACE * 5 + 20;
+const SWITCH_Y_OFFSET = 98;
+const SWITCH_Y_SPACE = 8;
+const SWITCH_SIZE = 40;
+const LENS_SIZE = 200;
+
+export  {
+    SLOT_X_OFFSET,
+    SLOT_Y_OFFSET,
+    SLOT_X_SPACE,
+    SLOT_Y_SPACE,
+    SLOT_SIZE,
+    SWITCH_X_OFFSET,
+    SWITCH_Y_OFFSET,
+    SWITCH_Y_SPACE,
+    SWITCH_SIZE,
+    LENS_SIZE
+}

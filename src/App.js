@@ -7,6 +7,8 @@ import WidgetArea from './components/WidgetArea';
 import { propTypes } from 'react-bootstrap/esm/Image';
 import { onCompositionEnd } from 'draft-js/lib/DraftEditorCompositionHandler';
 
+import "typeface-roboto";
+
 function App() {
   const [slots, setSlots] = useState({
     0: {
@@ -17,7 +19,7 @@ function App() {
       parent: 0,
       type: "text",
       text: "Hello.",
-      children: [2, 3]
+      children: [2, 3, 4]
     },
     2: {
       parent: 1,
@@ -30,6 +32,12 @@ function App() {
       type: "text",
       text: " Hey hey hey!",
       children: []
+    },
+    4: {
+      parent: 1,
+      type: "text",
+      text: " Heyoooo!",
+      children: []
     }
   });
   const [lastSlot, setLastSlot] = useState(2);
@@ -37,6 +45,51 @@ function App() {
   const [currentDepth, setCurrentDepth] = useState(0);
   const [isInsert, setIsInsert] = useState(false);
   const [hoverSlot, setHoverSlot] = useState(null);
+
+  const [switches, setSwitches] = useState({
+    0: {
+      model: "GPT-3",
+      slot: 2,
+      lens: 0,
+      color: "#FFAE50",
+      properties: {
+        engine: "davinci",
+        temperature: 0.7,
+        topP: 1,
+        frequencyPen: 0,
+        presencePen: 0,
+        bestOf: 1
+      }
+    },
+    1: {
+      model: "GPT-3",
+      slot: 3,
+      lens: -1,
+      color: "#71AAFF",
+      properties: {
+        engine: "davinci",
+        temperature: 0.7,
+        topP: 1,
+        frequencyPen: 0,
+        presencePen: 0,
+        bestOf: 1
+      }
+    },
+    2: {
+      model: "GPT-3",
+      slot: 4,
+      lens: 0,
+      color: "#2BB115",
+      properties: {
+        engine: "davinci",
+        temperature: 0.7,
+        topP: 1,
+        frequencyPen: 0,
+        presencePen: 0,
+        bestOf: 1
+      }
+    }
+  })
 
   function handleKeyDown(e) {
       if (e.key === "Meta") {
@@ -177,6 +230,7 @@ function App() {
         changeLastSlot={changeLastSlot} setHoverSlot={setHoverSlot} changeDepth={changeDepth} 
         removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
         reattachSlot={reattachSlot} getSlotPath={getSlotPath}
+        switches={switches}
       />
     </div>
   );

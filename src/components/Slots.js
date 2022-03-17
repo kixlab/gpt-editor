@@ -1,10 +1,8 @@
 import React from 'react';
 
-const SLOT_X_OFFSET = 20;
-const SLOT_Y_OFFSET = 108;
-const SLOT_X_SPACE = 40;
-const SLOT_Y_SPACE = 30;
-const SLOT_SIZE = 8;
+import { SLOT_X_OFFSET, SLOT_Y_OFFSET, SLOT_X_SPACE, SLOT_Y_SPACE, SLOT_SIZE } from './Sizes';
+
+import Switches from './Switches';
 
 function Slots(props) {
     function handleClick(e) {
@@ -43,7 +41,7 @@ function Slots(props) {
         props.setHoverSlot(null);
     }
 
-    function recursiveSlotDrawing(slotId, depth, numInLevel, slotPath, slotHoverPath) {
+    function recursiveSlotDrawing(slotId, depth, numInLevel, slotPath, slotHoverPath, slotsInDepth) {
         var elements = [];
 
         if(depth !== -1 && numInLevel[depth] == undefined) numInLevel.push(0);
@@ -52,7 +50,11 @@ function Slots(props) {
 
         var node = props.slots[slotId];
         if(depth !== -1) {
-            var currSize = SLOT_SIZE + (props.currentDepth == depth ? 4 : 0)
+            var currSize = SLOT_SIZE;
+            if(props.currentDepth == depth) {
+                currSize += 4;
+                slotsInDepth.push(slotId);
+            }
 
             if(node !== undefined) {
                 var isPath = slotPath.includes(slotId);
@@ -94,7 +96,7 @@ function Slots(props) {
             var childSlotId = children[i];
             if(childSlotId === undefined) childSlotId = Math.max(...Object.keys(props.slots)) + 1;
 
-            var [svgs, newNumInLevel] = recursiveSlotDrawing(childSlotId, depth + 1, numInLevel, slotPath, slotHoverPath);
+            var [svgs, newNumInLevel] = recursiveSlotDrawing(childSlotId, depth + 1, numInLevel, slotPath, slotHoverPath, slotsInDepth);
             elements = elements.concat(svgs);
 
             if(depth === -1)
@@ -141,10 +143,22 @@ function Slots(props) {
 
         numInLevel[depth] += 1;
         
-        return [elements, numInLevel];
+        return [elements, numInLevel, slotsInDepth];
     }
 
-    return recursiveSlotDrawing(0, -1, [], props.getSlotPath(props.lastSlot), props.hoverSlot ? props.getSlotPath(props.hoverSlot) : [])[0];
+    var [elements, numInLevel, slotsInDepth] = recursiveSlotDrawing(
+        0, -1, [], 
+        props.getSlotPath(props.lastSlot), 
+        props.hoverSlot ? props.getSlotPath(props.hoverSlot) : [], 
+        []
+    );
+
+    return (
+        <>
+            {elements}
+            {<Switches switches={props.switches} slots={props.slots} slotsInDepth={slotsInDepth}  />}
+        </>
+    );
 }
 
 export default Slots;
