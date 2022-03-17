@@ -39,7 +39,7 @@ function WidgetArea(props) {
         const x = e.pageX;
         const y = e.pageY;
         const offsetX = document.getElementById('editor-container').offsetWidth + 60*2;
-        var draggingObj = {type: e.target.getAttribute("data-type"), x: x-offsetX, y: y};
+        var draggingObj = {type: e.target.getAttribute("data-type"), startX: x-offsetX, startY: y};
         if([null, "slot-edge"].includes(draggingObj.type)) {
             return;
         } else if(draggingObj.type === "slot") {
@@ -49,12 +49,11 @@ function WidgetArea(props) {
     }
 
     function handleMouseUp(e) {
-        var dropObj = {type: e.target.getAttribute("data-type")};
+        var dropObj = {type: e.target.getAttribute("data-type"), data: e.target.getAttribute("data-id")};
         if([null, "slot-edge"].includes(dropObj.type)) {
             setDragging(null);
             return;
-        } else if(dragging.type === "slot" && dropObj.type === "slot") {
-            if(dragging.data === e.target.getAttribute("data-id")) return;
+        } else if(dragging.type === "slot" && dropObj.type === "slot" && dragging.data !== dropObj.data) {
             dragging.data = parseInt(dragging.data);
             dropObj.data = parseInt(e.target.getAttribute("data-id"));
             props.reattachSlot(dropObj.data, dragging.data);
@@ -62,9 +61,35 @@ function WidgetArea(props) {
         setDragging(null);
     }
 
+    function handleMouseMove(e) {
+        if(dragging === null) return;
+        var newDragging = {...dragging};
+        const x = e.pageX;
+        const y = e.pageY;
+        const offsetX = document.getElementById('editor-container').offsetWidth + 60*2;
+        newDragging.endX = x-offsetX;
+        newDragging.endY = y;
+
+        var distance = Math.sqrt(Math.pow(newDragging.endX - newDragging.startX, 2) + Math.pow(newDragging.endY - newDragging.startY, 2));
+        if(distance > 10)
+            setDragging(newDragging);
+    }
+
+    var connectionSvg = [];
+    if(dragging && dragging.endX) {
+        connectionSvg.push(
+            <line 
+                key="connection-line"
+                x1={dragging.startX} y1={dragging.startY} stroke="#0066FF"
+                x2={dragging.endX} y2={dragging.endY} strokeWidth="2" 
+            />
+        )
+    }
+
     return (
         <Container 
-            onClick={handleCanvasClick} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
+            onClick={handleCanvasClick} 
+            onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
             tabIndex="0" onKeyDown={handleKeyDown}
         >
             <filter id="shadow">
@@ -74,16 +99,13 @@ function WidgetArea(props) {
                     <feMergeNode in="SourceGraphic"/>
                 </feMerge>
             </filter>
+            {connectionSvg}
             <Slots 
                 slots={props.slots} lastSlot={props.lastSlot} currentDepth={props.currentDepth} isInsert={props.isInsert} 
                 changeLastSlot={props.changeLastSlot} changeDepth={props.changeDepth} 
                 hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
                 selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
             />
-            {dragging ? 
-                <circle cx={dragging.x} cy={dragging.y} r="5" /> :
-                ""
-            }
         </Container>
     )
 }
