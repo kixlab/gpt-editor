@@ -276,7 +276,7 @@ function TextEditor(props) {
     }
 
     return (
-        <SuperContainer>
+        <SuperContainer id="editor-container">
             <Slate 
                 editor={editor}
                 value={value}

@@ -36,7 +36,10 @@ function WidgetArea(props) {
     }
 
     function handleMouseDown(e) {
-        var draggingObj = {type: e.target.getAttribute("data-type")};
+        const x = e.pageX;
+        const y = e.pageY;
+        const offsetX = document.getElementById('editor-container').offsetWidth + 60*2;
+        var draggingObj = {type: e.target.getAttribute("data-type"), x: x-offsetX, y: y};
         if([null, "slot-edge"].includes(draggingObj.type)) {
             return;
         } else if(draggingObj.type === "slot") {
@@ -48,6 +51,7 @@ function WidgetArea(props) {
     function handleMouseUp(e) {
         var dropObj = {type: e.target.getAttribute("data-type")};
         if([null, "slot-edge"].includes(dropObj.type)) {
+            setDragging(null);
             return;
         } else if(dragging.type === "slot" && dropObj.type === "slot") {
             if(dragging.data === e.target.getAttribute("data-id")) return;
@@ -76,14 +80,20 @@ function WidgetArea(props) {
                 hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
                 selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
             />
+            {dragging ? 
+                <circle cx={dragging.x} cy={dragging.y} r="5" /> :
+                ""
+            }
         </Container>
     )
 }
 
 const Container = styled.svg`
-    height: 100%;
+    min-height: inherit !important;
+    height: auto;
     flex-grow: 1;
     outline: none;
+    flex-basis: 55%;
 `;
 
 export default WidgetArea;
