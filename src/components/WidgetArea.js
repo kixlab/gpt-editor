@@ -22,6 +22,9 @@ function WidgetArea(props) {
                 } else if(selected.type === "slot-edge") {
                     props.detatchSlot(parseInt(selected.data.split("-")[1]));
                     setSelected(null);
+                } else if(selected.type === "switch") {
+                    props.removeSwitch(parseInt(selected.data));
+                    setSelected(null);
                 }
                 break;
             case "c":

@@ -57,16 +57,18 @@ function Slots(props) {
                 currSize += props.currentDepth === depth ? 4 : 0;
                 slotsInDepth.push(slotId);
 
-                for(var i = 0; i < node.switches.length; i++) {
-                    var switchId = node.switches[i];
-                    elements.push(
-                        <rect
-                            key={slotId+"-switch-"+switchId} id={slotId+"-switch-"+switchId}
-                            x={coords[0] + currSize + 1 + 1} y={coords[1] - currSize + i*9}
-                            width="8" height="8" fill={props.switches[switchId].color}
-                            rx="1"
-                        />
-                    )
+                if(node !== undefined) {
+                    for(var i = 0; i < node.switches.length; i++) {
+                        var switchId = node.switches[i];
+                        elements.push(
+                            <rect
+                                key={slotId+"-switch-"+switchId} id={slotId+"-switch-"+switchId}
+                                x={coords[0] + currSize + 1 + 1} y={coords[1] - currSize + i*9}
+                                width="8" height="8" fill={props.switches[switchId].color}
+                                rx="1"
+                            />
+                        )
+                    }
                 }
             }
 

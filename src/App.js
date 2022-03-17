@@ -122,19 +122,38 @@ function App() {
 
   function handleGenerate(value) {
     var newSlots = {...slots};
+    var newSwitches = {...switches};
 
     var newSlotId = Math.max(...Object.keys(newSlots)) + 1;
+    var newSwitchId = Math.max(...Object.keys(switches)) + 1;
+
     newSlots[lastSlot].children.push(newSlotId);
     newSlots[newSlotId] = {
       parent: lastSlot,
       type: "text",
       text: value,
       children: [],
-      switches: []
+      switches: [newSwitchId]
     };
+
+    newSwitches[newSwitchId] = {
+      model: "GPT-3",
+      slot: newSlotId,
+      lens: -1,
+      color: "#71AAFF",
+      properties: {
+        engine: "davinci",
+        temperature: 0.7,
+        topP: 1,
+        frequencyPen: 0,
+        presencePen: 0,
+        bestOf: 1
+      }
+    }
 
     setSlots(newSlots);
     setLastSlot(newSlotId);
+    setSwitches(newSwitches);
     setIsInsert(false);
   }
 
@@ -238,6 +257,20 @@ function App() {
     setSlots(newSlots);
   }
 
+  function removeSwitch(switchId) {
+    var newSlots = {...slots};
+    var newSwitches = {...switches};
+    var slotId = newSwitches[switchId].slot;
+    var slot = newSlots[slotId];
+    var slotSwitches = slot.switches;
+    var index = slotSwitches.indexOf(switchId);
+    slotSwitches.splice(index, 1);
+
+    delete newSwitches[switchId];
+    setSlots(newSlots);
+    setSwitches(newSwitches);
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
@@ -251,7 +284,7 @@ function App() {
         changeLastSlot={changeLastSlot} setHoverSlot={setHoverSlot} changeDepth={changeDepth} 
         removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
         reattachSlot={reattachSlot} getSlotPath={getSlotPath}
-        switches={switches} attachSwitch={attachSwitch}
+        switches={switches} attachSwitch={attachSwitch} removeSwitch={removeSwitch}
       />
     </div>
   );
