@@ -221,6 +221,22 @@ function App() {
     return path;
   }
 
+  function attachSwitch(slotId, switchId) {
+    var newSlots = {...slots};
+    var newSwitches = {...switches};
+    newSlots[slotId].switches.push(switchId);
+
+    var originalSlotId = newSwitches[switchId].slot;
+    var originalSlot = newSlots[originalSlotId];
+    var originalSlotSwitches = originalSlot.switches;
+    var index = originalSlotSwitches.indexOf(switchId);
+    originalSlotSwitches.splice(index, 1);
+
+    newSwitches[switchId].slot = slotId;
+    setSwitches(newSwitches);
+    setSlots(newSlots);
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
@@ -234,7 +250,7 @@ function App() {
         changeLastSlot={changeLastSlot} setHoverSlot={setHoverSlot} changeDepth={changeDepth} 
         removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
         reattachSlot={reattachSlot} getSlotPath={getSlotPath}
-        switches={switches}
+        switches={switches} attachSwitch={attachSwitch}
       />
     </div>
   );

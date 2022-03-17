@@ -42,9 +42,8 @@ function WidgetArea(props) {
         var draggingObj = {type: e.target.getAttribute("data-type"), startX: x-offsetX, startY: y};
         if([null, "slot-edge"].includes(draggingObj.type)) {
             return;
-        } else if(draggingObj.type === "slot") {
-            draggingObj.data = e.target.getAttribute("data-id");
-        }
+        } 
+        draggingObj.data = e.target.getAttribute("data-id");
         setDragging(draggingObj);
     }
 
@@ -57,6 +56,10 @@ function WidgetArea(props) {
             dragging.data = parseInt(dragging.data);
             dropObj.data = parseInt(e.target.getAttribute("data-id"));
             props.reattachSlot(dropObj.data, dragging.data);
+        } else if(dragging.type === 'switch' && dropObj.type === 'slot') {
+            props.attachSwitch(parseInt(dropObj.data), parseInt(dragging.data));
+        } else if(dragging.type === 'slot' && dropObj.type === 'switch') {
+            props.attachSwitch(parseInt(dragging.data), parseInt(dropObj.data));
         }
         setDragging(null);
     }
