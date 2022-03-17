@@ -48,6 +48,8 @@ function WidgetArea(props) {
     }
 
     function handleMouseUp(e) {
+        if(dragging == null) return;
+        
         var dropObj = {type: e.target.getAttribute("data-type"), data: e.target.getAttribute("data-id")};
         if([null, "slot-edge"].includes(dropObj.type)) {
             setDragging(null);

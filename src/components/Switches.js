@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import {
     SWITCH_X_OFFSET,
@@ -9,6 +9,16 @@ import {
 } from './Sizes';
 
 function Switches(props) {
+    const [hoverSwitch, setHoverSwitch] = useState(null);
+
+    function handleMouseEnter(e) {
+        setHoverSwitch(parseInt(e.target.getAttribute('data-id')));
+    }
+    
+    function handleMouseLeave(e) {
+        setHoverSwitch(null);
+    }
+
     function drawOneSwitch(switchesList, switchId, currSwitch, yPosition) {
         var result = [];
         switchesList.push(
@@ -16,8 +26,8 @@ function Switches(props) {
                 key={switchId} data-type="switch" data-id={switchId}
                 className="switch" x={SWITCH_X_OFFSET} y={yPosition}
                 width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
-                fill={currSwitch.color}
-                style={{cursor: "pointer"}}
+                fill={currSwitch.color} style={{cursor: "pointer"}}
+                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
             />
         )
         switchesList.push(
@@ -36,24 +46,38 @@ function Switches(props) {
         var lensToPosition = {};
         var switchesList = [];
         var switchIdList = Object.keys(props.switches);
-        console.log(switchIdList, props.slotsInDepth)
         for(var i = 0; i < switchIdList.length; i++) {
             var switchId = switchIdList[i];
             var curr = props.switches[switchId];
             if(!props.slotsInDepth.includes(curr.slot)) continue;
             var lensId = curr.lens;
+            var currPosition = nextPosition;
             if(lensId === -1) {
                 drawOneSwitch(switchesList, switchId, curr, nextPosition);
                 nextPosition += SWITCH_SIZE + SWITCH_Y_SPACE;
             } else {
                 if(lensToPosition[lensId] !== undefined) {
-                    drawOneSwitch(switchesList, switchId, curr, lensToPosition[lensId]);
+                    currPosition = lensToPosition[lensId];
+                    drawOneSwitch(switchesList, switchId, curr, currPosition);
                     lensToPosition[lensId] += SWITCH_SIZE + SWITCH_Y_SPACE;
                 } else {
                     drawOneSwitch(switchesList, switchId, curr, nextPosition);
                     lensToPosition[lensId] = nextPosition + SWITCH_SIZE + SWITCH_Y_SPACE;
                     nextPosition += LENS_SIZE + SWITCH_Y_SPACE;
                 }
+            }
+
+            if(hoverSwitch === parseInt(switchId)) {
+                var thumb = document.getElementById(curr.slot + '-switch-' + switchId);
+                var startCoords = [parseInt(thumb.getAttribute("x")) + 8, parseInt(thumb.getAttribute('y'))+4];
+                var endCoords = [SWITCH_X_OFFSET, currPosition + SWITCH_SIZE/2];
+                switchesList.unshift(
+                    <line key={switchId + "-hover"}
+                        x1={startCoords[0]} y1={startCoords[1]}
+                        x2={endCoords[0]} y2={endCoords[1]}
+                        stroke={curr.color + "80"} strokeWidth="4"
+                    />
+                )
             }
         }
         return switchesList;

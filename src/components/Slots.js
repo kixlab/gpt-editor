@@ -61,7 +61,7 @@ function Slots(props) {
                     var switchId = node.switches[i];
                     elements.push(
                         <rect
-                            key={slotId+"-"+switchId}
+                            key={slotId+"-switch-"+switchId} id={slotId+"-switch-"+switchId}
                             x={coords[0] + currSize + 2 + 1} y={coords[1] - currSize + i*9}
                             width="8" height="8" fill={props.switches[switchId].color}
                             rx="1"
