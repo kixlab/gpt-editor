@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
 
 import {
     SWITCH_X_OFFSET,
@@ -10,6 +10,7 @@ import {
 
 function Switches(props) {
     const [hoverSwitch, setHoverSwitch] = useState(null);
+    const clickTimer = useRef(null);
 
     function handleMouseEnter(e) {
         var hoverSwitch = parseInt(e.target.getAttribute('data-id'))
@@ -22,27 +23,77 @@ function Switches(props) {
         setHoverSwitch(null);
         props.setHoverSlot(null);
     }
+    
+    function handleClick(e) {
+        let data = e.target.getAttribute("data-id");
+        switch (e.detail) {
+            case 1:
+                clickTimer.current = setTimeout(() => {
+                    props.setSelected({type: "switch", data: data});
+                    clickTimer.current = null;
+                }, 200);
+                break;
+            case 2:
+                if(clickTimer.current == null) return;
+                clearTimeout(clickTimer.current);
+                clickTimer.current = null;
+                console.log("generate")
+                break;
+            default:
+                break;
+        }
+    }
 
-    function drawOneSwitch(switchesList, switchId, currSwitch, yPosition) {
-        var result = [];
-        switchesList.push(
-            <rect
-                key={switchId} data-type="switch" data-id={switchId}
-                className="switch" x={SWITCH_X_OFFSET} y={yPosition}
-                width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
-                fill={currSwitch.color} style={{cursor: "pointer"}}
-                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+    function drawOneSwitch(switchesList, switchId, currSwitch, yPosition, isHover) {
+        var trianglePoints = [
+            [SWITCH_X_OFFSET + SWITCH_SIZE + 8, yPosition + SWITCH_SIZE/2 - 10],
+            [SWITCH_X_OFFSET + SWITCH_SIZE + 8, yPosition + SWITCH_SIZE/2 + 10],
+            [SWITCH_X_OFFSET + SWITCH_SIZE + 8+ 20, yPosition + SWITCH_SIZE/2]
+        ]
+        var pointsStr = trianglePoints.map((point) => point.join(',')).join(' ');
+        var triangle = (
+            <polygon 
+                data-id={switchId}
+                points={pointsStr} style={{fill: currSwitch.color, cursor: "pointer"}} 
+                onClick={(e) => console.log("show properties")}
+            />
+        );
+
+        var isSelected = props.selected && props.selected.type === "switch" && props.selected.data === switchId;
+        var selectionRing = (
+            <rect 
+                className="switch-selection" x={SWITCH_X_OFFSET - 3} y={yPosition - 3}
+                width={SWITCH_SIZE + 6} height={SWITCH_SIZE + 6} rx="4"
+                fill="none" stroke="#00C2FF" strokeWidth="2px"
             />
         )
+
         switchesList.push(
-            <text
-                key={switchId + "-text"} data-type="switch" data-id={switchId}
-                x={SWITCH_X_OFFSET + SWITCH_SIZE/2} y={yPosition + SWITCH_SIZE/2}
-                textAnchor="middle" alignmentBaseline="middle"
-                fontSize="12px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
-                style={{cursor: "pointer"}}
+            <g 
+                key={switchId + "box"}
                 onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
-            >{currSwitch.model}</text>
+                onClick={handleClick}
+            > 
+                <rect
+                    className="switch" x={SWITCH_X_OFFSET} y={yPosition}
+                    width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
+                    fill={currSwitch.color}
+                />
+                {isSelected ? selectionRing : ""}
+                <text
+                    key={switchId + "-text"}
+                    x={SWITCH_X_OFFSET + SWITCH_SIZE/2} y={yPosition + SWITCH_SIZE/2}
+                    textAnchor="middle" alignmentBaseline="middle"
+                    fontSize="12px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
+                >{currSwitch.model}</text>
+                <rect 
+                    data-type="switch" data-id={switchId}
+                    x={SWITCH_X_OFFSET - 4} y={yPosition - 4}
+                    width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
+                    fill="#00000000" style={{cursor: "pointer"}}
+                />
+                {isSelected ? triangle : ""}
+            </g>
         )
     }
 
@@ -57,22 +108,24 @@ function Switches(props) {
             if(!props.slotsInDepth.includes(curr.slot)) continue;
             var lensId = curr.lens;
             var currPosition = nextPosition;
+
+            var isHover = hoverSwitch === parseInt(switchId);
             if(lensId === -1) {
-                drawOneSwitch(switchesList, switchId, curr, nextPosition);
+                drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
                 nextPosition += SWITCH_SIZE + SWITCH_Y_SPACE;
             } else {
                 if(lensToPosition[lensId] !== undefined) {
                     currPosition = lensToPosition[lensId];
-                    drawOneSwitch(switchesList, switchId, curr, currPosition);
+                    drawOneSwitch(switchesList, switchId, curr, currPosition, isHover);
                     lensToPosition[lensId] += SWITCH_SIZE + SWITCH_Y_SPACE;
                 } else {
-                    drawOneSwitch(switchesList, switchId, curr, nextPosition);
+                    drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
                     lensToPosition[lensId] = nextPosition + SWITCH_SIZE + SWITCH_Y_SPACE;
                     nextPosition += LENS_SIZE + SWITCH_Y_SPACE;
                 }
             }
 
-            if(hoverSwitch === parseInt(switchId)) {
+            if(isHover) {
                 var thumb = document.getElementById(curr.slot + '-switch-' + switchId);
                 var startCoords = [parseInt(thumb.getAttribute("x")) + 8, parseInt(thumb.getAttribute('y'))+4];
                 var endCoords = [SWITCH_X_OFFSET, currPosition + SWITCH_SIZE/2];
@@ -85,6 +138,7 @@ function Switches(props) {
                 )
             }
         }
+
         return switchesList;
     }
 

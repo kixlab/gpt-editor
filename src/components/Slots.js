@@ -172,7 +172,7 @@ function Slots(props) {
             {elements}
             {<Switches 
                 switches={props.switches} slots={props.slots} slotsInDepth={slotsInDepth} 
-                setHoverSlot={props.setHoverSlot}
+                selected={props.selected} setHoverSlot={props.setHoverSlot} setSelected={props.setSelected}
             />}
         </>
     );

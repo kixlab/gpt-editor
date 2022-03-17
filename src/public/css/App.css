@@ -70,6 +70,10 @@
   filter: url(#switch-shadow);
 }
 
+.switch-selection {
+  filter: url(#shadow);
+}
+
 svg text {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
