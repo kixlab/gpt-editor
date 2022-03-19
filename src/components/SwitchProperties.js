@@ -22,15 +22,72 @@ function SwitchProperties(props) {
     var position = document.getElementById('switch-' + props.switchId).getClientRects()[0];
     var properties = currSwitch.properties;
 
+    function handleChange(e) {
+        var propertyName = e.target.getAttribute("data-property");
+        props.onPropertyChange(props.switchId, propertyName, e.target.value);
+    }
+
+    function propertyToText(name) {
+        switch(name) {
+            case "engine":
+                return "Engine";
+            case "temperature":
+                return "Temperature";
+            case "topP":
+                return "Top P";
+            case "frequencyPen":
+                return "Frequency Pen";
+            case "presencePen":
+                return "Presence Pen";
+            case "bestOf":
+                return "Best of";
+            default:
+                return "";
+        }
+    }
+
     function propertiesToHTML(propertyNames, properties) {
         var result = [];
         for(var i = 0; i < propertyNames.length; i++) {
             var name = propertyNames[i];
             if(!showAll && i > 1 && properties[name] === defaultProperties[name]) continue;
+            var inputHTML = "";
+            switch (name) {
+                case "engine":
+                    inputHTML = (
+                        <select className="dropdown" value={properties[name]} data-property={name} onChange={handleChange}>
+                            <option value="davinci">Davinci</option>
+                            <option value="dynamo">Dynamo</option>
+                        </select>
+                    )
+                    break;
+                case "temperature":
+                case "topP":
+                    inputHTML = (
+                        <input className="slider" type="range" min="0" max="1" step="0.01" value={properties[name]} onChange={handleChange} data-property={name}/>
+                    )
+                    break;
+                case "frequencyPen":
+                case "presencePen":
+                    inputHTML = (
+                        <input className="slider" type="range" min="0" max="2" step="0.01" value={properties[name]} onChange={handleChange} data-property={name}/>
+                    )
+                    break;
+                case "bestOf":
+                    inputHTML = (
+                        <input className="slider" type="range" min="1" max="20" step="1" value={properties[name]} onChange={handleChange} data-property={name}/>
+                    )
+                    break;
+            }
             result.push(
                 <PropertyContainer key={name} style={{borderColor: currSwitch.color}}>
-                    {name[0].toUpperCase() + name.slice(1)} <br/>
-                    {properties[name]}
+                    <PropertyHeader>
+                        <div>{propertyToText(name)}</div>
+                        {name !== "engine" ?
+                            <input className="textinput" type="text" value={properties[name]} onChange={handleChange} data-property={name}/>
+                            : ""}
+                    </PropertyHeader>
+                    {inputHTML}
                 </PropertyContainer>
             )
         }
@@ -61,8 +118,15 @@ const PropertyContainer = styled.div`
     margin-bottom: 4px;
     border: solid 2px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    padding: 0px 0 0 8px;
+    padding: 0px 8px 0 8px;
     font-size: 14px;
+`;
+
+const PropertyHeader = styled.div`
+    display: flex; 
+    justify-content: space-between;
+    padding-top: 2px;
+    margin-bottom: -2px;
 `;
 
 const ShowAllButton = styled.div`
@@ -74,6 +138,6 @@ const ShowAllButton = styled.div`
 	border-top: 20px solid;
     border-bottom: 0;
     cursor: pointer;
-`
+`;
 
 export default SwitchProperties;

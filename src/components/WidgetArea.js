@@ -128,7 +128,10 @@ function WidgetArea(props) {
                 />
             </SvgContainer>
             {selected && selected.isProperties ? 
-                <SwitchProperties switches={props.switches} switchId={selected.data}/>
+                <SwitchProperties 
+                    switches={props.switches} switchId={selected.data}
+                    onPropertyChange={props.onPropertyChange}
+                />
                 : ""
             }
         </Container>

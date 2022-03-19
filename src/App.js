@@ -279,6 +279,28 @@ function App() {
     setSwitches(newSwitches);
   }
 
+  function onPropertyChange(switchId, property, value) {
+    var newSwitches = {...switches};
+    switch (property) {
+      case "temperature":
+      case "topP":
+          value = parseFloat(value);
+          if(isNaN(value) || value < 0 || value > 1) return;
+          break;
+      case "frequencyPen":
+      case "presencePen":
+          value = parseFloat(value);
+          if(isNaN(value) || value < 0 || value > 2) return;
+          break;
+      case "bestOf":
+          value = parseInt(value);
+          if(isNaN(value) || value < 1 || value > 20) return;
+          break;
+    }
+    newSwitches[switchId].properties[property] = value;
+    setSwitches(newSwitches);
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
@@ -293,6 +315,7 @@ function App() {
         removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
         reattachSlot={reattachSlot} getSlotPath={getSlotPath}
         switches={switches} attachSwitch={attachSwitch} removeSwitch={removeSwitch}
+        onPropertyChange={onPropertyChange}
       />
     </div>
   );
