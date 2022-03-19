@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 
 import Slots from './Slots';
+import SwitchProperties from './SwitchProperties';
 
 function WidgetArea(props) {
     const [selected, setSelected] = useState(null);
@@ -94,6 +95,12 @@ function WidgetArea(props) {
         )
     }
 
+    function showSwitchProperties() {
+        var copy = {...selected};
+        copy.isProperties = true;
+        setSelected(copy);
+    }
+
     return (
         <Container>
             <SvgContainer 
@@ -117,9 +124,13 @@ function WidgetArea(props) {
                     changeLastSlot={props.changeLastSlot} changeDepth={props.changeDepth} 
                     hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
                     selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
-                    switches={props.switches}
+                    switches={props.switches} showSwitchProperties={showSwitchProperties}
                 />
             </SvgContainer>
+            {selected && selected.isProperties ? 
+                <SwitchProperties switches={props.switches} switchId={selected.data}/>
+                : ""
+            }
         </Container>
     )
 }

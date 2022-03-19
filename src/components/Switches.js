@@ -26,12 +26,13 @@ function Switches(props) {
     
     function handleClick(e) {
         let data = e.target.getAttribute("data-id");
+        if(e.target.tagName === "polygon") return;
         switch (e.detail) {
             case 1:
                 clickTimer.current = setTimeout(() => {
                     props.setSelected({type: "switch", data: data});
                     clickTimer.current = null;
-                }, 200);
+                }, 150);
                 break;
             case 2:
                 if(clickTimer.current == null) return;
@@ -55,7 +56,7 @@ function Switches(props) {
             <polygon 
                 data-id={switchId}
                 points={pointsStr} style={{fill: currSwitch.color, cursor: "pointer"}} 
-                onClick={(e) => console.log("show properties")}
+                onClick={(e) => props.showSwitchProperties({x: e.pageX, y: e.pageY})}
             />
         );
 
@@ -75,6 +76,7 @@ function Switches(props) {
                 onClick={handleClick}
             > 
                 <rect
+                    id={"switch-" + switchId}
                     className="switch" x={SWITCH_X_OFFSET} y={yPosition}
                     width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
                     fill={currSwitch.color}
@@ -84,7 +86,7 @@ function Switches(props) {
                     key={switchId + "-text"}
                     x={SWITCH_X_OFFSET + SWITCH_SIZE/2} y={yPosition + SWITCH_SIZE/2}
                     textAnchor="middle" alignmentBaseline="middle"
-                    fontSize="12px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
+                    fontSize="14px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
                 >{currSwitch.model}</text>
                 <rect 
                     data-type="switch" data-id={switchId}
