@@ -313,18 +313,24 @@ function App() {
   }
 
   function handleGenerate(switchId) {
+    var newSwitches = {...switches};
+    if(newSwitches[switchId].isLoading) return;
+    
     var currSwitch = switches[switchId];
     var data = {...currSwitch.properties};
     data.text = textify(currSwitch.slot);
+    
+    newSwitches[switchId].isLoading = true;
+    setSwitches(newSwitches);
 
     // TODO: modify depending on lens
-
-    console.log(data);
 
     axios
     .post(`http://localhost:5000/api/generate-new`, data)
     .then((response) => {
-        console.log(response.data);
+        var newSwitches = {...switches};
+        newSwitches[switchId].isLoading = false;
+        setSwitches(newSwitches);
     });
   }
 

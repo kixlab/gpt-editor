@@ -69,6 +69,24 @@ function Switches(props) {
             />
         )
 
+        var textOrLoadingSvg = currSwitch.isLoading ?
+            (<g key={switchId + "-loading"} 
+                transform={`translate(${SWITCH_X_OFFSET + SWITCH_SIZE/2 - 12.5}, ${yPosition + SWITCH_SIZE/2 - 12.5}) scale(0.5)`}>
+                <path 
+                    fill="#fff" 
+                    d="M25,5A20.14,20.14,0,0,1,45,22.88a2.51,2.51,0,0,0,2.49,2.26h0A2.52,2.52,0,0,0,50,22.33a25.14,25.14,0,0,0-50,0,2.52,2.52,0,0,0,2.5,2.81h0A2.51,2.51,0,0,0,5,22.88,20.14,20.14,0,0,1,25,5Z">
+                        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.5s" repeatCount="indefinite" />
+                </path>
+            </g>) :
+            (<text
+                key={switchId + "-text"}
+                x={SWITCH_X_OFFSET + SWITCH_SIZE/2} y={yPosition + SWITCH_SIZE/2}
+                textAnchor="middle" alignmentBaseline="middle"
+                fontSize="14px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
+            >
+                {currSwitch.model}
+            </text>)
+
         switchesList.push(
             <g 
                 key={switchId + "box"}
@@ -82,12 +100,7 @@ function Switches(props) {
                     fill={currSwitch.color}
                 />
                 {isSelected ? selectionRing : ""}
-                <text
-                    key={switchId + "-text"}
-                    x={SWITCH_X_OFFSET + SWITCH_SIZE/2} y={yPosition + SWITCH_SIZE/2}
-                    textAnchor="middle" alignmentBaseline="middle"
-                    fontSize="14px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
-                >{currSwitch.model}</text>
+                {textOrLoadingSvg}
                 <rect 
                     data-type="switch" data-id={switchId}
                     x={SWITCH_X_OFFSET - 4} y={yPosition - 4}
