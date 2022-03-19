@@ -58,6 +58,8 @@ function Slots(props) {
                 currSize += props.currentDepth === depth ? 4 : 0;
                 slotsInDepth.push(slotId);
 
+                console.log(slotId, props.slots, props.switches);
+
                 if(node !== undefined) {
                     for(var i = 0; i < node.switches.length; i++) {
                         var switchId = node.switches[i];

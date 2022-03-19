@@ -215,9 +215,8 @@ function TextEditor(props) {
     }
 
     function handleChange(newValue) {
-        if(valueToText(value) === valueToText(newValue) || props.hoverSlot) return;
-
         setValue(newValue);
+        if(valueToText(value) === valueToText(newValue) || props.hoverSlot) return;
 
         var children = [...newValue[0].children];
         

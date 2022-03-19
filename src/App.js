@@ -138,6 +138,7 @@ function App() {
     }
 
     function handleCreate(value) {
+        console.log(value);
         if (value === "") return;
 
         var newSlotId = generateId();
@@ -170,6 +171,7 @@ function App() {
         }});
 
         setLastSlot(newSlotId);
+        setCurrentDepth(getSlotPath(lastSlot).length);
         setIsInsert(false);
     }
 
@@ -216,7 +218,7 @@ function App() {
 
     function copySlot(slotId) {
         var toCopy = slots[slotId];
-        var newSlotId = generateId;
+        var newSlotId = generateId();
         slotsDispatch({
             type: "create", slotId: newSlotId, slot: {
                 parent: toCopy.parent,
@@ -304,6 +306,14 @@ function App() {
                     var newSlotId = generateId();
                     var newSwitchId = 'sw' + generateId();
 
+                    var newSwitch = JSON.parse(JSON.stringify(currSwitch));
+                    newSwitch.slot = newSlotId;
+                    newSwitch.lens = -1;
+                    newSwitch.isLoading = false;
+
+                    switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
+                    switchesDispatch({ type: 'loading', switchId, isLoading: false });
+
                     slotsDispatch({
                         type: "create", slotId: newSlotId, slot: {
                             parent: currSwitch.slot,
@@ -313,15 +323,8 @@ function App() {
                             switches: [newSwitchId]
                         }
                     });
-
-                    var newSwitch = JSON.parse(JSON.stringify(currSwitch));
-                    newSwitch.slot = newSlotId;
-                    newSwitch.lens = -1;
-                    newSwitch.isLoading = false;
-
+                    
                     setLastSlot(newSlotId);
-                    switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
-                    switchesDispatch({ type: 'loading', switchId, isLoading: false });
                 });
         }
     }
