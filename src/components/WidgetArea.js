@@ -125,6 +125,7 @@ function WidgetArea(props) {
                     hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
                     selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
                     switches={props.switches} showSwitchProperties={showSwitchProperties}
+                    handleGenerate={props.handleGenerate}
                 />
             </SvgContainer>
             {selected && selected.isProperties ? 

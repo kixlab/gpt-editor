@@ -6,6 +6,7 @@ import TextEditor from './components/Editor';
 import WidgetArea from './components/WidgetArea';
 import { propTypes } from 'react-bootstrap/esm/Image';
 import { onCompositionEnd } from 'draft-js/lib/DraftEditorCompositionHandler';
+import axios from 'axios';
 
 import "typeface-roboto";
 
@@ -120,7 +121,7 @@ function App() {
     setSlots(newSlots);
   }
 
-  function handleGenerate(value) {
+  function handleCreate(value) {
     var newSlots = {...slots};
     var newSwitches = {...switches};
 
@@ -301,11 +302,37 @@ function App() {
     setSwitches(newSwitches);
   }
 
+  function textify(slotId) {
+    var text = "";
+    var node = slots[slotId];
+    while(node.parent !== undefined) {
+        text = node.text + text;
+        node = slots[node.parent];
+    }
+    return text;
+  }
+
+  function handleGenerate(switchId) {
+    var currSwitch = switches[switchId];
+    var data = {...currSwitch.properties};
+    data.text = textify(currSwitch.slot);
+
+    // TODO: modify depending on lens
+
+    console.log(data);
+
+    axios
+    .post(`http://localhost:5000/api/generate-new`, data)
+    .then((response) => {
+        console.log(response.data);
+    });
+  }
+
   return (
     <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
       <TextEditor 
         isMeta={isMeta} slots={slots} lastSlot={lastSlot} currentDepth={currentDepth} hoverSlot={hoverSlot}
-        changeSlots={changeSlots} handleGenerate={handleGenerate} setIsInsert={setIsInsert}
+        changeSlots={changeSlots} handleCreate={handleCreate} setIsInsert={setIsInsert}
         getSlotPath={getSlotPath} setCurrentDepth={setCurrentDepth}
       />
       <WidgetArea 
@@ -316,6 +343,7 @@ function App() {
         reattachSlot={reattachSlot} getSlotPath={getSlotPath}
         switches={switches} attachSwitch={attachSwitch} removeSwitch={removeSwitch}
         onPropertyChange={onPropertyChange}
+        handleGenerate={handleGenerate}
       />
     </div>
   );

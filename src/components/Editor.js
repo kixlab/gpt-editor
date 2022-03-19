@@ -256,7 +256,7 @@ function TextEditor(props) {
             e.preventDefault();
             var valueChildren = value[0].children;
             var lastSpan = valueChildren[valueChildren.length - 1 - 1];
-            props.handleGenerate(lastSpan.children[0].text);
+            props.handleCreate(lastSpan.children[0].text);
         }
     }
     

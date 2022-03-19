@@ -56,8 +56,17 @@ function SwitchProperties(props) {
                 case "engine":
                     inputHTML = (
                         <select className="dropdown" value={properties[name]} data-property={name} onChange={handleChange}>
-                            <option value="davinci">Davinci</option>
-                            <option value="dynamo">Dynamo</option>
+                            <option value="text-davinci-002">text-davinci-002</option>
+                            <option value="text-curie-001">text-curie-001</option>
+                            <option value="text-baggage-001">text-baggage-001</option>
+                            <option value="text-ada-001">text-ada-001</option>
+                            <option value="text-davinci-001">text-davinci-001</option>
+                            <option value="davinci-instruct-beta">davinci-instruct-beta</option>
+                            <option value="davinci">davinci</option>
+                            <option value="curie-instruct-beta">curie-instruct-beta</option>
+                            <option value="curie">curie</option>
+                            <option value="baggage">baggage</option>
+                            <option value="ada">ada</option>
                         </select>
                     )
                     break;

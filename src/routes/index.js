@@ -22,6 +22,38 @@ function findSentenceEnding(text, startIdx) {
     return idx;
 }
 
+router.post("/generate-new", (req, res) => {
+    var data = {
+        prompt: req.body.text,
+        max_tokens: 40,
+        temperature: req.body.temperature,
+        top_p: req.body.topP,
+        presence_penalty: req.body.presencePen,
+        frequency_penalty: req.body.frequencyPen,
+        best_of: req.body.bestOf,
+        n: 1
+    };
+
+    axios.post('https://api.openai.com/v1/engines/'+req.body.engine+'/completions', data, {
+        headers: headers
+    })
+    .then((response) => {
+        console.log(response.data);
+        for(var i = 0; i < response.data.choices.length; i++) {
+            var text = response.data.choices[i].text;
+            var cropIdx = 0;
+            var endIdx = findSentenceEnding(text, cropIdx);
+            cropIdx = endIdx + 1;
+            response.data.choices[i].text = text.substring(0, cropIdx);
+        }
+        res.send(response.data.choices);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+})
+
+
 router.post("/generate", (req, res) => {
     console.log(req.body);
 

@@ -38,7 +38,7 @@ function Switches(props) {
                 if(clickTimer.current == null) return;
                 clearTimeout(clickTimer.current);
                 clickTimer.current = null;
-                console.log("generate")
+                props.handleGenerate(data);
                 break;
             default:
                 break;
