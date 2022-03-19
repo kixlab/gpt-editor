@@ -136,6 +136,12 @@ const PropertyHeader = styled.div`
     justify-content: space-between;
     padding-top: 2px;
     margin-bottom: -2px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 `;
 
 const ShowAllButton = styled.div`

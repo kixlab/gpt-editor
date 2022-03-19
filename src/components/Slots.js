@@ -10,11 +10,11 @@ function Slots(props) {
         if(data.split("-").length == 1) {
             switch (e.detail) {
                 case 1:
-                    props.setSelected({type: "slot", data: data});
+                    props.changeDepth(parseInt(data));
                     props.changeLastSlot(parseInt(data));
                     break;
                 case 2:
-                    props.changeDepth(parseInt(data));
+                    props.setSelected({type: "slot", data: data});
                     break;
                 default:
                     break;

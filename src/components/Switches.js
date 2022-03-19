@@ -30,7 +30,7 @@ function Switches(props) {
         switch (e.detail) {
             case 1:
                 clickTimer.current = setTimeout(() => {
-                    props.setSelected({type: "switch", data: data});
+                    props.handleGenerate(data);
                     clickTimer.current = null;
                 }, 150);
                 break;
@@ -38,7 +38,7 @@ function Switches(props) {
                 if(clickTimer.current == null) return;
                 clearTimeout(clickTimer.current);
                 clickTimer.current = null;
-                props.handleGenerate(data);
+                props.setSelected({type: "switch", data: data});
                 break;
             default:
                 break;
