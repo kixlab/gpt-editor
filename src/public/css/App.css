@@ -3,8 +3,12 @@
 }
 
 .App {
-  height: 100%;
-  padding: 20px 20px 32px 20px;
+  height: auto;
+  min-height: 100% !important;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  background-color: #EEE;
 }
 
 .App-logo {
@@ -44,10 +48,13 @@
 }
 
 .TextEditor {
-  height: calc(100% - 30px);
-  padding: 8px;
-  border-radius: 12px;
+  background-color: #fff;
+  padding: 32px;
+  height: auto;
+  min-height: 100% !important;
   overflow-y: scroll;
+  font-size: 20px;
+  color: #333;
 }
 
 .TextEditor::-webkit-scrollbar {
@@ -57,4 +64,65 @@
 .TextEditor::-webkit-scrollbar-thumb {
   border-radius: 3px;
   background-color: #ccc;
+}
+
+.switch {
+  filter: url(#switch-shadow);
+}
+
+.switch-selection {
+  filter: url(#shadow);
+}
+
+svg text {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;  
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%; 
+  background: rgb(0, 102, 255);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%; 
+  background: rgb(0, 102, 255);
+  cursor: pointer;
+}
+
+.dropdown {
+  border-color: #ccc;
+  width: 100%;
+}
+
+.textinput {
+  width: 36px;
+  padding: 0px;
+  border: solid 1px #ccc;
+  border-radius: 4px;
+  text-align: center;
 }
