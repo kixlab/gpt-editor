@@ -10,8 +10,8 @@ function Slots(props) {
         if(data.split("-").length == 1) {
             switch (e.detail) {
                 case 1:
-                    props.changeDepth(parseInt(data));
-                    props.changeLastSlot(parseInt(data));
+                    props.changeDepth(data);
+                    props.changeLastSlot(data);
                     break;
                 case 2:
                     props.setSelected({type: "slot", data: data});
@@ -25,10 +25,11 @@ function Slots(props) {
     }
 
     function handleMouseEnter(e) {
-        let data = parseInt(e.target.getAttribute("data-id"));
+        let data = e.target.getAttribute("data-id");
         var slotId = props.lastSlot;
         var slot = props.slots[slotId];
-        while(slot.parent !== 0) {
+        if(props.lastSlot === 'ROOT') return;
+        while(slot.parent !== 'ROOT') {
             if(slotId === data) return;
             slotId = slot.parent;
             slot = props.slots[slotId];
@@ -93,7 +94,7 @@ function Slots(props) {
                 );
             }
 
-            if(props.selected && props.selected.type === "slot" && slotId === parseInt(props.selected.data)) {
+            if(props.selected && props.selected.type === "slot" && slotId === props.selected.data) {
                 elements.push(
                     <circle
                         key="selection-ring"
@@ -110,7 +111,7 @@ function Slots(props) {
 
         for(var i = 0; i < childrenLen; i++) {
             var childSlotId = children[i];
-            if(childSlotId === undefined) childSlotId = Math.max(...Object.keys(props.slots)) + 1;
+            if(childSlotId === undefined) childSlotId = "TEMP";
 
             var [svgs, newNumInLevel] = recursiveSlotDrawing(childSlotId, depth + 1, numInLevel, slotPath, slotHoverPath, slotsInDepth);
             elements = elements.concat(svgs);
@@ -163,7 +164,7 @@ function Slots(props) {
     }
 
     var [elements, numInLevel, slotsInDepth] = recursiveSlotDrawing(
-        0, -1, [], 
+        'ROOT', -1, [], 
         props.getSlotPath(props.lastSlot), 
         props.hoverSlot ? props.getSlotPath(props.hoverSlot) : [], 
         []

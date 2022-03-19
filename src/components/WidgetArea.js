@@ -18,20 +18,20 @@ function WidgetArea(props) {
         switch(e.key) {
             case "Backspace":
                 if(selected.type === "slot") {
-                    props.removeSlot(parseInt(selected.data));
+                    props.removeSlot(selected.data);
                     setSelected(null);
                 } else if(selected.type === "slot-edge") {
-                    props.detatchSlot(parseInt(selected.data.split("-")[1]));
+                    props.detatchSlot(selected.data.split("-")[1]);
                     setSelected(null);
                 } else if(selected.type === "switch") {
-                    props.removeSwitch(parseInt(selected.data));
+                    props.removeSwitch(selected.data);
                     setSelected(null);
                 }
                 break;
             case "c":
                 if(!props.isMeta) break;
                 if(selected.type === "slot") {
-                    props.copySlot(parseInt(selected.data));
+                    props.copySlot(selected.data);
                 }
                 break;
             default:
@@ -59,13 +59,13 @@ function WidgetArea(props) {
             setDragging(null);
             return;
         } else if(dragging.type === "slot" && dropObj.type === "slot" && dragging.data !== dropObj.data) {
-            dragging.data = parseInt(dragging.data);
-            dropObj.data = parseInt(e.target.getAttribute("data-id"));
+            dragging.data = dragging.data;
+            dropObj.data = e.target.getAttribute("data-id");
             props.reattachSlot(dropObj.data, dragging.data);
         } else if(dragging.type === 'switch' && dropObj.type === 'slot') {
-            props.attachSwitch(parseInt(dropObj.data), parseInt(dragging.data));
+            props.attachSwitch(dropObj.data, dragging.data);
         } else if(dragging.type === 'slot' && dropObj.type === 'switch') {
-            props.attachSwitch(parseInt(dragging.data), parseInt(dropObj.data));
+            props.attachSwitch(dragging.data, dropObj.data);
         }
         setDragging(null);
     }

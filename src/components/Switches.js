@@ -13,7 +13,7 @@ function Switches(props) {
     const clickTimer = useRef(null);
 
     function handleMouseEnter(e) {
-        var hoverSwitch = parseInt(e.target.getAttribute('data-id'))
+        var hoverSwitch = e.target.getAttribute('data-id');
         setHoverSwitch(hoverSwitch);
         var hoverSlot = props.switches[hoverSwitch].slot;
         props.setHoverSlot(hoverSlot);
@@ -124,7 +124,7 @@ function Switches(props) {
             var lensId = curr.lens;
             var currPosition = nextPosition;
 
-            var isHover = hoverSwitch === parseInt(switchId);
+            var isHover = hoverSwitch === switchId;
             if(lensId === -1) {
                 drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
                 nextPosition += SWITCH_SIZE + SWITCH_Y_SPACE;

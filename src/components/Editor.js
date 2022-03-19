@@ -232,7 +232,7 @@ function TextEditor(props) {
 
             var spanText = span.children[0].text;
             var slotId = span.slotId;
-            var slot = props.slots[parseInt(slotId)];
+            var slot = props.slots[slotId];
 
             if(slot.text !== spanText) {
                 changedPathList.push(slotId);
