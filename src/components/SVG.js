@@ -53,6 +53,29 @@ const PeekBig = (
         <path d="M5 1H208C218.493 1 227 9.50659 227 20V223H24C13.5066 223 5 214.493 5 204V1Z" fill="#fff" stroke="#0066FF" strokeWidth="2" data-type="lens" />
     </g>
 );
+const Collapse = (
+    <g>
+        <path d="M1 8V5C1 2.79086 2.79086 1 5 1H13C15.2091 1 17 2.79086 17 5V13C17 15.2091 15.2091 17 13 17H10" strokeWidth="2" strokeLinecap="round" fill="#fff"/>
+        <path d="M14.9537 3.93168C15.1489 3.73642 15.1489 3.41983 14.9537 3.22457C14.7584 3.02931 14.4418 3.02931 14.2465 3.22457L14.9537 3.93168ZM9.3001 8.37812C9.3001 8.65427 9.52395 8.87812 9.8001 8.87812L14.3001 8.87812C14.5762 8.87812 14.8001 8.65427 14.8001 8.37812C14.8001 8.10198 14.5762 7.87812 14.3001 7.87812L10.3001 7.87812L10.3001 3.87812C10.3001 3.60198 10.0762 3.37812 9.8001 3.37812C9.52396 3.37812 9.3001 3.60198 9.3001 3.87812L9.3001 8.37812ZM14.2465 3.22457L9.44654 8.02457L10.1537 8.73168L14.9537 3.93168L14.2465 3.22457Z"/>
+        <rect x="1" y="9.7998" width="7.2" height="7.2" rx="2" strokeWidth="2" fill="#fff"/>
+    </g>
+)
+const SpaceButton = (
+    <g>
+        <rect x="1" y="1" width="16" height="16" rx="3" fill="white" strokeWidth="2"/>
+        <circle cx="5.5" cy="12.5" r="2.5" stroke="none"/>
+        <circle cx="12.5" cy="9.5" r="2.5" stroke="none"/>
+        <circle cx="6.5" cy="5.5" r="2.5" stroke="none"/>
+    </g>
+)
+const ListButton = (
+    <g>
+        <rect x="1" y="1" width="16" height="16" rx="3" fill="white" strokeWidth="2"/>
+        <rect x="3.5" y="5.5" width="11" height="1" rx="0.5"/>
+        <rect x="3.5" y="8.5" width="11" height="1" rx="0.5"/>
+        <rect x="3.5" y="11.5" width="11" height="1" rx="0.5"/>
+    </g>
+)
 
 export {
     ListSmall,
@@ -61,4 +84,7 @@ export {
     ListBig,
     SpaceBig,
     PeekBig,
+    Collapse,
+    SpaceButton,
+    ListButton
 }

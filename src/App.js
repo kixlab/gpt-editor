@@ -149,6 +149,11 @@ function App() {
                 var { lensId, generations } = action;
                 newLenses[lensId].generations = newLenses[lensId].generations.concat(generations);
                 return newLenses;
+            case 'change':
+                var { lensId, property, value } = action;
+                var currLens = newLenses[lensId];
+                currLens[property] = value;
+                return newLenses;
             default:
                 throw new Error();
         }
@@ -509,6 +514,10 @@ function App() {
         setLastSlot(newSlotId);
     }
 
+    function changeLensProperty(lensId, property, value) {
+        lensesDispatch({ type: 'change', lensId, property, value });
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <TextEditor
@@ -526,7 +535,7 @@ function App() {
                 removeSwitch={removeSwitch} onPropertyChange={onPropertyChange} copySwitch={copySwitch}
                 handleGenerate={handleGenerate}
                 lenses={lenses} chooseLens={chooseLens} attachLens={attachLens} detatchLens={detatchLens}
-                slotifyGenerations={slotifyGenerations}
+                slotifyGenerations={slotifyGenerations} changeLensProperty={changeLensProperty}
             />
         </div>
     );

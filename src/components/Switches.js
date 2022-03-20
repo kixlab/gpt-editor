@@ -153,7 +153,7 @@ function Switches(props) {
                             key={lensId} lensId={lensId} 
                             lenses={props.lenses} position={nextPosition} switches={props.switches}
                             selected={props.selected} setSelected={props.setSelected}
-                            slotifyGenerations={props.slotifyGenerations}
+                            slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
                         />
                     )
                     nextPosition += LENS_SIZE + SWITCH_Y_SPACE;
