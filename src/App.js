@@ -128,6 +128,26 @@ function App() {
                 var { lensId, newLens } = action;
                 newLenses[lensId] = newLens;
                 return newLenses;
+            case 'attach-switch':
+                var { lensId, switchId } = action;
+                newLenses[lensId].switches.push(switchId);
+                console.log(newLenses)
+                return newLenses;
+            case 'detatch-switch':
+                if(action.lensId !== undefined && action.lensId === -1) return newLenses;
+                var listOfPairs = action.list;
+                if(listOfPairs === undefined) {
+                    listOfPairs = [{lensId: action.lensId, switchId: action.switchId}];
+                }
+                for(var i = 0; i < listOfPairs.length; i++) {
+                    var {lensId, switchId} = listOfPairs[i];
+                    var index = newLenses[lensId].switches.indexOf(switchId);
+                    newLenses[lensId].switches.splice(index, 1);
+                    if(newLenses[lensId].switches.length === 0)
+                        delete newLenses[lensId];
+                }
+                console.log(newLenses);
+                return newLenses;
             default:
                 throw new Error();
         }
@@ -210,6 +230,7 @@ function App() {
     function removeSlot(slotId) {
         var slotsToRemove = [];
         var switchesToRemove = [];
+        var lensesToDetatch = [];
         var parentSlotId = slots[slotId].parent;
         var children = [slotId];
         while (children.length !== 0) {
@@ -221,6 +242,9 @@ function App() {
                     for (var i = 0; i < slots[childId].switches.length; i++) {
                         var switchId = slots[childId].switches[i];
                         switchesToRemove.push(switchId);
+                        if (switches[switchId].lens !== -1) {
+                            lensesToDetatch.push({lensId: switches[switchId].lens, switchId});
+                        }
                     }
                 }
                 slotsToRemove.push(childId);
@@ -230,6 +254,7 @@ function App() {
 
         slotsDispatch({ type: "remove", slotId: slotId, slotsToRemove });
         switchesDispatch({ type: "remove", switchesToRemove });
+        lensesDispatch({ type: "detatch-switch", list: lensesToDetatch });
         setLastSlot(parentSlotId);
         setHoverSlot(parentSlotId);
     }
@@ -297,30 +322,51 @@ function App() {
 
     function removeSwitch(switchId) {
         var slotId = switches[switchId].slot;
-        slotsDispatch({ type: 'detatch-switch', slotId: slotId });
+        slotsDispatch({ type: 'detatch-switch', slotId, switchId });
         switchesDispatch({ type: 'remove', switchesToRemove: [switchId]})
+        lensesDispatch({ type: 'detatch-switch', lensId: switches[switchId].lens, switchId: switchId });
     }
 
     function copySwitch(switchId) {
         var toCopy = switches[switchId];
         var newSwitchId = "sw" + generateId();
         slotsDispatch({ type: 'attach-switch', slotId: toCopy.slot, switchId: newSwitchId });
-        switchesDispatch({
-            type: "create", switchId: newSwitchId,
-            newSwitch: {
-                model: toCopy.model,
-                slot: toCopy.slot,
-                lens: toCopy.lens,
-                color: toCopy.color,
-                properties: {
-                    engine: toCopy.properties.engine,
-                    temperature: toCopy.properties.temperature,
-                    topP: toCopy.properties.topP,
-                    frequencyPen: toCopy.properties.frequencyPen,
-                    presencePen: toCopy.properties.presencePen,
-                    bestOf: toCopy.properties.bestOf
-            }
-        }});
+        if(lenses[toCopy.lens].switches.length < 4) {
+            switchesDispatch({
+                type: "create", switchId: newSwitchId,
+                newSwitch: {
+                    model: toCopy.model,
+                    slot: toCopy.slot,
+                    lens: toCopy.lens,
+                    color: toCopy.color,
+                    properties: {
+                        engine: toCopy.properties.engine,
+                        temperature: toCopy.properties.temperature,
+                        topP: toCopy.properties.topP,
+                        frequencyPen: toCopy.properties.frequencyPen,
+                        presencePen: toCopy.properties.presencePen,
+                        bestOf: toCopy.properties.bestOf
+                }
+            }});
+            lensesDispatch({ type: 'attach-switch', lensId: toCopy.lens, switchId: newSwitchId });
+        } else {
+            switchesDispatch({
+                type: "create", switchId: newSwitchId,
+                newSwitch: {
+                    model: toCopy.model,
+                    slot: toCopy.slot,
+                    lens: -1,
+                    color: toCopy.color,
+                    properties: {
+                        engine: toCopy.properties.engine,
+                        temperature: toCopy.properties.temperature,
+                        topP: toCopy.properties.topP,
+                        frequencyPen: toCopy.properties.frequencyPen,
+                        presencePen: toCopy.properties.presencePen,
+                        bestOf: toCopy.properties.bestOf
+                }
+            }});
+        }
     }
 
     function onPropertyChange(switchId, property, value) {
@@ -406,6 +452,14 @@ function App() {
         lensesDispatch({ type: 'create', lensId: newLensId, newLens: newLens });
     }
 
+    function attachLens(switchId, lensId) {
+        if(switches[switchId].lens === -1) {
+            lensesDispatch({ type: 'detatch-switch', lensId: switches[switchId].lens, switchId: switchId });
+        }
+        switchesDispatch({ type: 'attach-lens', switchId, lensId });
+        lensesDispatch({ type: 'attach-switch', lensId, switchId });
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <TextEditor
@@ -422,7 +476,7 @@ function App() {
                 switches={switches} createSwitch={createSwitch} attachSwitch={attachSwitch} 
                 removeSwitch={removeSwitch} onPropertyChange={onPropertyChange} copySwitch={copySwitch}
                 handleGenerate={handleGenerate}
-                lenses={lenses} selectLens={selectLens}
+                lenses={lenses} selectLens={selectLens} attachLens={attachLens}
             />
         </div>
     );
