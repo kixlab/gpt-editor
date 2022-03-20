@@ -151,7 +151,7 @@ function Switches(props) {
                     lensesList.push(
                         <Lens 
                             key={lensId} lensId={lensId} 
-                            lenses={props.lenses} position={nextPosition} 
+                            lenses={props.lenses} position={nextPosition} switches={props.switches}
                             selected={props.selected} setSelected={props.setSelected}
                         />
                     )

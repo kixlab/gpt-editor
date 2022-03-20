@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
     SWITCH_SIZE,
@@ -11,10 +11,11 @@ import {
     ListSmall,
     SpaceSmall,
     PeekSmall,
-    ListBig,
     SpaceBig,
     PeekBig
 } from './SVG.js'
+
+import ListLens from './ListLens';
 
 function Lens(props) {
     const lens = props.lenses[props.lensId];
@@ -60,7 +61,7 @@ function Lens(props) {
             connectors.push(
                 <line 
                     key={edgeStr+"drawn"}
-                    x1={LENS_X_OFFSET - 32} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
+                    x1={LENS_X_OFFSET - 28} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
                     x2={LENS_X_OFFSET + 4} y2={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position}  
                     stroke={isSelected ? 'rgb(0, 194, 255)' : "#0066FF"} 
                     strokeWidth={isSelected ? "4px" : "2px"}
@@ -71,7 +72,7 @@ function Lens(props) {
                 <line 
                     key={edgeStr} onClick={clickEdge}
                     data-type={'switch-lens-edge'} data-id={edgeStr}
-                    x1={LENS_X_OFFSET - 32} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
+                    x1={LENS_X_OFFSET - 28} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
                     x2={LENS_X_OFFSET + 4} y2={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position}  
                     stroke={"#00000000"} 
                     strokeWidth={"20px"}
@@ -86,13 +87,10 @@ function Lens(props) {
         switch (lens.type) {
             case 'list':
                 return (
-                    <g id={props.lensId} 
-                        transform={`translate(${LENS_X_OFFSET}, ${props.position})`}
-                        data-type="lens" data-id={props.lensId}
-                        style={{cursor: 'pointer'}}
-                    >
-                        {ListBig}
-                    </g>
+                    <ListLens 
+                        lensId={props.lensId} lenses={props.lenses} 
+                        switches={props.switches} position={props.position}
+                    />
                 )
             case 'space':
                 return (

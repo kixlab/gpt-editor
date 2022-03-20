@@ -1,14 +1,13 @@
 import './public/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "typeface-roboto";
+import axios from 'axios';
 
 import React, { useState, useReducer, useCallback } from 'react';
 import TextEditor from './components/Editor';
 import WidgetArea from './components/WidgetArea';
-import { propTypes } from 'react-bootstrap/esm/Image';
-import { onCompositionEnd } from 'draft-js/lib/DraftEditorCompositionHandler';
-import axios from 'axios';
-
-import "typeface-roboto";
+import { loremipsum } from './components/LoremIpsum'
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -131,10 +130,8 @@ function App() {
             case 'attach-switch':
                 var { lensId, switchId } = action;
                 newLenses[lensId].switches.push(switchId);
-                console.log(newLenses)
                 return newLenses;
             case 'detatch-switch':
-                console.log(JSON.stringify(newLenses));
                 if(action.lensId !== undefined && action.lensId === -1) return newLenses;
                 var listOfPairs = action.list;
                 if(listOfPairs === undefined) {
@@ -147,7 +144,10 @@ function App() {
                     if(newLenses[lensId].switches.length === 0)
                         delete newLenses[lensId];
                 }
-                console.log(newLenses);
+                return newLenses;
+            case 'add-generations':
+                var { lensId, generations } = action;
+                newLenses[lensId].generations = newLenses[lensId].generations.concat(generations);
                 return newLenses;
             default:
                 throw new Error();
@@ -438,6 +438,13 @@ function App() {
                     
                     setLastSlot(newSlotId);
                 });
+        } else if(lenses[currSwitch.lens].type === 'list') {
+            var newGenerations = []
+            for(var i = 0; i < 3; i++) {
+                newGenerations.push({switchId: switchId, text: loremipsum[Math.floor(Math.random() * loremipsum.length)] + "."});
+            }
+            lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generations: newGenerations});
+            switchesDispatch({ type: 'loading', switchId, isLoading: false });
         }
     }
 
@@ -447,7 +454,8 @@ function App() {
         var newLens = {
             type: type,
             switches: [switchId],
-            generations: []
+            generations: [],
+            isCollapsed: false
         }
         switchesDispatch({ type: 'attach-lens', switchId, lensId: newLensId });
         lensesDispatch({ type: 'create', lensId: newLensId, newLens: newLens });
