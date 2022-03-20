@@ -134,7 +134,7 @@ function Switches(props) {
                     <Lens 
                         key={'temporallens-' + switchId} 
                         lensId={lensId} switchId={switchId} 
-                        position={nextPosition}
+                        lenses={props.lenses} position={nextPosition}
                         selectLens={props.selectLens}
                     />
                 )
@@ -143,13 +143,13 @@ function Switches(props) {
                 if(lensToPosition[lensId] !== undefined) {
                     currPosition = lensToPosition[lensId];
                     drawOneSwitch(switchesList, switchId, curr, currPosition, isHover);
-                    switchesList.push(
-                        <Lens key={lensId} lensId={lensId} lenses={props.lenses} position={currPosition} />
-                    )
                     lensToPosition[lensId] += SWITCH_SIZE + SWITCH_Y_SPACE;
                 } else {
                     drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
                     lensToPosition[lensId] = nextPosition + SWITCH_SIZE + SWITCH_Y_SPACE;
+                    switchesList.push(
+                        <Lens key={lensId} lensId={lensId} lenses={props.lenses} position={nextPosition} />
+                    )
                     nextPosition += LENS_SIZE + SWITCH_Y_SPACE;
                 }
             }
