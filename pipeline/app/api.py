@@ -80,7 +80,7 @@ def create_api(model, tokenizer) -> Blueprint:
         coord = draw_graph(sentences, cossim)
         result = []
         for i in range(len(sentences)):
-            result.append({'text': sentences[i], 'position': {'x': coord[i][0], 'y': coord[i][1]}})
+            result.append({'text': sentences[i], 'coordinates': {'x': coord[i][0], 'y': coord[i][1]}})
         return jsonify(result)
 
     return api

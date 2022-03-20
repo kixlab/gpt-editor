@@ -444,7 +444,7 @@ function App() {
                 
                 setLastSlot(newSlotId);
             });
-        } else if(currLens.type === 'list') {
+        } else if(currLens.type === 'list' || currLens.type === 'space') {
             data.n = 3;
             axios
             .post(`http://localhost:5000/api/generate-new`, data)
@@ -452,7 +452,7 @@ function App() {
                 var newGenerations = []
                 console.log(response.data);
                 for(var i = 0; i < response.data.length; i++) {
-                    newGenerations.push({switchId: switchId, text: response.data[i].text});
+                    newGenerations.push({switchId: switchId, text: response.data[i].text, coordinates: response.data[i].coordinates});
                 }
                 lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generations: newGenerations});
                 switchesDispatch({ type: 'loading', switchId, isLoading: false });
