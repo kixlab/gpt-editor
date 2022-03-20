@@ -134,6 +134,7 @@ function App() {
                 console.log(newLenses)
                 return newLenses;
             case 'detatch-switch':
+                console.log(JSON.stringify(newLenses));
                 if(action.lensId !== undefined && action.lensId === -1) return newLenses;
                 var listOfPairs = action.list;
                 if(listOfPairs === undefined) {
@@ -440,7 +441,7 @@ function App() {
         }
     }
 
-    function selectLens(switchId, type) {
+    function chooseLens(switchId, type) {
         var newLensId = "l" + generateId();
 
         var newLens = {
@@ -460,6 +461,11 @@ function App() {
         lensesDispatch({ type: 'attach-switch', lensId, switchId });
     }
 
+    function detatchLens(switchId, lensId) {
+        switchesDispatch({ type: 'attach-lens', switchId, lensId: -1 });
+        lensesDispatch({ type: 'detatch-switch', lensId, switchId });
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <TextEditor
@@ -476,7 +482,7 @@ function App() {
                 switches={switches} createSwitch={createSwitch} attachSwitch={attachSwitch} 
                 removeSwitch={removeSwitch} onPropertyChange={onPropertyChange} copySwitch={copySwitch}
                 handleGenerate={handleGenerate}
-                lenses={lenses} selectLens={selectLens} attachLens={attachLens}
+                lenses={lenses} chooseLens={chooseLens} attachLens={attachLens} detatchLens={detatchLens}
             />
         </div>
     );

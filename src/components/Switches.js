@@ -120,6 +120,7 @@ function Switches(props) {
         var lensToPosition = {};
         var switchesList = [];
         var switchIdList = Object.keys(props.switches);
+        var lensesList = [];
         for(var i = 0; i < switchIdList.length; i++) {
             var switchId = switchIdList[i];
             var curr = props.switches[switchId];
@@ -130,12 +131,12 @@ function Switches(props) {
             var isHover = hoverSwitch === switchId;
             if(lensId === -1) {
                 drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
-                switchesList.push(
+                lensesList.push(
                     <Lens 
                         key={'temporallens-' + switchId} 
                         lensId={lensId} switchId={switchId} 
                         lenses={props.lenses} position={nextPosition}
-                        selectLens={props.selectLens}
+                        chooseLens={props.chooseLens}
                     />
                 )
                 nextPosition += SWITCH_SIZE + SWITCH_Y_SPACE;
@@ -147,8 +148,12 @@ function Switches(props) {
                 } else {
                     drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
                     lensToPosition[lensId] = nextPosition + SWITCH_SIZE + SWITCH_Y_SPACE;
-                    switchesList.push(
-                        <Lens key={lensId} lensId={lensId} lenses={props.lenses} position={nextPosition} />
+                    lensesList.push(
+                        <Lens 
+                            key={lensId} lensId={lensId} 
+                            lenses={props.lenses} position={nextPosition} 
+                            selected={props.selected} setSelected={props.setSelected}
+                        />
                     )
                     nextPosition += LENS_SIZE + SWITCH_Y_SPACE;
                 }
@@ -168,7 +173,7 @@ function Switches(props) {
             }
         }
 
-        return switchesList;
+        return lensesList.concat(switchesList);
     }
 
     return (drawSwitches());

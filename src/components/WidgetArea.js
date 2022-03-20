@@ -26,6 +26,10 @@ function WidgetArea(props) {
                 } else if (selected.type === "switch") {
                     props.removeSwitch(selected.data);
                     setSelected(null);
+                } else if (selected.type === 'switch-lens-edge') {
+                    var parsedData = selected.data.split("-");
+                    props.detatchLens(parsedData[0], parsedData[1]);
+                    setSelected(null);
                 }
                 break;
             case "c":
@@ -54,8 +58,11 @@ function WidgetArea(props) {
         var draggingObj = { type: e.target.getAttribute("data-type"), startX: x - offsetX, startY: y };
         if ([null, "slot-edge"].includes(draggingObj.type)) {
             return;
+        } else if(draggingObj.type === 'lens') {
+            draggingObj.data = e.target.parentElement.parentElement.getAttribute('data-id');
+        } else {
+            draggingObj.data = e.target.getAttribute("data-id");
         }
-        draggingObj.data = e.target.getAttribute("data-id");
         setDragging(draggingObj);
     }
 
@@ -63,6 +70,10 @@ function WidgetArea(props) {
         if (dragging == null) return;
 
         var dropObj = { type: e.target.getAttribute("data-type"), data: e.target.getAttribute("data-id") };
+        if(dropObj.type === 'lens') {
+            dropObj.data = e.target.parentElement.parentElement.getAttribute('data-id');
+        }
+
         if ([null, "slot-edge"].includes(dropObj.type)) {
             setDragging(null);
             return;
@@ -74,6 +85,10 @@ function WidgetArea(props) {
             props.attachSwitch(dropObj.data, dragging.data);
         } else if (dragging.type === 'slot' && dropObj.type === 'switch') {
             props.attachSwitch(dragging.data, dropObj.data);
+        } else if (dragging.type === 'lens' && dropObj.type === 'switch') {
+            props.attachLens(dropObj.data, dragging.data);
+        } else if (dragging.type === 'switch' && dropObj.type === 'lens') {
+            props.attachLens(dragging.data, dropObj.data);
         }
         setDragging(null);
     }
@@ -125,7 +140,7 @@ function WidgetArea(props) {
                     selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
                     switches={props.switches} showSwitchProperties={showSwitchProperties}
                     handleGenerate={props.handleGenerate}
-                    lenses={props.lenses} selectLens={props.selectLens}
+                    lenses={props.lenses} chooseLens={props.chooseLens}
                 />
             </SvgContainer>
             {selected && selected.isProperties ?

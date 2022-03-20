@@ -38,19 +38,19 @@ const PeekSmall = (
 const ListBig = (
     <g filter="url(#svg-shadow)">
         <rect x="4" width="224" height="224" fill="white" />
-        <rect x="5" y="1" width="222" height="222" fill="#fff" stroke="#0066FF" strokeWidth="2" />
+        <rect x="5" y="1" width="222" height="222" fill="#fff" stroke="#0066FF" strokeWidth="2" data-type="lens" />
     </g>
 );
 const SpaceBig = (
     <g filter="url(#svg-shadow)">
         <rect x="4" width="224" height="224" rx="20" fill="white"/>
-        <rect x="5" y="1" width="222" height="222" rx="19" fill="#fff" stroke="#0066FF" strokeWidth="2"/>
+        <rect x="5" y="1" width="222" height="222" rx="19" fill="#fff" stroke="#0066FF" strokeWidth="2" data-type="lens"/>
     </g>
 );
 const PeekBig = (
     <g filter="url(#svg-shadow)">
         <path d="M4 0H208C219.046 0 228 8.95431 228 20V224H24C12.9543 224 4 215.046 4 204V0Z" fill="white" />
-        <path d="M5 1H208C218.493 1 227 9.50659 227 20V223H24C13.5066 223 5 214.493 5 204V1Z" fill="#fff" stroke="#0066FF" strokeWidth="2" />
+        <path d="M5 1H208C218.493 1 227 9.50659 227 20V223H24C13.5066 223 5 214.493 5 204V1Z" fill="#fff" stroke="#0066FF" strokeWidth="2" data-type="lens" />
     </g>
 );
 
