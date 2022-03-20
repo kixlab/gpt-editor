@@ -141,6 +141,7 @@ function WidgetArea(props) {
                     switches={props.switches} showSwitchProperties={showSwitchProperties}
                     handleGenerate={props.handleGenerate}
                     lenses={props.lenses} chooseLens={props.chooseLens}
+                    slotifyGenerations={props.slotifyGenerations}
                 />
             </SvgContainer>
             {selected && selected.isProperties ?

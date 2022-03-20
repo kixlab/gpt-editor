@@ -179,6 +179,7 @@ function Slots(props) {
                 selected={props.selected} setHoverSlot={props.setHoverSlot} setSelected={props.setSelected}
                 showSwitchProperties={props.showSwitchProperties} handleGenerate={props.handleGenerate}
                 lenses={props.lenses} chooseLens={props.chooseLens}
+                slotifyGenerations={props.slotifyGenerations}
             />}
         </>
     );

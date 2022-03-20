@@ -30,8 +30,8 @@ router.post("/generate-new", (req, res) => {
         top_p: req.body.topP,
         presence_penalty: req.body.presencePen,
         frequency_penalty: req.body.frequencyPen,
-        best_of: req.body.bestOf,
-        n: 1
+        best_of: req.body.bestOf < req.body.n ? req.body.n : req.body.bestOf,
+        n: req.body.n
     };
 
     axios.post('https://api.openai.com/v1/engines/'+req.body.engine+'/completions', data, {
@@ -49,7 +49,7 @@ router.post("/generate-new", (req, res) => {
         res.send(response.data.choices);
     })
     .catch((error) => {
-        console.log(error);
+        console.log(error.response.data);
     });
 })
 

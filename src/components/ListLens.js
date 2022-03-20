@@ -8,6 +8,10 @@ import { ListBig } from './SVG.js'
 function ListLens(props) {
     const lens = props.lenses[props.lensId];
 
+    function handleItemClick(e) {
+        props.slotifyGenerations(e.target.getAttribute('data-switch'), [e.target.getAttribute('data-text')]);
+    }
+
     return (
         <g id={props.lensId} 
             transform={`translate(${LENS_X_OFFSET}, ${props.position})`}
@@ -22,8 +26,10 @@ function ListLens(props) {
                     {lens.generations.map((generation, i) => {
                         return (
                             <ListItem 
+                                onClick={handleItemClick}
                                 style={{borderLeftColor: props.switches[generation.switchId].color}}
                                 data-type="lens" data-id={props.lensId}
+                                data-switch={generation.switchId} data-text={generation.text}
                             >
                                 {generation.text}
                             </ListItem>

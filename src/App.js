@@ -404,6 +404,7 @@ function App() {
         if (switches[switchId].isLoading) return;
 
         var currSwitch = switches[switchId];
+        var currLens = lenses[currSwitch.lens];
         var data = { ...currSwitch.properties };
         data.text = textify(currSwitch.slot);
 
@@ -411,40 +412,46 @@ function App() {
 
         // TODO: modify generation format depending on lens
 
-        if (lenses[currSwitch.lens] === undefined) {
+        if (currLens === undefined) {
             axios
-                .post(`http://localhost:5000/api/generate-new`, data)
-                .then((response) => {
-                    var newSlotId = generateId();
-                    var newSwitchId = 'sw' + generateId();
+            .post(`http://localhost:5000/api/generate-new`, data)
+            .then((response) => {
+                var newSlotId = generateId();
+                var newSwitchId = 'sw' + generateId();
 
-                    var newSwitch = JSON.parse(JSON.stringify(currSwitch));
-                    newSwitch.slot = newSlotId;
-                    newSwitch.lens = -1;
-                    newSwitch.isLoading = false;
+                var newSwitch = JSON.parse(JSON.stringify(currSwitch));
+                newSwitch.slot = newSlotId;
+                newSwitch.lens = -1;
+                newSwitch.isLoading = false;
 
-                    switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
-                    switchesDispatch({ type: 'loading', switchId, isLoading: false });
+                switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
+                switchesDispatch({ type: 'loading', switchId, isLoading: false });
 
-                    slotsDispatch({
-                        type: "create", slotId: newSlotId, slot: {
-                            parent: currSwitch.slot,
-                            type: "text",
-                            text: response.data[0].text,
-                            children: [],
-                            switches: [newSwitchId]
-                        }
-                    });
-                    
-                    setLastSlot(newSlotId);
+                slotsDispatch({
+                    type: "create", slotId: newSlotId, slot: {
+                        parent: currSwitch.slot,
+                        type: "text",
+                        text: response.data[0].text,
+                        children: [],
+                        switches: [newSwitchId]
+                    }
                 });
-        } else if(lenses[currSwitch.lens].type === 'list') {
-            var newGenerations = []
-            for(var i = 0; i < 3; i++) {
-                newGenerations.push({switchId: switchId, text: loremipsum[Math.floor(Math.random() * loremipsum.length)] + "."});
-            }
-            lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generations: newGenerations});
-            switchesDispatch({ type: 'loading', switchId, isLoading: false });
+                
+                setLastSlot(newSlotId);
+            });
+        } else if(currLens.type === 'list') {
+            data.n = 3;
+            axios
+            .post(`http://localhost:5000/api/generate-new`, data)
+            .then((response) => {
+                var newGenerations = []
+                console.log(response.data);
+                for(var i = 0; i < response.data.length; i++) {
+                    newGenerations.push({switchId: switchId, text: response.data[i].text});
+                }
+                lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generations: newGenerations});
+                switchesDispatch({ type: 'loading', switchId, isLoading: false });
+            });
         }
     }
 
@@ -474,6 +481,34 @@ function App() {
         lensesDispatch({ type: 'detatch-switch', lensId, switchId });
     }
 
+    function slotifyGenerations(switchId, values) {
+        var currSwitch = switches[switchId];
+        var parentSlot = currSwitch.slot;
+        for(var i = 0; i < values.length; i++) {
+            var newSlotId = generateId();
+            var newSwitchId = 'sw' + generateId();
+
+            var newSwitch = JSON.parse(JSON.stringify(currSwitch));
+            newSwitch.slot = newSlotId;
+            newSwitch.lens = -1;
+            newSwitch.isLoading = false;
+
+            switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
+
+            slotsDispatch({
+                type: "create", slotId: newSlotId, slot: {
+                    parent: parentSlot,
+                    type: "text",
+                    text: values[i],
+                    children: [],
+                    switches: [newSwitchId]
+                }
+            });
+            parentSlot = newSlotId;
+        }
+        setLastSlot(newSlotId);
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <TextEditor
@@ -491,6 +526,7 @@ function App() {
                 removeSwitch={removeSwitch} onPropertyChange={onPropertyChange} copySwitch={copySwitch}
                 handleGenerate={handleGenerate}
                 lenses={lenses} chooseLens={chooseLens} attachLens={attachLens} detatchLens={detatchLens}
+                slotifyGenerations={slotifyGenerations}
             />
         </div>
     );

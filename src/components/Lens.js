@@ -90,6 +90,7 @@ function Lens(props) {
                     <ListLens 
                         lensId={props.lensId} lenses={props.lenses} 
                         switches={props.switches} position={props.position}
+                        slotifyGenerations={props.slotifyGenerations}
                     />
                 )
             case 'space':
