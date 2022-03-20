@@ -59,12 +59,22 @@ function Lens(props) {
             var isSelected = props.selected && props.selected.type === 'switch-lens-edge' && props.selected.data === edgeStr;
             connectors.push(
                 <line 
-                    key={edgeStr} onClick={clickEdge}
-                    data-type={'switch-lens-edge'} data-id={edgeStr}
+                    key={edgeStr+"drawn"}
                     x1={LENS_X_OFFSET - 32} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
                     x2={LENS_X_OFFSET + 4} y2={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position}  
                     stroke={isSelected ? 'rgb(0, 194, 255)' : "#0066FF"} 
                     strokeWidth={isSelected ? "4px" : "2px"}
+                    style={{cursor: 'pointer'}}
+                />
+            )
+            connectors.push(
+                <line 
+                    key={edgeStr} onClick={clickEdge}
+                    data-type={'switch-lens-edge'} data-id={edgeStr}
+                    x1={LENS_X_OFFSET - 32} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
+                    x2={LENS_X_OFFSET + 4} y2={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position}  
+                    stroke={"#00000000"} 
+                    strokeWidth={"20px"}
                     style={{cursor: 'pointer'}}
                 />
             )
