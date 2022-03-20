@@ -111,13 +111,28 @@ function App() {
                 var { switchId, isLoading } = action; 
                 newSwitches[switchId].isLoading = isLoading;
                 return newSwitches;
+            case 'attach-lens':
+                var { switchId, lensId } = action;
+                newSwitches[switchId].lens = lensId;
+                return newSwitches;
             default:
                 throw new Error();
         }
     }, []);
     const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0});
 
-    const [lenses, setLenses] = useState({});
+    const lensesReducer = useCallback((lenses, action) => {
+        var newLenses = { ...lenses };
+        switch (action.type) {
+            case 'create':
+                var { lensId, newLens } = action;
+                newLenses[lensId] = newLens;
+                return newLenses;
+            default:
+                throw new Error();
+        }
+    })
+    const [lenses, lensesDispatch] = useReducer(lensesReducer, {});
 
     const [isMeta, setIsMeta] = useState(false);
     const [lastSlot, setLastSlot] = useState('ROOT');
@@ -253,6 +268,27 @@ function App() {
         return path;
     }
 
+    function createSwitch(slotId) {
+        var newSwitchId = "sw" + generateId();
+
+        slotsDispatch({ type: 'attach-switch', slotId: slotId, switchId: newSwitchId });
+        switchesDispatch({type: "create", switchId: newSwitchId,
+            newSwitch: {
+                model: "GPT-3",
+                slot: slotId,
+                lens: -1,
+                color: "#71AAFF",
+                properties: {
+                    engine: "davinci",
+                    temperature: 0.7,
+                    topP: 1,
+                    frequencyPen: 0,
+                    presencePen: 0,
+                    bestOf: 1
+            }
+        }});
+    }
+
     function attachSwitch(slotId, switchId) {
         slotsDispatch({ type: 'attach-switch', slotId: slotId, switchId: switchId });
         slotsDispatch({ type: 'detatch-switch', slotId: switches[switchId].slot, switchId: switchId });
@@ -263,6 +299,28 @@ function App() {
         var slotId = switches[switchId].slot;
         slotsDispatch({ type: 'detatch-switch', slotId: slotId });
         switchesDispatch({ type: 'remove', switchesToRemove: [switchId]})
+    }
+
+    function copySwitch(switchId) {
+        var toCopy = switches[switchId];
+        var newSwitchId = "sw" + generateId();
+        slotsDispatch({ type: 'attach-switch', slotId: toCopy.slot, switchId: newSwitchId });
+        switchesDispatch({
+            type: "create", switchId: newSwitchId,
+            newSwitch: {
+                model: toCopy.model,
+                slot: toCopy.slot,
+                lens: toCopy.lens,
+                color: toCopy.color,
+                properties: {
+                    engine: toCopy.properties.engine,
+                    temperature: toCopy.properties.temperature,
+                    topP: toCopy.properties.topP,
+                    frequencyPen: toCopy.properties.frequencyPen,
+                    presencePen: toCopy.properties.presencePen,
+                    bestOf: toCopy.properties.bestOf
+            }
+        }});
     }
 
     function onPropertyChange(switchId, property, value) {
@@ -336,6 +394,18 @@ function App() {
         }
     }
 
+    function selectLens(switchId, type) {
+        var newLensId = "l" + generateId();
+
+        var newLens = {
+            type: type,
+            switches: [switchId],
+            generations: []
+        }
+        switchesDispatch({ type: 'attach-lens', switchId, lensId: newLensId });
+        lensesDispatch({ type: 'create', lensId: newLensId, newLens: newLens });
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <TextEditor
@@ -349,9 +419,10 @@ function App() {
                 changeLastSlot={changeLastSlot} setHoverSlot={setHoverSlot} changeDepth={changeDepth}
                 removeSlot={removeSlot} detatchSlot={detatchSlot} copySlot={copySlot}
                 reattachSlot={reattachSlot} getSlotPath={getSlotPath}
-                switches={switches} attachSwitch={attachSwitch} removeSwitch={removeSwitch}
-                onPropertyChange={onPropertyChange}
+                switches={switches} createSwitch={createSwitch} attachSwitch={attachSwitch} 
+                removeSwitch={removeSwitch} onPropertyChange={onPropertyChange} copySwitch={copySwitch}
                 handleGenerate={handleGenerate}
+                lenses={lenses} selectLens={selectLens}
             />
         </div>
     );

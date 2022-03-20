@@ -177,8 +177,8 @@ function Slots(props) {
             {<Switches 
                 switches={props.switches} slots={props.slots} slotsInDepth={slotsInDepth} 
                 selected={props.selected} setHoverSlot={props.setHoverSlot} setSelected={props.setSelected}
-                showSwitchProperties={props.showSwitchProperties}
-                handleGenerate={props.handleGenerate}
+                showSwitchProperties={props.showSwitchProperties} handleGenerate={props.handleGenerate}
+                lenses={props.lenses} selectLens={props.selectLens}
             />}
         </>
     );

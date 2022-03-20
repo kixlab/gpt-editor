@@ -8,6 +8,8 @@ import {
     LENS_SIZE
 } from './Sizes';
 
+import Lens from './Lens';
+
 function Switches(props) {
     const [currColor, setCurrColor] = useState(0);
     const [hoverSwitch, setHoverSwitch] = useState(null);
@@ -128,11 +130,22 @@ function Switches(props) {
             var isHover = hoverSwitch === switchId;
             if(lensId === -1) {
                 drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
+                switchesList.push(
+                    <Lens 
+                        key={'temporallens-' + switchId} 
+                        lensId={lensId} switchId={switchId} 
+                        position={nextPosition}
+                        selectLens={props.selectLens}
+                    />
+                )
                 nextPosition += SWITCH_SIZE + SWITCH_Y_SPACE;
             } else {
                 if(lensToPosition[lensId] !== undefined) {
                     currPosition = lensToPosition[lensId];
                     drawOneSwitch(switchesList, switchId, curr, currPosition, isHover);
+                    switchesList.push(
+                        <Lens key={lensId} lensId={lensId} lenses={props.lenses} position={currPosition} />
+                    )
                     lensToPosition[lensId] += SWITCH_SIZE + SWITCH_Y_SPACE;
                 } else {
                     drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
