@@ -474,6 +474,7 @@ function App() {
     }
 
     function attachLens(switchId, lensId) {
+        if(lenses[lensId].switches.includes(switchId) || lenses[lensId].switches.length >= 4) return;
         if(switches[switchId].lens === -1) {
             lensesDispatch({ type: 'detatch-switch', lensId: switches[switchId].lens, switchId: switchId });
         }

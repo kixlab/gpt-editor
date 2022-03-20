@@ -146,6 +146,8 @@ function Switches(props) {
                     drawOneSwitch(switchesList, switchId, curr, currPosition, isHover);
                     lensToPosition[lensId] += SWITCH_SIZE + SWITCH_Y_SPACE;
                 } else {
+                    var lens = props.lenses[lensId];
+                    var lensSize = lens.collapse ? lens.switches.length * (SWITCH_SIZE + SWITCH_Y_SPACE) - SWITCH_Y_SPACE : LENS_SIZE;
                     drawOneSwitch(switchesList, switchId, curr, nextPosition, isHover);
                     lensToPosition[lensId] = nextPosition + SWITCH_SIZE + SWITCH_Y_SPACE;
                     lensesList.push(
@@ -156,7 +158,7 @@ function Switches(props) {
                             slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
                         />
                     )
-                    nextPosition += LENS_SIZE + SWITCH_Y_SPACE;
+                    nextPosition += lensSize + SWITCH_Y_SPACE;
                 }
             }
 

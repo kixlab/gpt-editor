@@ -117,7 +117,7 @@ function Lens(props) {
                             onClick={() => props.changeLensProperty(props.lensId, 'collapse', false)}
                             data-type="lens" data-id={props.lensId}
                         >
-                            {props.type === 'list' ? ListSmall : SpaceSmall}
+                            {lens.type === 'list' ? ListSmall : SpaceSmall}
                         </g>
                     )
                 } else {

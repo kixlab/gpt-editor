@@ -59,7 +59,11 @@ function WidgetArea(props) {
         if ([null, "slot-edge"].includes(draggingObj.type)) {
             return;
         } else if(draggingObj.type === 'lens') {
-            draggingObj.data = e.target.parentElement.parentElement.getAttribute('data-id');
+            var parent = e.target.parentElement;
+            while(!parent.getAttribute('data-id') && parent.getAttribute('data-type') === 'lens') 
+                parent = parent.parentElement;
+            if(parent.getAttribute('data-type') !== 'lens') return;
+            draggingObj.data = parent.getAttribute('data-id');
         } else {
             draggingObj.data = e.target.getAttribute("data-id");
         }
@@ -71,7 +75,14 @@ function WidgetArea(props) {
 
         var dropObj = { type: e.target.getAttribute("data-type"), data: e.target.getAttribute("data-id") };
         if(dropObj.type === 'lens') {
-            dropObj.data = e.target.parentElement.parentElement.getAttribute('data-id');
+            var parent = e.target.parentElement;
+            while(!parent.getAttribute('data-id') && parent.getAttribute('data-type') === 'lens') 
+                parent = parent.parentElement;
+            if(parent.getAttribute('data-type') !== 'lens') {
+                setDragging(null);
+                return;
+            }
+            dropObj.data = parent.getAttribute('data-id');
         }
 
         if ([null, "slot-edge"].includes(dropObj.type)) {
