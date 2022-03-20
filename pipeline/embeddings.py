@@ -94,7 +94,7 @@ def draw_matrix(sentences, cossim):
     plt.show()
 
 
-def draw_graph(sentences, cossim):
+def draw_graph(sentences, cossim, ax):
     G = nx.Graph()
 
     for i in range(len(sentences)):
@@ -103,10 +103,14 @@ def draw_graph(sentences, cossim):
     for i in range(len(sentences)):
         for j in range(i+1, len(sentences)):
             weight = 100 * round(cossim[i][j].item(), 2)
+            if weight < 20: 
+                continue
             #G.add_edge(i, j, weight=weight, label=weight)
             G.add_weighted_edges_from([(i, j, weight)], label=weight)
 
     coord = nx.spring_layout(G, weight="weight")
+
+    print(sentences[0], coord[0])
 
     # set label coords a bit upper the nodes
     node_label_coords = {}
@@ -116,21 +120,21 @@ def draw_graph(sentences, cossim):
     sentences = map(lambda s: s.replace('\n', '\\n'), sentences)
 
     # draw the network
-    nodes = nx.draw_networkx_nodes(G, pos=coord)
-    edges = nx.draw_networkx_edges(G, pos=coord)
-    edge_labels = nx.draw_networkx_edge_labels(G, pos=coord, edge_labels=nx.get_edge_attributes(G, 'label'))
-    node_labels = nx.draw_networkx_labels(G, pos=node_label_coords, font_size=8, labels={i: s for i, s in enumerate(sentences)})
+    nodes = nx.draw_networkx_nodes(G, pos=coord, ax=ax)
+    edges = nx.draw_networkx_edges(G, pos=coord, ax=ax)
+    edge_labels = nx.draw_networkx_edge_labels(G, pos=coord, edge_labels=nx.get_edge_attributes(G, 'label'), ax=ax)
+    node_labels = nx.draw_networkx_labels(G, pos=node_label_coords, font_size=8, labels={i: s for i, s in enumerate(sentences)}, ax=ax)
+
     plt.title("Sentences network")
+    return coord
 
 sentences = sentences
 embeds, cossim = process_simcse(sentences)
 
 # find maximum weight clique of length 3
 
-
-
-#plt.subplot(121)
-#draw_graph(sentences, cossim)
+#plt.subplot(1)
+#draw_graph(sentences[:10], cossim)
 #embeds, cossim = process_sbert(sentences)
 #plt.subplot(122)
 #draw_graph(sentences, cossim)
@@ -142,4 +146,15 @@ embeds, cossim = process_simcse(sentences)
 #for i, txt in enumerate(sentences):
 #    plt.annotate(txt, (new_embeds[:,0][i], new_embeds[:,1][i]))
 
-#plt.show()
+ax1 = plt.subplot(2, 1, 1)
+coords = draw_graph(sentences[:10], cossim, ax1)
+
+ax2 = plt.subplot(2, 1, 2)
+x = []
+y = []
+for key in coords:
+    x.append(coords[key][0])
+    y.append(coords[key][1])
+ax2.scatter(x, y)
+
+plt.show()
