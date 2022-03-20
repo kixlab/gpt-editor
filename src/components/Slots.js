@@ -12,6 +12,7 @@ function Slots(props) {
                 case 1:
                     props.changeDepth(data);
                     props.changeLastSlot(data);
+                    props.setSelected(null);
                     break;
                 case 2:
                     props.setSelected({type: "slot", data: data});
@@ -57,8 +58,6 @@ function Slots(props) {
             if(props.currentDepth == depth || isPinned) {
                 currSize += props.currentDepth === depth ? 4 : 0;
                 slotsInDepth.push(slotId);
-
-                console.log(slotId, props.slots, props.switches);
 
                 if(node !== undefined) {
                     for(var i = 0; i < node.switches.length; i++) {

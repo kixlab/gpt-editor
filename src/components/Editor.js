@@ -80,8 +80,6 @@ const withInlines = editor => {
 
         if(selection.anchor.offset === 1 && currentChildText.length === 1) return;
 
-        console.log(n);
-
         switch(n) {
             case "word":
                 var words = currentChildText.split(" ").filter(word => word !== "");
@@ -91,7 +89,6 @@ const withInlines = editor => {
                 }
                 break;
             case "line":
-                console.log("hey");
                 Transforms.delete(editor, { unit: "character", distance: currentChildText.length - 1, reverse: true });
                 return;
         }
@@ -115,7 +112,6 @@ const withInlines = editor => {
             if(child.children[0].text.length === Math.abs(anchor.offset-focus.offset)) return;
         }
 
-        console.log(n, selection);
         deleteFragment(n);
     }
 

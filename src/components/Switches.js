@@ -9,6 +9,7 @@ import {
 } from './Sizes';
 
 function Switches(props) {
+    const [currColor, setCurrColor] = useState(0);
     const [hoverSwitch, setHoverSwitch] = useState(null);
     const clickTimer = useRef(null);
 

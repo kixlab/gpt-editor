@@ -14,6 +14,8 @@ function generateId() {
     return Math.random().toString(36).slice(2, 12);
 }
 
+const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
+
 function App() {
     const slotsReducer = useCallback((slots, action) => {
         var newSlots = { ...slots };
@@ -97,7 +99,13 @@ function App() {
                 return newSwitches;
             case 'change':
                 var { switchId, property, value } = action;
-                newSwitches[switchId].properties[property] = value;
+                var currSwitch = newSwitches[switchId];
+                currSwitch.properties[property] = value;
+                if(currSwitch.color === '#71AAFF') {
+                    var colorIndex = newSwitches['colorIndex']
+                    currSwitch.color = colorWheel[colorIndex];
+                    newSwitches['colorIndex'] = (colorIndex + 1) % colorWheel.length;
+                }
                 return newSwitches;
             case 'loading':
                 var { switchId, isLoading } = action; 
@@ -107,7 +115,7 @@ function App() {
                 throw new Error();
         }
     }, []);
-    const [switches, switchesDispatch] = useReducer(switchesReducer, {});
+    const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0});
 
     const [lenses, setLenses] = useState({});
 
@@ -138,7 +146,6 @@ function App() {
     }
 
     function handleCreate(value) {
-        console.log(value);
         if (value === "") return;
 
         var newSlotId = generateId();
