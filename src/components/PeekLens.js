@@ -55,9 +55,10 @@ function PeekLens(props) {
         );
     }
 
+    var xPosition = LENS_X_OFFSET + (lens.isPinned ? LENS_SIZE + 32 : 0);
     return (
         <g id={props.lensId} 
-            transform={`translate(${LENS_X_OFFSET}, ${props.position})`}
+            transform={`translate(${xPosition}, ${props.position})`}
             data-type="lens" data-id={props.lensId}
         >
             {PeekBig}

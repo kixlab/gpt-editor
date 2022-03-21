@@ -57,7 +57,30 @@ function Lens(props) {
         for (var i = 0; i < lens.switches.length; i++) {
             var edgeStr = lens.switches[i] + '-' + props.lensId;
             var isSelected = props.selected && props.selected.type === 'switch-lens-edge' && props.selected.data === edgeStr;
-            if(i < 1 || !lens.collapse) {
+            if(lens.isPinned) {
+                var xPosition = LENS_X_OFFSET + LENS_SIZE + 32 + LENS_SIZE/2;
+                connectors.push(
+                    <line 
+                        key={edgeStr+"drawn"}
+                        x1={xPosition} y1={props.position - 16} 
+                        x2={xPosition} y2={props.position}  
+                        stroke={isSelected ? 'rgb(0, 194, 255)' : "#0066FF"} 
+                        strokeWidth={isSelected ? "4px" : "2px"}
+                        style={{cursor: 'pointer'}}
+                    />
+                )
+                connectors.push(
+                    <line 
+                        key={edgeStr} onClick={clickEdge}
+                        data-type={'switch-lens-edge'} data-id={edgeStr}
+                        x1={xPosition} y1={props.position - 16} 
+                        x2={xPosition} y2={props.position}  
+                        stroke={"#00000000"} 
+                        strokeWidth={"20px"}
+                        style={{cursor: 'pointer'}}
+                    />
+                )
+            } else if(i < 1 || !lens.collapse) {
                 connectors.push(
                     <line 
                         key={edgeStr+"drawn"}
@@ -130,10 +153,11 @@ function Lens(props) {
                     )
                 }
             case 'peek':
+                var xPosition = LENS_X_OFFSET + (lens.isPinned ? LENS_SIZE + 32 + LENS_SIZE/2 - SWITCH_SIZE/2 : 0);
                 if(lens.collapse) {
                     return (
                         <g
-                            transform={`translate(${LENS_X_OFFSET}, ${props.position})`} style={{ cursor: "pointer" }}
+                            transform={`translate(${xPosition}, ${props.position})`} style={{ cursor: "pointer" }}
                             onClick={() => props.changeLensProperty(props.lensId, 'collapse', false)}
                             data-type="lens" data-id={props.lensId}
                         >
