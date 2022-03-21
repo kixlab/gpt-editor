@@ -61,8 +61,6 @@ def draw_graph(sentences, cossim):
     for i in range(len(sentences)):
         for j in range(i+1, len(sentences)):
             weight = 100 * round(cossim[i][j].item(), 2)
-            if weight < 20: 
-                continue
             #G.add_edge(i, j, weight=weight, label=weight)
             G.add_weighted_edges_from([(i, j, weight)], label=weight)
 
@@ -76,11 +74,23 @@ def create_api(model, tokenizer) -> Blueprint:
     @api.route('/api/generate-new', methods=['POST'])
     def generate():
         sentences = get_sentences(request)
-        embeddings, cossim = process_simcse(model, tokenizer, sentences)
-        coord = draw_graph(sentences, cossim)
+        existing = request.json['existing']
+        combined = list(map(lambda entry: entry['text'], existing))+sentences
+        embeddings, cossim = process_simcse(model, tokenizer, combined)
+        coord = draw_graph(combined, cossim)
         result = []
+        for i in range(len(existing)):
+            result.append({
+                'switchId': existing[i]['switchId'],
+                'text': existing[i]['text'], 
+                'coordinates': {'x': coord[i][0], 'y': coord[i][1]
+            }})
         for i in range(len(sentences)):
-            result.append({'text': sentences[i], 'coordinates': {'x': coord[i][0], 'y': coord[i][1]}})
+            result.append({
+                'switchId': request.json['switchId'], 
+                'text': sentences[i], 
+                'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]
+            }})
         return jsonify(result)
 
     return api

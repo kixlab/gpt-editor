@@ -145,9 +145,9 @@ function App() {
                         delete newLenses[lensId];
                 }
                 return newLenses;
-            case 'add-generations':
+            case 'set-generations':
                 var { lensId, generations } = action;
-                newLenses[lensId].generations = newLenses[lensId].generations.concat(generations);
+                newLenses[lensId].generations = generations;
                 return newLenses;
             case 'change':
                 var { lensId, property, value } = action;
@@ -446,15 +446,14 @@ function App() {
             });
         } else if(currLens.type === 'list' || currLens.type === 'space') {
             data.n = 3;
+            data.existing = currLens.generations;
+            data.switchId = switchId;
             axios
             .post(`http://localhost:5000/api/generate-new`, data)
             .then((response) => {
-                var newGenerations = []
-                console.log(response.data);
-                for(var i = 0; i < response.data.length; i++) {
-                    newGenerations.push({switchId: switchId, text: response.data[i].text, coordinates: response.data[i].coordinates});
-                }
-                lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generations: newGenerations});
+                var newGenerations = response.data;
+                console.log(newGenerations)
+                lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
                 switchesDispatch({ type: 'loading', switchId, isLoading: false });
             });
         }
