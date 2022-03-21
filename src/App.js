@@ -523,6 +523,7 @@ function App() {
     }
 
     function slotifyGenerations(switchId, values) {
+        console.log(switches[switchId]);
         var currSwitch = switches[switchId];
         var parentSlot = currSwitch.slot;
         for(var i = 0; i < values.length; i++) {

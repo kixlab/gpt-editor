@@ -28,7 +28,10 @@ function PeekLens(props) {
                 x={4} y={0} width={LENS_SIZE} height={LENS_SIZE}
                 data-type="lens" data-id={props.lensId}
             >
-                <PeekContainer data-type="lens" data-id={props.lensId}>
+                <PeekContainer 
+                    data-type="lens" data-id={props.lensId} data-switch={lens.switches[0]}
+                    onClick={(e) => props.slotifyGenerations(e.target.getAttribute('data-switch'), lens.generations.map(g => g.text))}
+                >
                     {lens.generations.map((generation, i) => {
                         return (
                             <Content 
@@ -36,6 +39,7 @@ function PeekLens(props) {
                                 onMouseEnter={handleHoverContent}
                                 data-index={i} data-length={lens.generations.length}
                                 data-hovered={hoveredIndexes.includes(i)}
+                                data-switch={lens.switches[0]}
                             >
                                 {generation.text}
                             </Content>
@@ -80,6 +84,13 @@ const PeekContainer = styled.div`
         background: #ccc;
         border-radius: 4px;
     }
+    cursor: pointer;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
 `;
 const Content = styled.span`
     word-wrap: break-word;
