@@ -108,6 +108,7 @@ function App() {
                 return newSwitches;
             case 'loading':
                 var { switchId, isLoading } = action; 
+                if(newSwitches[switchId] === undefined) return newSwitches;
                 newSwitches[switchId].isLoading = isLoading;
                 return newSwitches;
             case 'attach-lens':
@@ -154,7 +155,13 @@ function App() {
                 return newLenses;
             case 'set-generations':
                 var { lensId, generations } = action;
+                if(newLenses[lensId] === undefined) return newLenses;
                 newLenses[lensId].generations = generations;
+                return newLenses;
+            case 'add-generations':
+                var { lensId, generations } = action;
+                if(newLenses[lensId] === undefined) return newLenses;
+                newLenses[lensId].generations = newLenses[lensId].generations.concat(generations);
                 return newLenses;
             case 'change':
                 var { lensId, property, value } = action;
@@ -425,8 +432,9 @@ function App() {
         // TODO: modify generation format depending on lens
 
         if (currLens === undefined) {
+            data.n = 1;
             axios
-            .post(`http://localhost:5000/api/generate-new`, data)
+            .post(`http://localhost:5000/api/generate-one`, data)
             .then((response) => {
                 var newSlotId = generateId();
                 var newSwitchId = 'sw' + generateId();
@@ -459,7 +467,6 @@ function App() {
             .post(`http://localhost:5000/api/generate-new`, data)
             .then((response) => {
                 var newGenerations = response.data;
-                console.log(newGenerations)
                 lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
                 switchesDispatch({ type: 'loading', switchId, isLoading: false });
             });
@@ -469,8 +476,8 @@ function App() {
             axios
             .post(`http://localhost:5000/api/generate-one`, data)
             .then((response) => {
-                var newGeneration = response.data.text;
-                lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generation: newGeneration});
+                var newGenerations = response.data;
+                lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generations: newGenerations});
                 switchesDispatch({ type: 'loading', switchId, isLoading: false });
             });
         }

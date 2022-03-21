@@ -32,9 +32,10 @@ function PeekLens(props) {
                     {lens.generations.map((generation, i) => {
                         return (
                             <Content 
+                                key={i}
                                 onMouseEnter={handleHoverContent}
                                 data-index={i} data-length={lens.generations.length}
-                                data-isHovered={hoveredIndexes.includes(i)}
+                                data-hovered={hoveredIndexes.includes(i)}
                             >
                                 {generation.text}
                             </Content>
@@ -86,7 +87,7 @@ const Content = styled.span`
         var percentage = parseInt(props['data-length']) > 0 ? parseInt(props['data-index'])/parseInt(props['data-length']) : 0;
         percentage = 1 - percentage;
         if(parseInt(props['data-index'])%3 === 2) percentage = 0;
-        if(props['data-isHovered']) percentage = 1;
+        if(props['data-hovered']) percentage = 1;
         return 'rgba(51, 51, 51, ' + percentage + ')';
     }};
     transition: color 2s ease;

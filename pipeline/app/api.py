@@ -93,7 +93,13 @@ def create_api(model, tokenizer) -> Blueprint:
             }})
         return jsonify(result)
 
+    @api.route('/api/generate-one', methods=['POST'])
+    def generate_one():
+        sentences = get_sentences(request)
+        return jsonify([{'text': sentences[0]}])
+
     return api
+
 
 
 
