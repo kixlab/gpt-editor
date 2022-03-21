@@ -127,13 +127,6 @@ function App() {
             case 'create':
                 var { lensId, newLens } = action;
                 newLenses[lensId] = newLens;
-                if(newLens.type === 'peek') {
-                    newLenses[lensId].generations = [
-                        {text: 'Hello.'},
-                        {text: ' My name is Jake.'},
-                        {text: ' I like apples.'}
-                    ]
-                }
                 return newLenses;
             case 'attach-switch':
                 var { lensId, switchId } = action;
@@ -158,15 +151,36 @@ function App() {
                 if(newLenses[lensId] === undefined) return newLenses;
                 newLenses[lensId].generations = generations;
                 return newLenses;
-            case 'add-generations':
-                var { lensId, generations } = action;
-                if(newLenses[lensId] === undefined) return newLenses;
-                newLenses[lensId].generations = newLenses[lensId].generations.concat(generations);
-                return newLenses;
             case 'change':
                 var { lensId, property, value } = action;
                 var currLens = newLenses[lensId];
                 currLens[property] = value;
+                return newLenses;
+            case 'set-timer':
+                var { lensId } = action;
+                if(newLenses[lensId] === undefined) return newLenses;
+                newLenses[lensId].timer = setInterval(() => {
+                    var currLens = lenses[lensId];
+                    var currSwitch = switches[currLens.switches[0]];
+                    var data = { ...currSwitch.properties };
+                    data.text = textify(currSwitch.slot);
+                    data.text += currLens.generations.map(g => g.text).join("");
+                    data.n = 1;
+                    axios
+                    .post(`http://localhost:5000/api/generate-one`, data)
+                    .then((response) => {
+                        console.log(response.data);
+                        var newGenerations = response.data;
+                        newGenerations = newGenerations.concat(currLens.generations);
+                        lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
+                    });
+                }, 5000);
+                return newLenses;
+            case 'clear-timer':
+                var { lensId } = action;
+                if(newLenses[lensId] === undefined) return newLenses;
+                clearInterval(newLenses[lensId].timer);
+                newLenses[lensId].timer = null;
                 return newLenses;
             default:
                 throw new Error();
@@ -420,6 +434,12 @@ function App() {
     }
 
     function handleGenerate(switchId) {
+        if (switches[switchId].isLoading && lenses[switches[switchId].lens].type === 'peek') {
+            var currLens = lenses[switches[switchId].lens];
+            switchesDispatch({ type: 'loading', switchId, isLoading: false });
+            lensesDispatch({ type: 'clear-timer', lensId: switches[switchId].lens });
+            return;
+        }
         if (switches[switchId].isLoading) return;
 
         var currSwitch = switches[switchId];
@@ -471,15 +491,7 @@ function App() {
                 switchesDispatch({ type: 'loading', switchId, isLoading: false });
             });
         } else if(currLens.type === 'peek') {
-            data.text += currLens.generations.map(g => g.text).join("");
-            data.n = 1;
-            axios
-            .post(`http://localhost:5000/api/generate-one`, data)
-            .then((response) => {
-                var newGenerations = response.data;
-                lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generations: newGenerations});
-                switchesDispatch({ type: 'loading', switchId, isLoading: false });
-            });
+            lensesDispatch({ type: 'set-timer', lensId: switches[switchId].lens });
         }
     }
 

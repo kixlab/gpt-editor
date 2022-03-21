@@ -42,8 +42,8 @@ const ListBig = (
     </g>
 );
 const SpaceBig = (
-    <g filter="url(#svg-shadow)">
-        <rect x="4" width="224" height="224" rx="20" fill="white"/>
+    <g filter="url(#svg-shadow)" data-type="lens">
+        <rect x="4" width="224" height="224" rx="20" fill="white" data-type="lens"/>
         <rect x="5" y="1" width="222" height="222" rx="19" fill="#fff" stroke="#0066FF" strokeWidth="2" data-type="lens"/>
     </g>
 );

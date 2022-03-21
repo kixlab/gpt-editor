@@ -83,11 +83,11 @@ function ListSpaceLens(props) {
                 yRange[1] = Math.max(yRange[1], coordinates.y);
             }
             return (
-                <>
+                <g data-type="lens" data-id={props.lensId}>
                     {lens.generations.map((generation, index) => {
                         var [x, y] = translateCoordinates(generation.coordinates, xRange, yRange);
                         return (
-                            <circle 
+                            <circle data-type="lens" data-id={props.lensId}
                                 key={index} cx={x} cy={y} r="6" style={{cursor: "pointer"}}
                                 fill={props.switches[generation.switchId].color} 
                                 stroke="#fff" strokeWidth="1" data-text={generation.text} data-x={x} data-y={y}
@@ -107,7 +107,7 @@ function ListSpaceLens(props) {
                             </HoverText>
                         </foreignObject>
                     )}
-                </>
+                </g>
             );
         }
     }
