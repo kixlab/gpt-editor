@@ -10,12 +10,11 @@ import {
 import {
     ListSmall,
     SpaceSmall,
-    PeekSmall,
-    SpaceBig,
-    PeekBig
+    PeekSmall
 } from './SVG.js'
 
 import ListSpaceLens from './ListSpaceLens';
+import PeekLens from './PeekLens';
 
 function Lens(props) {
     const lens = props.lenses[props.lensId];
@@ -131,15 +130,26 @@ function Lens(props) {
                     )
                 }
             case 'peek':
-                return (
-                    <g id={props.lensId} 
-                        transform={`translate(${LENS_X_OFFSET}, ${props.position})`}
-                        data-type="lens" data-id={props.lensId}
-                        style={{cursor: 'pointer'}}
-                    >
-                        {PeekBig}
-                    </g>
-                )
+                if(lens.collapse) {
+                    return (
+                        <g
+                            transform={`translate(${LENS_X_OFFSET}, ${props.position})`} style={{ cursor: "pointer" }}
+                            onClick={() => props.changeLensProperty(props.lensId, 'collapse', false)}
+                            data-type="lens" data-id={props.lensId}
+                        >
+                            {PeekSmall}
+                        </g>
+                    )
+                } else {
+                    return (
+                        <PeekLens 
+                            lensId={props.lensId} lenses={props.lenses} 
+                            switches={props.switches} position={props.position}
+                            slotifyGenerations={props.slotifyGenerations}
+                            changeLensProperty={props.changeLensProperty}
+                        />
+                    )
+                }
         }
     }
     

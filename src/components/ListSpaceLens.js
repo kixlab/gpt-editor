@@ -141,7 +141,7 @@ function ListSpaceLens(props) {
 
 const ListLensContainer = styled.div`
     margin-top: 28px;
-    height: calc(100% - 20px);
+    height: calc(100% - 30px);
     width: calc(100% - 4px);
     padding: 14px;
     display: flex;

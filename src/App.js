@@ -126,6 +126,13 @@ function App() {
             case 'create':
                 var { lensId, newLens } = action;
                 newLenses[lensId] = newLens;
+                if(newLens.type === 'peek') {
+                    newLenses[lensId].generations = [
+                        {text: 'Hello.'},
+                        {text: ' My name is Jake.'},
+                        {text: ' I like apples.'}
+                    ]
+                }
                 return newLenses;
             case 'attach-switch':
                 var { lensId, switchId } = action;
@@ -337,7 +344,7 @@ function App() {
         var toCopy = switches[switchId];
         var newSwitchId = "sw" + generateId();
         slotsDispatch({ type: 'attach-switch', slotId: toCopy.slot, switchId: newSwitchId });
-        if(lenses[toCopy.lens].switches.length < 4) {
+        if(lenses[toCopy.lens].switches.length < 4 && lenses[toCopy.lens].type !== 'peek') {
             switchesDispatch({
                 type: "create", switchId: newSwitchId,
                 newSwitch: {
@@ -456,6 +463,16 @@ function App() {
                 lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
                 switchesDispatch({ type: 'loading', switchId, isLoading: false });
             });
+        } else if(currLens.type === 'peek') {
+            data.text += currLens.generations.map(g => g.text).join("");
+            data.n = 1;
+            axios
+            .post(`http://localhost:5000/api/generate-one`, data)
+            .then((response) => {
+                var newGeneration = response.data.text;
+                lensesDispatch({type: "add-generations", lensId: currSwitch.lens, generation: newGeneration});
+                switchesDispatch({ type: 'loading', switchId, isLoading: false });
+            });
         }
     }
 
@@ -473,7 +490,7 @@ function App() {
     }
 
     function attachLens(switchId, lensId) {
-        if(lenses[lensId].switches.includes(switchId) || lenses[lensId].switches.length >= 4) return;
+        if(lenses[lensId].switches.includes(switchId) || lenses[lensId].switches.length >= 4 || lenses[lensId].type === 'peek') return;
         if(switches[switchId].lens === -1) {
             lensesDispatch({ type: 'detatch-switch', lensId: switches[switchId].lens, switchId: switchId });
         }
@@ -515,6 +532,7 @@ function App() {
     }
 
     function changeLensProperty(lensId, property, value) {
+        console.log(lensId, property, value, lenses)
         lensesDispatch({ type: 'change', lensId, property, value });
     }
 
