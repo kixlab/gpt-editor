@@ -53,9 +53,7 @@ function Slots(props) {
         var node = props.slots[slotId];
         if(depth !== -1) {
             var currSize = SLOT_SIZE;
-            // TODO: check if slot's switch's lens is pinned
-            var isPinned = false;
-            if(props.currentDepth == depth || isPinned) {
+            if(props.currentDepth == depth) {
                 currSize += props.currentDepth === depth ? 4 : 0;
                 slotsInDepth.push(slotId);
 

@@ -3,13 +3,14 @@ import styled from "styled-components";
 
 import { LENS_X_OFFSET, LENS_SIZE } from  './Sizes';
 
-import { PeekBig, Collapse } from './SVG.js'
+import { PeekBig, Collapse, PinButton} from './SVG.js'
 
 function PeekLens(props) {
     const lens = props.lenses[props.lensId];
 
     const [collapseHover, setCollapseHover] = useState(false);
     const [hoveredIndexes, setHoveredIndexes] = useState([]);
+    const [pinHover, setPinHover] = useState(false);
 
     function handleCollapseClick() {
         props.changeLensProperty(props.lensId, 'collapse', !lens.collapse);
@@ -20,6 +21,10 @@ function PeekLens(props) {
         var newHoveredIndexes = [...hoveredIndexes];
         newHoveredIndexes.push(index);
         setHoveredIndexes(newHoveredIndexes);
+    }
+
+    function handlePinClick(e) {
+        props.changeLensProperty(props.lensId, 'isPinned', !lens.isPinned);
     }
 
     function drawLensContent() {
@@ -64,6 +69,13 @@ function PeekLens(props) {
                 stroke={collapseHover ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
             >
                 {Collapse}
+            </g>
+            <g 
+                transform="translate(16, 10) scale(1.44)" style={{cursor: "pointer"}}
+                onMouseEnter={() => setPinHover(true)} onMouseLeave={() => setPinHover(false)}
+                onClick={handlePinClick} fill={(pinHover || lens.isPinned) ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
+            >
+                {PinButton}
             </g>
         </g>
     )

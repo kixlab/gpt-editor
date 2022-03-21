@@ -502,7 +502,8 @@ function App() {
             type: type,
             switches: [switchId],
             generations: [],
-            isCollapsed: false
+            isCollapsed: false,
+            isPinned: false
         }
         switchesDispatch({ type: 'attach-lens', switchId, lensId: newLensId });
         lensesDispatch({ type: 'create', lensId: newLensId, newLens: newLens });
