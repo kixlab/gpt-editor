@@ -171,7 +171,7 @@ function App() {
                     .then((response) => {
                         console.log(response.data);
                         var newGenerations = response.data;
-                        newGenerations = newGenerations.concat(currLens.generations);
+                        newGenerations = currLens.generations.concat(newGenerations);
                         lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
                     });
                 }, 5000);
