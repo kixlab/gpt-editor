@@ -12,14 +12,15 @@ function PromptEditor(props) {
         <Container>
             <div style={{fontSize: "20px", marginBottom: "12px"}}>Prompt</div>
             <InnerContainer>
-                {props.currPath.map((index, depth) => (
+                {props.slots.path.map((index, depth) => (
                     <PromptLine 
                         key={`${depth}-${index}`} depth={depth} index={index}
-                        value={props.slots[depth][index]} 
-                        currPath={props.currPath} slots={props.slots}
-                        handleChangeLine={handleLineChange} changePath={props.changePath}
+                        value={props.slots.entries[depth][index]} slots={props.slots}
+                        handleLineChange={handleLineChange} changePath={props.changePath}
+                        selected={props.selected} setSelected={props.setSelected}
                     />
                 ))}
+                <AddButton onClick={props.addPromptLine}>+ Add New</AddButton>
             </InnerContainer>
         </Container>
     )
@@ -29,7 +30,7 @@ const Container = styled.div`
     margin-left: 120px;
     margin-top: 60px;
     padding: 32px;
-    padding-right: 16px;
+    padding-right: 24px;
     background-color: #fff;
     width: 30%;
     border-radius: 20px;
@@ -43,7 +44,7 @@ const InnerContainer = styled.div`
     gap: 24px;
     height: calc(100% - 32px - 12px);
     overflow-y: scroll;
-    padding-right: 16px;
+    padding-right: 8px;
     &::-webkit-scrollbar {
         width: 4px;
     }
@@ -51,6 +52,17 @@ const InnerContainer = styled.div`
         background: #ccc;
         border-radius: 4px;
     }
+    align-items: center;
+`;
+
+const AddButton = styled.button`
+    background-color: rgba(0, 102, 255, 0.6);
+    color: white;
+    font-size: 18px;
+    padding: 8px 16px;
+    width: fit-content;
+    border: none;
+    border-radius: 8px;
 `;
 
 export default PromptEditor;

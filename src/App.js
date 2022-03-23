@@ -1,6 +1,5 @@
 import './public/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "typeface-roboto";
 import axios from 'axios';
 
 import React, { useState, useReducer, useCallback } from 'react';
@@ -18,30 +17,40 @@ function App() {
         switch (action.type) {
             case 'create':
                 var { newText, depth } = action;
-                if(newSlots[depth] === undefined) {
-                    newSlots[depth] = [newText];
-                } else {
-                    newSlots[depth].push(newText);
-                }
+                newSlots.entries[depth].unshift(newText);
+                newSlots.path[depth] = 0;
                 return newSlots;
             case 'change':
                 var { changedText, depth, index } = action;
-                newSlots[depth][index] = changedText;
-                console.log(newSlots);
+                newSlots.entries[depth][index] = changedText;
                 return newSlots;
             case 'remove':
                 var { depth, index } = action;
-                newSlots[depth].splice(index, 1);
+                //TODO: check if path would be error
+                newSlots.entries[depth].splice(index, 1);
+                if(newSlots.entries[depth].length === 1) {
+                    newSlots.entries.splice(depth, 1);
+                    newSlots.path.splice(depth, 1);
+                } else if(newSlots.entries[depth].length <= newSlots.path[depth]) {
+                    newSlots.path[depth] = 0;
+                }
+                return newSlots;
+            case 'create-line':
+                newSlots.entries.push(['', null]);
+                newSlots.path.push(0)
+                console.log(newSlots);
+                return newSlots;
+            case 'change-path':
+                var { depth, index } = action;
+                newSlots.path[depth] = index;
                 return newSlots;
             default:
                 throw new Error();
         }
     }, []);
     const [slots, slotsDispatch] = useReducer(slotsReducer, 
-        [
-            ["Write a creative ad for the following product to run on Facebook aimed at parents:","Write a creative ad for the following product to run on Twitter aimed at parents:"],
-            ["Product: Learning Room is a virtual environment to help students from kindergarten to high school excel in school."],
-        ]
+        {entries: [['', null ]],
+        path: [0]}
     );
 
     const switchesReducer = useCallback((switches, action) => {
@@ -81,13 +90,21 @@ function App() {
         }
     }, []);
     const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0});
-
     const [isMeta, setIsMeta] = useState(false);
-    const [currPath, setCurrPath] = useState([0, 0]);
+    const [selected, setSelected] = useState({type: null})
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
             setIsMeta(true);
+        } else if(e.key === 'c' && isMeta) {
+            if(selected.type === 'slots') {
+                copySlots(selected.data, slots.path[selected.data]);
+            }
+        } else if(e.key === 'd' && isMeta) {
+            e.preventDefault();
+            if(selected.type === 'slots') {
+                removeSlot(selected.data, slots.path[selected.data]);
+            }
         }
     }
 
@@ -106,7 +123,8 @@ function App() {
     }
     
     function copySlots(depth, index) {
-        var newText = slots[depth][index];
+        var newText = slots.entries[depth][index];
+        setSelected({type: null})
         slotsDispatch({
             type: 'create',
             newText: newText,
@@ -119,17 +137,26 @@ function App() {
     }
 
     function changePath(depth, index) {
-        var copyPath = [...currPath];
-        copyPath[depth] = index;
-        setCurrPath(copyPath);
+        if(selected.type === 'slots') setSelected({type: null})
+        slotsDispatch({ type: 'change-path', depth, index})
+    }
+
+    function removeSlot(depth, index) {
+        setSelected({type: null});
+        slotsDispatch({ type: "remove", depth, index });
+    }
+
+    function addPromptLine() {
+        slotsDispatch({ type: 'create-line' });
     }
 
     return (
-        <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+        <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0">
             <PromptEditor
-                isMeta={isMeta} slots={slots} currPath={currPath}
+                isMeta={isMeta} slots={slots}
                 createSlots={createSlots} copySlots={copySlots} changeSlots={changeSlots}
-                changePath={changePath}
+                changePath={changePath} selected={selected} setSelected={setSelected}
+                addPromptLine={addPromptLine}
             />
         </div>
     );
