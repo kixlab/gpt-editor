@@ -1,9 +1,11 @@
 import './public/css/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import styled from "styled-components";
 
 import React, { useState, useReducer, useCallback } from 'react';
 import PromptEditor from './copywriting/PromptEditor';
+import Switches from './copywriting/Switches';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -49,8 +51,11 @@ function App() {
         }
     }, []);
     const [slots, slotsDispatch] = useReducer(slotsReducer, 
-        {entries: [['', null ]],
-        path: [0]}
+        {entries: [
+            ['Write a creative ad for the following product to run on Facebook aimed at parents:', 'Write a creative ad for the following product to run on Twitter aimed at parents:', null ],
+            ["Product: Learning Room is a virtual environment to help students from kindergarten to high school excel in school.", null]
+        ],
+        path: [0, 0]}
     );
 
     const switchesReducer = useCallback((switches, action) => {
@@ -89,7 +94,47 @@ function App() {
                 throw new Error();
         }
     }, []);
-    const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0});
+    const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0,
+        0: {
+            model: "GPT-3",
+            path: [0, 0],
+            color: "#71AAFF",
+            properties: {
+                engine: "davinci",
+                temperature: 0.7,
+                topP: 1,
+                frequencyPen: 0,
+                presencePen: 0,
+                bestOf: 1
+            }
+        },
+        1: {
+            model: "GPT-3",
+            path: [1, 0],
+            color: "#71AAFF",
+            properties: {
+                engine: "davinci",
+                temperature: 0.7,
+                topP: 1,
+                frequencyPen: 0,
+                presencePen: 0,
+                bestOf: 1
+            }
+        },
+        2: {
+            model: "GPT-3",
+            path: [1, 1],
+            color: "#71AAFF",
+            properties: {
+                engine: "davinci",
+                temperature: 0.7,
+                topP: 1,
+                frequencyPen: 0,
+                presencePen: 0,
+                bestOf: 1
+            }
+        }
+    });
     const [isMeta, setIsMeta] = useState(false);
     const [selected, setSelected] = useState({type: null})
 
@@ -150,16 +195,33 @@ function App() {
         slotsDispatch({ type: 'create-line' });
     }
 
+    function handleGenerate() {
+        console.log("GENERATE")
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0">
-            <PromptEditor
-                isMeta={isMeta} slots={slots}
-                createSlots={createSlots} copySlots={copySlots} changeSlots={changeSlots}
-                changePath={changePath} selected={selected} setSelected={setSelected}
-                addPromptLine={addPromptLine}
-            />
+            <LeftColumn>
+                <PromptEditor
+                    slots={slots}
+                    createSlots={createSlots} copySlots={copySlots} changeSlots={changeSlots}
+                    changePath={changePath} selected={selected} setSelected={setSelected}
+                    addPromptLine={addPromptLine}
+                />
+                <Switches
+                    slots={slots} switches={switches}
+                    selected={selected} setSelected={setSelected}
+                    handleGenerate={handleGenerate}
+                />
+            </LeftColumn>
         </div>
     );
 }
+
+const LeftColumn = styled.div`
+    width: calc(45% - 120px - 48px);
+    margin-left: 120px;
+    margin-top: 60px;
+`;
 
 export default App;

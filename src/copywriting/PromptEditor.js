@@ -7,7 +7,7 @@ function PromptEditor(props) {
     function handleLineChange(value, depth, index) {
         props.changeSlots(value, depth, index);
     }
-
+    
     return (
         <Container>
             <div style={{fontSize: "20px", marginBottom: "12px"}}>Prompt</div>
@@ -27,12 +27,10 @@ function PromptEditor(props) {
 }
 
 const Container = styled.div`
-    margin-left: 120px;
-    margin-top: 60px;
     padding: 32px;
     padding-right: 24px;
     background-color: #fff;
-    width: 30%;
+    width: 100%;
     border-radius: 20px;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     height: calc(100% - 92px - 64px - 128px);
