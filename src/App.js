@@ -75,9 +75,9 @@ function App() {
                     delete newSwitches[switchesToRemove[i]];
                 }
                 return newSwitches;
-            case 'attach-slot':
-                var { switchId, slotId } = action;
-                newSwitches[switchId].slot = slotId;
+            case 'attach-path':
+                var { switchId, path } = action;
+                newSwitches[switchId].path = path;
                 return newSwitches;
             case 'change':
                 var { switchId, property, value } = action;
@@ -208,6 +208,11 @@ function App() {
         console.log("GENERATE")
     }
 
+    function attachPath(switchId, path) {
+        console.log(switchId, path);
+        switchesDispatch({ type: 'attach-path', switchId, path})
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0">
             <LeftColumn>
@@ -223,6 +228,7 @@ function App() {
                     selected={selected} setSelected={setSelected}
                     handleGenerate={handleGenerate} setPath={setPath}
                     hoverPath={hoverPath} setHoverPath={setHoverPath}
+                    attachPath={attachPath}
                 />
             </LeftColumn>
         </div>

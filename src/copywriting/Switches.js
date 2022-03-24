@@ -6,10 +6,10 @@ const SWITCH_SIZE = 50;
 const SWITCH_PROPERTY_WIDTH = 160;
 
 function Switches(props) {
-    const [hoverSwitch, setHoverSwitch] = useState(null);
     const clickTimer = useRef(null);
     const containerRef = useRef(null);
     const [containerWidth, setContainerWidth] = useState(0);
+    const [dragging, setDragging] = useState(null);
 
     useLayoutEffect(() => {
         // I don't think it can be null at this point, but better safe than sorry
@@ -19,6 +19,7 @@ function Switches(props) {
     });
 
     function handleMouseEnter(e) {
+        if(dragging !== null) return;
         var hoverSwitch = e.target.getAttribute('data-id');
         props.setHoverPath(props.switches[hoverSwitch].path);
     }
@@ -54,6 +55,52 @@ function Switches(props) {
         }
     }
 
+    function handleMouseDown(e) {
+        const x = e.pageX;
+        const y = e.pageY;
+        const offsetX = 120;
+        const offsetY = containerRef.current.getBoundingClientRect().y;
+        var draggingObj = { type: e.target.getAttribute("data-type"), startX: x - offsetX, startY: y - offsetY };
+        if ([null].includes(draggingObj.type)) {
+            return;
+        } else {
+            draggingObj.data = e.target.getAttribute("data-id");
+        }
+        setDragging(draggingObj);
+    }
+
+    function handleMouseUp(e) {
+        if (dragging == null) return;
+
+        var dropObj = { type: e.target.getAttribute("data-type"), data: e.target.getAttribute("data-id") };
+        console.log(dropObj);
+
+        if ([null].includes(dropObj.type)) {
+            setDragging(null);
+            return;
+        } else if (dragging.type === 'appendage' && dropObj.type === 'switch'){
+            props.attachPath(parseInt(dropObj.data), props.slots.path);
+        } else if (dragging.type === "switch" && dropObj.type === "appendage") {
+            props.attachPath(parseInt(dragging.data), props.slots.path);
+        }
+        setDragging(null);
+    }
+
+    function handleMouseMove(e) {
+        if (dragging === null) return;
+        var newDragging = { ...dragging };
+        const x = e.pageX;
+        const y = e.pageY;
+        const offsetX = 120;
+        const offsetY = containerRef.current.getBoundingClientRect().y;
+        newDragging.endX = x - offsetX;
+        newDragging.endY = y - offsetY;
+
+        var distance = Math.sqrt(Math.pow(newDragging.endX - newDragging.startX, 2) + Math.pow(newDragging.endY - newDragging.startY, 2));
+        if (distance > 10)
+            setDragging(newDragging);
+    }
+
 
     function drawOneSwitch(switchId, switchIdx, numSwitches) {
         var currSwitch = props.switches[switchId];
@@ -63,9 +110,9 @@ function Switches(props) {
         var xPosition = startingPoint + switchIdx * (SWITCH_SIZE + SWITCH_X_SPACE);
         var yPosition = 128;
         var trianglePoints = [
-            [xPosition + SWITCH_SIZE / 2 - 10, yPosition - 6],
-            [xPosition + SWITCH_SIZE / 2, yPosition - 26],
-            [xPosition + SWITCH_SIZE / 2 + 10, yPosition - 6]
+            [xPosition, yPosition - 6],
+            [xPosition + 10, yPosition - 26],
+            [xPosition + 20, yPosition - 6]
         ]
         var pointsStr = trianglePoints.map((point) => point.join(',')).join(' ');
         var triangle = (
@@ -118,7 +165,7 @@ function Switches(props) {
         }
 
         return (
-            <>
+            <g key={switchId+"group"}>
             {connectorSvg}
             <g
                 key={switchId + "box"}
@@ -141,7 +188,7 @@ function Switches(props) {
                 />
                 {isSelected ? triangle : ""}
             </g>
-            </>
+            </g>
         )
     }
 
@@ -150,7 +197,7 @@ function Switches(props) {
         return (
             <>
                 <line x1={centerX} y1="0" x2={centerX} y2="55" stroke="#0066FF" strokeWidth="4px"/>
-                <circle cx={centerX} cy="64" r="10" fill="#0066FF" style={{cursor: "pointer"}}/>
+                <circle cx={centerX} cy="64" r="10" fill="#0066FF" style={{cursor: "pointer"}} data-type="appendage"/>
             </>
         )
     }
@@ -162,14 +209,36 @@ function Switches(props) {
         props.setSelected({type: null})
     }
 
+    var draggingSvg = "";
+    if (dragging && dragging.endX) {
+        draggingSvg = (
+            <g>
+                <line
+                    key="connection-line-h"
+                    x1={dragging.startX} y1={dragging.startY} stroke="#0066FF"
+                    x2={dragging.endX} y2={dragging.startY} strokeWidth="2"
+                />
+                <line
+                    key="connection-line-v"
+                    x1={dragging.endX} y1={dragging.startY} stroke="#0066FF"
+                    x2={dragging.endX} y2={dragging.endY} strokeWidth="2"
+                />
+            </g>
+        )
+    }
+
     return (
-        <SVGContainer ref={containerRef} onClick={handleCanvasClick}>
+        <SVGContainer ref={containerRef} 
+            onClick={handleCanvasClick} 
+            onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
+        >
             {filters}
-            {drawBulb()}
+            {draggingSvg}
             {switchesIdList.map(
                 (switchId, switchIdx) => 
                     drawOneSwitch(switchId, switchIdx, switchesIdList.length)
             )}
+            {drawBulb()}
         </SVGContainer>
     )
 }
