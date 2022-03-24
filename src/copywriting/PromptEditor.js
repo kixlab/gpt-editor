@@ -7,19 +7,34 @@ function PromptEditor(props) {
     function handleLineChange(value, depth, index) {
         props.changeSlots(value, depth, index);
     }
-    
+
+    var linesHTML = "";
+    if(props.hoverPath === null || props.slots.path.join(" ") === props.hoverPath.join(" ")) {
+        linesHTML = props.slots.path.map((index, depth) => (
+            <PromptLine 
+                key={`${depth}-${index}`} depth={depth} index={index}
+                value={props.slots.entries[depth][index]} slots={props.slots}
+                handleLineChange={handleLineChange} changePath={props.changePath}
+                selected={props.selected} setSelected={props.setSelected}
+            />
+        ))
+    } else {
+        linesHTML = props.hoverPath.map((index, depth) => (
+            <PromptLine 
+                key={`${depth}-${index}`} depth={depth} index={index}
+                value={props.slots.entries[depth][index]} slots={props.slots}
+                handleLineChange={handleLineChange} changePath={props.changePath}
+                selected={props.selected} setSelected={props.setSelected}
+                hoverPath={props.hoverPath} isHover={true}
+            />
+        ))
+    }
+
     return (
         <Container>
             <div style={{fontSize: "20px", marginBottom: "12px"}}>Prompt</div>
             <InnerContainer>
-                {props.slots.path.map((index, depth) => (
-                    <PromptLine 
-                        key={`${depth}-${index}`} depth={depth} index={index}
-                        value={props.slots.entries[depth][index]} slots={props.slots}
-                        handleLineChange={handleLineChange} changePath={props.changePath}
-                        selected={props.selected} setSelected={props.setSelected}
-                    />
-                ))}
+                {linesHTML}
                 <AddButton onClick={props.addPromptLine}>+ Add New</AddButton>
             </InnerContainer>
         </Container>

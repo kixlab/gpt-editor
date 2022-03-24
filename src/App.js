@@ -46,6 +46,10 @@ function App() {
                 var { depth, index } = action;
                 newSlots.path[depth] = index;
                 return newSlots;
+            case 'set-path':
+                var { path } = action;
+                newSlots.path = path;
+                return newSlots;
             default:
                 throw new Error();
         }
@@ -137,6 +141,7 @@ function App() {
     });
     const [isMeta, setIsMeta] = useState(false);
     const [selected, setSelected] = useState({type: null})
+    const [hoverPath, setHoverPath] = useState(null);
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -186,6 +191,10 @@ function App() {
         slotsDispatch({ type: 'change-path', depth, index})
     }
 
+    function setPath(path) {
+        slotsDispatch({ type: 'set-path', path})
+    }
+
     function removeSlot(depth, index) {
         setSelected({type: null});
         slotsDispatch({ type: "remove", depth, index });
@@ -207,11 +216,13 @@ function App() {
                     createSlots={createSlots} copySlots={copySlots} changeSlots={changeSlots}
                     changePath={changePath} selected={selected} setSelected={setSelected}
                     addPromptLine={addPromptLine}
+                    hoverPath={hoverPath}
                 />
                 <Switches
                     slots={slots} switches={switches}
                     selected={selected} setSelected={setSelected}
-                    handleGenerate={handleGenerate}
+                    handleGenerate={handleGenerate} setPath={setPath}
+                    hoverPath={hoverPath} setHoverPath={setHoverPath}
                 />
             </LeftColumn>
         </div>

@@ -20,11 +20,11 @@ function Switches(props) {
 
     function handleMouseEnter(e) {
         var hoverSwitch = e.target.getAttribute('data-id');
-        setHoverSwitch(hoverSwitch);
+        props.setHoverPath(props.switches[hoverSwitch].path);
     }
     
     function handleMouseLeave(e) {
-        setHoverSwitch(null);
+        props.setHoverPath(null);
         // TODO: make it so if hover on model it shows the corresponding slots on the top
     }
     
@@ -44,8 +44,10 @@ function Switches(props) {
                 clickTimer.current = null;
                 if(props.selected.type === 'switch' && props.selected.data === data)
                     props.setSelected({type: null})
-                else
+                else {
                     props.setSelected({type: "switch", data: data});
+                    props.setPath(props.switches[data].path);
+                }
                 break;
             default:
                 break;
@@ -101,7 +103,23 @@ function Switches(props) {
                 {currSwitch.model}
             </text>)
 
+        var connectorSvg = "";
+        var isPath = props.slots.path.join(" ") === currSwitch.path.join(" ");
+        var isHoverPath = props.hoverPath && props.hoverPath.join(" ") === currSwitch.path.join(" ");
+        if(isPath || isHoverPath) {
+            var centerCont = containerWidth / 2;
+            var centerSwitch = xPosition + SWITCH_SIZE/2;
+            connectorSvg = (
+                <g>
+                    <line x1={centerCont} y1="64" x2={centerSwitch} y2="64" stroke={isPath ? "#0066FF" : "#0066FF66" } strokeWidth="4px"/>
+                    <line x1={centerSwitch} y1="62" x2={centerSwitch} y2="128" stroke={isPath ? "#0066FF" : "#0066FF66"} strokeWidth="4px"/>
+                </g>
+            )
+        }
+
         return (
+            <>
+            {connectorSvg}
             <g
                 key={switchId + "box"}
                 onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
@@ -123,6 +141,7 @@ function Switches(props) {
                 />
                 {isSelected ? triangle : ""}
             </g>
+            </>
         )
     }
 
@@ -138,8 +157,13 @@ function Switches(props) {
 
     var switchesIdList = Object.keys(props.switches).filter((switchId) => switchId !== 'colorIndex');
 
+    function handleCanvasClick(e) {
+        if(e.target.tagName !== 'svg') return;
+        props.setSelected({type: null})
+    }
+
     return (
-        <SVGContainer ref={containerRef}>
+        <SVGContainer ref={containerRef} onClick={handleCanvasClick}>
             {filters}
             {drawBulb()}
             {switchesIdList.map(

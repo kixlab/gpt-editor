@@ -26,11 +26,12 @@ function PromptLine(props) {
 
     const buttonsHTML = [];
     for(var i = 0; i < props.slots.entries[props.depth].length; i++) {
+        var isOneHover = props.hoverPath && props.hoverPath[props.depth] === i;
         buttonsHTML.push(
             <Circle 
                 key={i} isSelected={i === props.slots.path[props.depth]}
                 data-index={i} isEmpty={props.slots.entries[props.depth][i] === null}
-                onClick={handleClickTray}
+                onClick={handleClickTray} isHover={isOneHover}
             />
         );
     }
@@ -45,12 +46,22 @@ function PromptLine(props) {
     }
 
     const isEmptyItem = props.value === null;
+
+
+    var textAreaStyle = {
+        width: "100%",
+        border: "none",
+        resize: "none",
+        padding: "0px",
+        color: props.isHover ? "#0066FF66" : "#333",
+    };
+
     return (
         <div style={{width: "100%"}}>
             <TextAreaCont 
                 onClick={handleClickContainer} 
                 isSelected={props.selected.type === 'slots' && props.selected.data === props.depth}
-                isEmptyItem={isEmptyItem}
+                isEmptyItem={isEmptyItem} isHover={props.isHover}
             >
                 {!isEmptyItem ? 
                     <TextareaAutosize 
@@ -72,10 +83,10 @@ const TextAreaCont = styled.div`
     width: 100%;
     padding: 8px 16px;
     border-radius: 4px;
-    border: solid ${(props) => props.isSelected ? "4px #00C2FF" : props.isEmptyItem ? "2px #ddd" : "2px #0066FF"};
+    border: solid ${(props) => props.isHover ? "2px #0066FF66" : props.isSelected ? "4px #00C2FF" : props.isEmptyItem ? "2px #ddd" : "2px #0066FF"};
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     background-color: "#fff";
-    color: ${(props) => props.isEmptyItem ? "#999" : "#333" };
+    color: ${(props) => props.isHover ? "#0066FF66" : props.isEmptyItem ? "#999" : "#333" };
     font-size: 18px;
     height: auto;
     display: flex;
@@ -83,13 +94,6 @@ const TextAreaCont = styled.div`
     align-items: center;
     justify-content: center;
 `;
-
-const textAreaStyle = {
-    width: "100%",
-    border: "none",
-    resize: "none",
-    padding: "0px"
-};
 
 const Tray = styled.div`
     display: flex;
@@ -103,8 +107,8 @@ const Circle = styled.div`
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    border: solid 3px ${props => props.isSelected ? "#0066FF" : "#ddd"};
-    background-color: ${props => props.isEmpty ? "#fff" : props.isSelected ? "#0066FF" : "#ddd"};
+    border: ${props => !props.isEmpty ? "none" : props.isSelected ? "solid 3px #0066FF" : props.isHover ? "solid 3px #0066FF66" : "solid 3px #ddd"};
+    background-color: ${props => props.isEmpty ? "#fff" : props.isSelected ? "#0066FF" : props.isHover ? "#0066FF66" : "#ddd"};
     cursor: pointer;
 `
 
