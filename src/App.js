@@ -6,6 +6,8 @@ import styled from "styled-components";
 import React, { useState, useReducer, useCallback } from 'react';
 import PromptEditor from './copywriting/PromptEditor';
 import Switches from './copywriting/Switches';
+import SwitchProperties from './copywriting/SwitchProperties';
+
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -212,16 +214,41 @@ function App() {
         });
     }
 
-    function handleGenerate() {
-        console.log("GENERATE")
+    function handleGenerate(switchId) {
+        var currSwitch = switches[switchId];
+        switchesDispatch({ type: 'loading', switchId: switchId, isLoading: true });
     }
 
     function attachPath(switchId, path) {
         switchesDispatch({ type: 'attach-path', switchId, path})
     }
 
+    function onPropertyChange(switchId, property, value) {
+        switch (property) {
+            case "temperature":
+            case "topP":
+                value = parseFloat(value);
+                if (isNaN(value) || value < 0 || value > 1) return;
+                break;
+            case "frequencyPen":
+            case "presencePen":
+                value = parseFloat(value);
+                if (isNaN(value) || value < 0 || value > 2) return;
+                break;
+            case "bestOf":
+                value = parseInt(value);
+                if (isNaN(value) || value < 1 || value > 20) return;
+                break;
+        }
+        switchesDispatch({ type: 'change', switchId, property, value });
+    }
+
+    function handleCanvasClick(e) {
+        setSelected({type: null});
+    }
+
     return (
-        <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0">
+        <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <LeftColumn>
                 <PromptEditor
                     slots={slots}
@@ -235,8 +262,15 @@ function App() {
                     selected={selected} setSelected={setSelected}
                     handleGenerate={handleGenerate} setPath={setPath}
                     hoverPath={hoverPath} setHoverPath={setHoverPath}
-                    attachPath={attachPath}
+                    attachPath={attachPath} onPropertyChange={onPropertyChange}
                 />
+                {selected && selected.isProperties ?
+                    <SwitchProperties
+                        switches={switches} switchId={selected.data}
+                        onPropertyChange={onPropertyChange}
+                    />
+                    : ""
+                }
             </LeftColumn>
         </div>
     );

@@ -21,6 +21,7 @@ function PromptLine(props) {
     }
 
     function handleClickTray(e) {
+        e.stopPropagation();
         props.changePath(props.depth, parseInt(e.target.getAttribute('data-index')))
     }
 
@@ -38,6 +39,7 @@ function PromptLine(props) {
 
     function handleClickContainer(e) {
         if(e.target.tagName === 'TEXTAREA' || props.value === null) return;
+        e.stopPropagation();
         props.setSelected(
             props.selected.type === 'slots' && props.selected.data === props.depth ? 
             {type: null} : 

@@ -2,7 +2,7 @@ import React, { useState, useRef, useLayoutEffect } from 'react';
 import styled from "styled-components";
 
 const SWITCH_X_SPACE = 16;
-const SWITCH_SIZE = 50;
+const SWITCH_SIZE = 64;
 const SWITCH_PROPERTY_WIDTH = 160;
 
 function Switches(props) {
@@ -31,14 +31,15 @@ function Switches(props) {
     }
     
     function handleClick(e) {
+        e.stopPropagation();
         let data = e.target.getAttribute("data-id");
-        if(e.target.tagName === "polygon") return;
         switch (e.detail) {
             case 1:
                 clickTimer.current = setTimeout(() => {
                     props.handleGenerate(data);
+                    props.setSelected({type: null});
                     clickTimer.current = null;
-                }, 150);
+                }, 200);
                 break;
             case 2:
                 if(clickTimer.current == null) return;
@@ -120,7 +121,10 @@ function Switches(props) {
             <polygon
                 data-id={switchId}
                 points={pointsStr} style={{ fill: currSwitch.color, cursor: "pointer" }}
-                onClick={(e) => props.showSwitchProperties({ x: e.pageX, y: e.pageY })}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    showSwitchProperties();
+                }}
             />
         );
 
@@ -135,7 +139,7 @@ function Switches(props) {
 
         var textOrLoadingSvg = currSwitch.isLoading ?
             (<g key={switchId + "-loading"}
-                transform={`translate(${xPosition + SWITCH_SIZE / 2 - 12.5}, ${yPosition + SWITCH_SIZE / 2 - 12.5}) scale(0.5)`}>
+                transform={`translate(${xPosition + SWITCH_SIZE / 2 - 17.5}, ${yPosition + SWITCH_SIZE / 2 - 17.5}) scale(0.7)`}>
                 <path
                     fill="#fff"
                     d="M25,5A20.14,20.14,0,0,1,45,22.88a2.51,2.51,0,0,0,2.49,2.26h0A2.52,2.52,0,0,0,50,22.33a25.14,25.14,0,0,0-50,0,2.52,2.52,0,0,0,2.5,2.81h0A2.51,2.51,0,0,0,5,22.88,20.14,20.14,0,0,1,25,5Z">
@@ -146,7 +150,7 @@ function Switches(props) {
                 key={switchId + "-text"}
                 x={xPosition + SWITCH_SIZE / 2} y={yPosition + SWITCH_SIZE / 2}
                 textAnchor="middle" alignmentBaseline="middle"
-                fontSize="14px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
+                fontSize="18px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
             >
                 {currSwitch.model}
             </text>)
@@ -205,11 +209,6 @@ function Switches(props) {
 
     var switchesIdList = Object.keys(props.switches).filter((switchId) => switchId !== 'colorIndex');
 
-    function handleCanvasClick(e) {
-        if(e.target.tagName !== 'svg') return;
-        props.setSelected({type: null})
-    }
-
     var draggingSvg = "";
     if (dragging && dragging.endX) {
         draggingSvg = (
@@ -228,9 +227,14 @@ function Switches(props) {
         )
     }
 
+    function showSwitchProperties() {
+        var copy = { ...props.selected };
+        copy.isProperties = true;
+        props.setSelected(copy);
+    }
+
     return (
         <SVGContainer ref={containerRef} 
-            onClick={handleCanvasClick} 
             onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}
         >
             {filters}

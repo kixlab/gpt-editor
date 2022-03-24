@@ -35,7 +35,12 @@ function PromptEditor(props) {
             <div style={{fontSize: "20px", marginBottom: "12px"}}>Prompt</div>
             <InnerContainer>
                 {linesHTML}
-                <AddButton onClick={props.addPromptLine}>+ Add New</AddButton>
+                <AddButton onClick={(e) => {
+                    e.stopPropagation();
+                    props.addPromptLine();
+                }}>
+                    + Add New
+                </AddButton>
             </InnerContainer>
         </Container>
     )
