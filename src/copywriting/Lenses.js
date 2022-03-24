@@ -60,7 +60,7 @@ function Lenses(props) {
                 <BigContent>
                     {currLens.generations.length === 0 ?
                         <div style={{color: "#ccc"}}>Get new suggestions by connecting prompts to generators and clicking on the generators...</div>:
-                        <GenerationList lens={currLens} switches={props.switches} />
+                        <GenerationList lens={currLens} switches={props.switches} copyGeneration={props.copyGeneration} />
                     } 
                 </BigContent>
             </BigLens>

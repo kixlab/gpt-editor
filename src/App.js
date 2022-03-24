@@ -284,8 +284,8 @@ function App() {
         setSelected({type: null});
     }
     
-    function changeText(text) {
-        setText(text);
+    function changeText(newText) {
+        setText(newText);
     }
 
     function changeLens(lensId, property, value) {
@@ -294,6 +294,10 @@ function App() {
 
     function changeLensType(lensId, typeIndex, newType) {
         lensesDispatch({ type: 'change-type', lensId, typeIndex, newType });
+    }
+
+    function copyGeneration(newText) {
+        setText(text + " " + newText);
     }
 
     return (
@@ -326,6 +330,7 @@ function App() {
                 <Lenses 
                     lenses={lenses} lensId={0} switches={switches}
                     changeLens={changeLens} changeLensType={changeLensType}
+                    copyGeneration={copyGeneration}
                 />
             </RightColumn>
         </div>
