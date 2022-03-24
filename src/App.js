@@ -85,10 +85,11 @@ function App() {
                 var { switchId, property, value } = action;
                 var currSwitch = newSwitches[switchId];
                 currSwitch.properties[property] = value;
-                if(currSwitch.color === '#71AAFF') {
+                if(!currSwitch.isChanged) {
                     var colorIndex = newSwitches['colorIndex']
                     currSwitch.color = colorWheel[colorIndex];
                     newSwitches['colorIndex'] = (colorIndex + 1) % colorWheel.length;
+                    currSwitch.isChanged = true;
                 }
                 return newSwitches;
             case 'loading':
@@ -105,6 +106,7 @@ function App() {
             model: "GPT-3",
             path: null,
             color: "#71AAFF",
+            isChanged: false,
             properties: {
                 engine: "davinci",
                 temperature: 0.7,
@@ -118,6 +120,7 @@ function App() {
             model: "GPT-3",
             path: [1, 0],
             color: "#71AAFF",
+            isChanged: false,
             properties: {
                 engine: "davinci",
                 temperature: 0.7,
@@ -131,6 +134,7 @@ function App() {
             model: "GPT-3",
             path: [1, 1],
             color: "#71AAFF",
+            isChanged: false,
             properties: {
                 engine: "davinci",
                 temperature: 0.7,
@@ -171,7 +175,7 @@ function App() {
     const [lenses, lensesDispatch] = useReducer(lensesReducer, {
         0: {
             types: ["list", "sentiment"],
-            generations: [...tempGenerations],
+            generations: [],
             generationLength: 4
         }
     });
@@ -187,12 +191,19 @@ function App() {
         } else if(e.key === 'c' && isMeta) {
             if(selected.type === 'slots') {
                 copySlots(selected.data, slots.path[selected.data]);
+            } else if(selected.type === 'switch') {
+                copySwitch(selected.data);
             }
         } else if(e.key === 'd' && isMeta) {
             e.preventDefault();
             if(selected.type === 'slots') {
                 removeSlot(selected.data, slots.path[selected.data]);
+            } else if(selected.type === 'switch') {
+                switchesDispatch({type: 'remove', switchesToRemove: [selected.data]});
             }
+        } else if(e.key === "g" && isMeta) {
+            e.preventDefault();
+            createSwitch();
         }
     }
 
@@ -251,9 +262,41 @@ function App() {
         });
     }
 
+    function textify() {
+        var result = "";
+        for(var i = 0; i < slots.path.length; i++) {
+            var index = slots.path[i];
+            var entry = slots.entries[i][index];
+            if(entry === null) continue;
+            result += entry + "\n\n";
+        }
+        return result;
+    }
+
     function handleGenerate(switchId) {
+        if (switches[switchId].isLoading) return;
+
         var currSwitch = switches[switchId];
         switchesDispatch({ type: 'loading', switchId: switchId, isLoading: true });
+        
+        var currSwitch = switches[switchId];
+        var currLens = lenses[0];
+        var data = { ...currSwitch.properties };
+        data.text = textify();
+
+        switchesDispatch({ type: 'loading', switchId, isLoading: true });
+
+        data.n = 3;
+        data.length = currLens.generationLength;
+        data.switchId = switchId;
+        data.existing = currLens.generations;
+        axios
+        .post(`http://localhost:5000/api/generate-length`, data)
+        .then((response) => {
+            var newGenerations = response.data;
+            lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
+            switchesDispatch({ type: 'loading', switchId, isLoading: false });
+        });
     }
 
     function attachPath(switchId, path) {
@@ -278,6 +321,49 @@ function App() {
                 break;
         }
         switchesDispatch({ type: 'change', switchId, property, value });
+    }
+
+    function createSwitch() {
+        var newSwitchId = "s" + generateId();
+        switchesDispatch({ 
+            type: 'create', switchId: newSwitchId,
+            newSwitch: {
+                model: "GPT-3",
+                path: null,
+                color: "#71AAFF",
+                isChanged: false,
+                properties: {
+                    engine: "davinci",
+                    temperature: 0.7,
+                    topP: 1,
+                    frequencyPen: 0,
+                    presencePen: 0,
+                    bestOf: 1
+                }
+            }
+        })
+    }
+
+    function copySwitch(switchId) {
+        var newSwitchId = "s" + generateId();
+        var toCopy = switches[switchId];
+        switchesDispatch({ 
+            type: 'create', switchId: newSwitchId,
+            newSwitch: {
+                model: toCopy.model,
+                path: toCopy.path,
+                color: toCopy.color,
+                isChanged: false,
+                properties: {
+                    engine: toCopy.properties.engine,
+                    temperature: toCopy.properties.temperature,
+                    topP: toCopy.properties.topP,
+                    frequencyPen: toCopy.properties.frequencyPen,
+                    presencePen: toCopy.properties.presencePen,
+                    bestOf: toCopy.properties.bestOf
+                }
+            }
+        })
     }
 
     function handleCanvasClick(e) {
@@ -316,6 +402,7 @@ function App() {
                     handleGenerate={handleGenerate} setPath={setPath}
                     hoverPath={hoverPath} setHoverPath={setHoverPath}
                     attachPath={attachPath} onPropertyChange={onPropertyChange}
+                    createSwitch={createSwitch}
                 />
                 {selected && selected.isProperties ?
                     <SwitchProperties

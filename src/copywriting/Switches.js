@@ -171,28 +171,28 @@ function Switches(props) {
 
         return (
             <g key={switchId+"group"}>
-            {connectorSvg}
-            <g
-                key={switchId + "box"}
-                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
-                onClick={handleClick}
-            >
-                <rect
-                    id={"switch-" + switchId}
-                    className="switch" x={xPosition} y={yPosition}
-                    width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
-                    fill={currSwitch.color}
-                />
-                {isSelected ? selectionRing : ""}
-                {textOrLoadingSvg}
-                <rect
-                    data-type="switch" data-id={switchId}
-                    x={xPosition - 4} y={yPosition - 4}
-                    width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
-                    fill="#00000000" style={{ cursor: "pointer" }}
-                />
-                {isSelected ? triangle : ""}
-            </g>
+                {connectorSvg}
+                <g
+                    key={switchId + "box"}
+                    onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+                    onClick={handleClick}
+                >
+                    <rect
+                        id={"switch-" + switchId}
+                        className="switch" x={xPosition} y={yPosition}
+                        width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
+                        fill={currSwitch.color}
+                    />
+                    {isSelected ? selectionRing : ""}
+                    {textOrLoadingSvg}
+                    <rect
+                        data-type="switch" data-id={switchId}
+                        x={xPosition - 4} y={yPosition - 4}
+                        width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
+                        fill="#00000000" style={{ cursor: "pointer" }}
+                    />
+                    {isSelected ? triangle : ""}
+                </g>
             </g>
         )
     }
@@ -206,8 +206,6 @@ function Switches(props) {
             </>
         )
     }
-
-    var switchesIdList = Object.keys(props.switches).filter((switchId) => switchId !== 'colorIndex');
 
     var draggingSvg = "";
     if (dragging && dragging.endX) {
@@ -232,6 +230,8 @@ function Switches(props) {
         copy.isProperties = true;
         props.setSelected(copy);
     }
+
+    var switchesIdList = Object.keys(props.switches).filter((switchId) => switchId !== 'colorIndex');
 
     return (
         <SVGContainer ref={containerRef} 

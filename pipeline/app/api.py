@@ -17,11 +17,11 @@ def findSentenceEnding(text, startIdx):
         idx += 1
     return idx
 
-def get_sentences(request):
+def get_sentences(request, length):
     response = openai.Completion.create(
         engine=request.json['engine'],
         prompt=request.json['text'],
-        max_tokens=40,
+        max_tokens=40*length,
         temperature=request.json['temperature'],
         top_p=request.json['topP'],
         frequency_penalty=request.json['frequencyPen'],
@@ -34,8 +34,9 @@ def get_sentences(request):
     for i in range(len(response.choices)):
         s = response.choices[i].text
         cropIdx = 0
-        endIdx = findSentenceEnding(s, cropIdx)
-        cropIdx = endIdx + 1
+        for j in range(length):
+            endIdx = findSentenceEnding(s, cropIdx)
+            cropIdx = endIdx + 1
         sentences.append(s[:cropIdx])
     
     return sentences
@@ -73,7 +74,7 @@ def create_api(model, tokenizer) -> Blueprint:
 
     @api.route('/api/generate-new', methods=['POST'])
     def generate():
-        sentences = get_sentences(request)
+        sentences = get_sentences(request, 1)
         existing = request.json['existing']
         combined = list(map(lambda entry: entry['text'], existing))+sentences
         embeddings, cossim = process_simcse(model, tokenizer, combined)
@@ -95,8 +96,30 @@ def create_api(model, tokenizer) -> Blueprint:
 
     @api.route('/api/generate-one', methods=['POST'])
     def generate_one():
-        sentences = get_sentences(request)
+        sentences = get_sentences(request, 1)
         return jsonify([{'text': sentences[0]}])
+
+    @api.route('/api/generate-length', methods=['POST'])
+    def generate_length():
+        sentences = get_sentences(request, request.json['length'])
+        existing = request.json['existing']
+        combined = list(map(lambda entry: entry['text'], existing))+sentences
+        embeddings, cossim = process_simcse(model, tokenizer, combined)
+        coord = draw_graph(combined, cossim)
+        result = []
+        for i in range(len(existing)):
+            result.append({
+                'switchId': existing[i]['switchId'],
+                'text': existing[i]['text'], 
+                'coordinates': {'x': coord[i][0], 'y': coord[i][1]
+            }})
+        for i in range(len(sentences)):
+            result.append({
+                'switchId': request.json['switchId'], 
+                'text': sentences[i], 
+                'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]
+            }})
+        return jsonify(result)
 
     return api
 
