@@ -1,0 +1,47 @@
+import React from 'react';
+import styled from "styled-components";
+
+function GenerationList(props) {
+    const generations = [];
+    for(let i = 0; i < props.lens.generations.length; i++) {
+        var entry = props.lens.generations[i];
+        var color = props.switches[entry.switchId] ? props.switches[entry.switchId].color : "#ccc";
+        generations.push(
+            <div key={i} style={{display: "flex", flexDirection: "row", gap: "8px"}}>
+                <Bar barColor={color}></Bar>
+                <TextContainer key={i} data-idx={i}>
+                    {entry.text}
+                </TextContainer>
+            </div>
+        )
+    }
+    return (
+        <Container>
+            {generations}
+        </Container>
+    );
+}
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+`;
+
+const Bar = styled.div`
+    height: inherit;
+    width: 6px;
+    background-color: ${props => props.barColor};
+    border-radius: 3px;
+`;
+
+const TextContainer = styled.div`
+    background-color: #fff;
+    border: solid 2px #ccc;
+    border-radius: 8px;
+    padding: 4px 8px;
+    width: calc(100% - 8px - 6px);
+    cursor: pointer;
+`;
+
+export default GenerationList;

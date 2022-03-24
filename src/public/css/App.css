@@ -95,6 +95,9 @@ svg text {
   transition: opacity .2s;
   cursor: pointer;
 }
+.slider:hover {
+  opacity: 1;
+}
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;

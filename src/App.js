@@ -7,7 +7,8 @@ import React, { useState, useReducer, useCallback } from 'react';
 import PromptEditor from './copywriting/PromptEditor';
 import Switches from './copywriting/Switches';
 import SwitchProperties from './copywriting/SwitchProperties';
-
+import TextEditor from './copywriting/TextEditor';
+import Lenses from './copywriting/Lenses';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -140,9 +141,45 @@ function App() {
             }
         }
     });
+
+    const lensesReducer = useCallback((lenses, action) => {
+        var newLenses = { ...lenses };
+        switch (action.type) {
+            case 'set-generations':
+                var { lensId, generations } = action;
+                if(newLenses[lensId] === undefined) return newLenses;
+                newLenses[lensId].generations = generations;
+                return newLenses;
+            case 'change':
+                var { lensId, property, value } = action;
+                var currLens = newLenses[lensId];
+                currLens[property] = value;
+                return newLenses;
+            case 'change-type':
+                var { lensId, typeIndex, newType } = action;
+                newLenses[lensId].types[typeIndex] = newType;
+                return newLenses;
+            default:
+                throw new Error();
+        }
+    })
+
+    var tempGenerations = [{text: "Looking for a way to help your child excel in school? Look no further than Learning Room! Our virtual environment is specifically designed to help students from kindergarten to high school succeed. Plus, it's convenient and easy to use - perfect for busy parents!", switchId: 0}, {text: "world", switchId: 1}]
+    tempGenerations = tempGenerations.concat(tempGenerations);
+    tempGenerations = tempGenerations.concat(tempGenerations);
+    tempGenerations = tempGenerations.concat(tempGenerations);
+    const [lenses, lensesDispatch] = useReducer(lensesReducer, {
+        0: {
+            types: ["list", "sentiment"],
+            generations: [...tempGenerations],
+            generationLength: 4
+        }
+    });
+
     const [isMeta, setIsMeta] = useState(false);
     const [selected, setSelected] = useState({type: null})
     const [hoverPath, setHoverPath] = useState(null);
+    const [text, setText] = useState("");
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -246,6 +283,18 @@ function App() {
     function handleCanvasClick(e) {
         setSelected({type: null});
     }
+    
+    function changeText(text) {
+        setText(text);
+    }
+
+    function changeLens(lensId, property, value) {
+        lensesDispatch({ type: 'change', lensId, property, value });
+    }
+
+    function changeLensType(lensId, typeIndex, newType) {
+        lensesDispatch({ type: 'change-type', lensId, typeIndex, newType });
+    }
 
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
@@ -272,13 +321,26 @@ function App() {
                     : ""
                 }
             </LeftColumn>
+            <RightColumn>
+                <TextEditor text={text} changeText={changeText} />
+                <Lenses 
+                    lenses={lenses} lensId={0} switches={switches}
+                    changeLens={changeLens} changeLensType={changeLensType}
+                />
+            </RightColumn>
         </div>
     );
 }
 
 const LeftColumn = styled.div`
-    width: calc(45% - 120px - 48px);
+    width: calc(45% - 120px - 30px);
     margin-left: 120px;
+    margin-top: 60px;
+`;
+
+const RightColumn = styled.div`
+    width: calc(55% - 120px - 30px);
+    margin-left: 60px;
     margin-top: 60px;
 `;
 
