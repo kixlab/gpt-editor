@@ -89,7 +89,7 @@ const TextAreaCont = styled.div`
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     background-color: "#fff";
     color: ${(props) => props.isHover ? "#0066FF66" : props.isEmptyItem ? "#999" : "#333" };
-    font-size: 18px;
+    font-size: 14px;
     height: auto;
     display: flex;
     cursor: ${(props) => props.isEmptyItem ? "auto" : "pointer"};

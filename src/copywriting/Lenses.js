@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import { ListButton, SpaceButton } from './SVG';
 import GenerationList from './GenerationList';
+import GenerationSpace from './GenerationSpace';
 
 function Lenses(props) {
     const currLens = props.lenses[props.lensId];
@@ -38,29 +39,31 @@ function Lenses(props) {
                     </LengthAdjust>
                     <Toggles>
                         <svg height="32" width="82">
-                            <g 
+                            <ListBtn 
                                 transform="scale(1.75)" 
-                                stroke={currLens.types[0] === 'list' ? "#0066FF" : "#ccc"}
-                                style={{cursor: "pointer"}} onClick={() => handleChangeType(0, "list")}
+                                onClick={() => handleChangeType(0, "list")}
+                                isList={currLens.types[0] === 'list'}
                             >
                                 {ListButton}
-                            </g>
+                            </ListBtn>
                             <line x1="40" y1="0" x2="40" y2="32" stroke="#ccc" strokeWidth="2"/>
-                            <g 
+                            <SpaceBtn
                                 transform={`translate(50, 0) scale(1.75)`} 
-                                stroke={currLens.types[0] === 'space' ? "#0066FF" : "#ccc"}
-                                fill={currLens.types[0] === 'space' ? "#0066FF" : "#ccc"}
-                                style={{cursor: "pointer"}} onClick={() => handleChangeType(0, "space")}
+                                onClick={() => handleChangeType(0, "space")}
+                                isSpace={currLens.types[0] === 'space'}
                             >
                                 {SpaceButton}
-                            </g>
+                            </SpaceBtn>
                         </svg>
                     </Toggles>
                 </BigHeader>
                 <BigContent>
                     {currLens.generations.length === 0 ?
-                        <div style={{color: "#ccc"}}>Get new suggestions by connecting prompts to generators and clicking on the generators...</div>:
-                        <GenerationList lens={currLens} switches={props.switches} copyGeneration={props.copyGeneration} />
+                        <div style={{color: "#ccc"}}>Get new suggestions by connecting prompts to generators and clicking on the generators...</div> :
+                        (currLens.types[0] === 'list' ?
+                            <GenerationList lens={currLens} switches={props.switches} copyGeneration={props.copyGeneration} /> :
+                            <GenerationSpace lens={currLens} switches={props.switches} copyGeneration={props.copyGeneration} />
+                        )
                     } 
                 </BigContent>
             </BigLens>
@@ -106,9 +109,27 @@ const LengthAdjust = styled.div`
 const Toggles = styled.div`
 `;
 
+const ListBtn = styled.g`
+    cursor: pointer;
+    stroke: ${props => props.isList ? "#0066FF" : "#ccc"};
+    &:hover {
+        stroke: ${props => props.isList ? "#0066FF" : "#0066FF66"};
+    }
+`;
+
+const SpaceBtn = styled.g`
+    cursor: pointer;
+    stroke: ${props => props.isSpace ? "#0066FF" : "#ccc"};
+    fill: ${props => props.isSpace ? "#0066FF" : "#ccc"};
+    &:hover {
+        stroke: ${props => props.isSpace ? "#0066FF" : "#0066FF66"};
+        fill: ${props => props.isSpace ? "#0066FF" : "#0066FF66"};
+    }
+`;
+
 const BigContent = styled.div`
-    margin: 0px 8px 0 16px;
-    padding-right: 8px;
+    margin: 0 0 0 16px;
+    padding-right: 16px;
     overflow-y: scroll;
     height: calc(100% - 32px - 16px);
     &::-webkit-scrollbar {

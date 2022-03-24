@@ -81,9 +81,9 @@ function Switches(props) {
             setDragging(null);
             return;
         } else if (dragging.type === 'appendage' && dropObj.type === 'switch'){
-            props.attachPath(parseInt(dropObj.data), props.slots.path);
+            props.attachPath(dropObj.data, props.slots.path);
         } else if (dragging.type === "switch" && dropObj.type === "appendage") {
-            props.attachPath(parseInt(dragging.data), props.slots.path);
+            props.attachPath(dragging.data, props.slots.path);
         }
         setDragging(null);
     }

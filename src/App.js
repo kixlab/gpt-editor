@@ -58,7 +58,7 @@ function App() {
     }, []);
     const [slots, slotsDispatch] = useReducer(slotsReducer, 
         {entries: [
-            ['Write a creative ad for the following product to run on Facebook aimed at parents:', 'Write a creative ad for the following product to run on Twitter aimed at parents:', null ],
+            ['Write a creative ad for the following product to run on Facebook aimed at parents:', null ],
             ["Product: Learning Room is a virtual environment to help students from kindergarten to high school excel in school.", null]
         ],
         path: [0, 0]}
@@ -101,50 +101,7 @@ function App() {
                 throw new Error();
         }
     }, []);
-    const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0,
-        0: {
-            model: "GPT-3",
-            path: null,
-            color: "#71AAFF",
-            isChanged: false,
-            properties: {
-                engine: "davinci",
-                temperature: 0.7,
-                topP: 1,
-                frequencyPen: 0,
-                presencePen: 0,
-                bestOf: 1
-            }
-        },
-        1: {
-            model: "GPT-3",
-            path: [1, 0],
-            color: "#71AAFF",
-            isChanged: false,
-            properties: {
-                engine: "davinci",
-                temperature: 0.7,
-                topP: 1,
-                frequencyPen: 0,
-                presencePen: 0,
-                bestOf: 1
-            }
-        },
-        2: {
-            model: "GPT-3",
-            path: [1, 1],
-            color: "#71AAFF",
-            isChanged: false,
-            properties: {
-                engine: "davinci",
-                temperature: 0.7,
-                topP: 1,
-                frequencyPen: 0,
-                presencePen: 0,
-                bestOf: 1
-            }
-        }
-    });
+    const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0});
 
     const lensesReducer = useCallback((lenses, action) => {
         var newLenses = { ...lenses };
@@ -168,10 +125,6 @@ function App() {
         }
     })
 
-    var tempGenerations = [{text: "Looking for a way to help your child excel in school? Look no further than Learning Room! Our virtual environment is specifically designed to help students from kindergarten to high school succeed. Plus, it's convenient and easy to use - perfect for busy parents!", switchId: 0}, {text: "world", switchId: 1}]
-    tempGenerations = tempGenerations.concat(tempGenerations);
-    tempGenerations = tempGenerations.concat(tempGenerations);
-    tempGenerations = tempGenerations.concat(tempGenerations);
     const [lenses, lensesDispatch] = useReducer(lensesReducer, {
         0: {
             types: ["list", "sentiment"],
@@ -274,7 +227,7 @@ function App() {
     }
 
     function handleGenerate(switchId) {
-        if (switches[switchId].isLoading) return;
+        if (switches[switchId].isLoading || switches[switchId].path === null) return;
 
         var currSwitch = switches[switchId];
         switchesDispatch({ type: 'loading', switchId: switchId, isLoading: true });
@@ -333,7 +286,7 @@ function App() {
                 color: "#71AAFF",
                 isChanged: false,
                 properties: {
-                    engine: "davinci",
+                    engine: "text-davinci-002",
                     temperature: 0.7,
                     topP: 1,
                     frequencyPen: 0,
@@ -425,13 +378,13 @@ function App() {
 }
 
 const LeftColumn = styled.div`
-    width: calc(45% - 120px - 30px);
+    width: calc(40% - 120px - 30px);
     margin-left: 120px;
     margin-top: 60px;
 `;
 
 const RightColumn = styled.div`
-    width: calc(55% - 120px - 30px);
+    width: calc(60% - 120px - 30px);
     margin-left: 60px;
     margin-top: 60px;
 `;
