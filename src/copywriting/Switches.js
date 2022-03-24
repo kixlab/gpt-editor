@@ -21,7 +21,8 @@ function Switches(props) {
     function handleMouseEnter(e) {
         if(dragging !== null) return;
         var hoverSwitch = e.target.getAttribute('data-id');
-        props.setHoverPath(props.switches[hoverSwitch].path);
+        if(props.switches[hoverSwitch].path)
+            props.setHoverPath(props.switches[hoverSwitch].path);
     }
     
     function handleMouseLeave(e) {
@@ -47,7 +48,8 @@ function Switches(props) {
                     props.setSelected({type: null})
                 else {
                     props.setSelected({type: "switch", data: data});
-                    props.setPath(props.switches[data].path);
+                    if(props.switches[data].path)
+                        props.setPath(props.switches[data].path);
                 }
                 break;
             default:
@@ -73,7 +75,6 @@ function Switches(props) {
         if (dragging == null) return;
 
         var dropObj = { type: e.target.getAttribute("data-type"), data: e.target.getAttribute("data-id") };
-        console.log(dropObj);
 
         if ([null].includes(dropObj.type)) {
             setDragging(null);
@@ -151,8 +152,8 @@ function Switches(props) {
             </text>)
 
         var connectorSvg = "";
-        var isPath = props.slots.path.join(" ") === currSwitch.path.join(" ");
-        var isHoverPath = props.hoverPath && props.hoverPath.join(" ") === currSwitch.path.join(" ");
+        var isPath = currSwitch.path && props.slots.path.join(" ") === currSwitch.path.join(" ");
+        var isHoverPath = currSwitch.path && props.hoverPath && props.hoverPath.join(" ") === currSwitch.path.join(" ");
         if(isPath || isHoverPath) {
             var centerCont = containerWidth / 2;
             var centerSwitch = xPosition + SWITCH_SIZE/2;

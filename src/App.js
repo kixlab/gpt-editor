@@ -39,8 +39,7 @@ function App() {
                 return newSlots;
             case 'create-line':
                 newSlots.entries.push(['', null]);
-                newSlots.path.push(0)
-                console.log(newSlots);
+                newSlots.path.push(0);
                 return newSlots;
             case 'change-path':
                 var { depth, index } = action;
@@ -101,7 +100,7 @@ function App() {
     const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0,
         0: {
             model: "GPT-3",
-            path: [0, 0],
+            path: null,
             color: "#71AAFF",
             properties: {
                 engine: "davinci",
@@ -198,10 +197,19 @@ function App() {
     function removeSlot(depth, index) {
         setSelected({type: null});
         slotsDispatch({ type: "remove", depth, index });
+        var switchIds = Object.keys(switches).filter(id => id !== 'colorIndex');
+        switchIds.forEach(id => {
+            if(switches[id].path && switches[id].path[depth] === index)
+                switchesDispatch({ type: 'attach-path', switchId: id, path: null});
+        });
     }
 
     function addPromptLine() {
         slotsDispatch({ type: 'create-line' });
+        var switchIds = Object.keys(switches).filter(id => id !== 'colorIndex');
+        switchIds.forEach(id => {
+            switchesDispatch({ type: 'attach-path', switchId: id, path: switches[id].path ? [...switches[id].path, 1] : null});
+        });
     }
 
     function handleGenerate() {
@@ -209,7 +217,6 @@ function App() {
     }
 
     function attachPath(switchId, path) {
-        console.log(switchId, path);
         switchesDispatch({ type: 'attach-path', switchId, path})
     }
 
