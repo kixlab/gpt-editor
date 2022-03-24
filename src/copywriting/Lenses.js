@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from "styled-components";
 
-import { ListButton, SpaceButton } from './SVG';
+import { NewListButton, NewSpaceButton, SentimentButton, EmotionButton } from './SVG';
 import GenerationList from './GenerationList';
 import GenerationSpace from './GenerationSpace';
+import GenerationRatings from './GenerationRatings';
 
 function Lenses(props) {
     const currLens = props.lenses[props.lensId];
@@ -40,19 +41,18 @@ function Lenses(props) {
                     <Toggles>
                         <svg height="32" width="82">
                             <ListBtn 
-                                transform="scale(1.75)" 
                                 onClick={() => handleChangeType(0, "list")}
                                 isList={currLens.types[0] === 'list'}
                             >
-                                {ListButton}
+                                {NewListButton}
                             </ListBtn>
-                            <line x1="40" y1="0" x2="40" y2="32" stroke="#ccc" strokeWidth="2"/>
+                            <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
                             <SpaceBtn
-                                transform={`translate(50, 0) scale(1.75)`} 
+                                transform={`translate(50, 0)`} 
                                 onClick={() => handleChangeType(0, "space")}
                                 isSpace={currLens.types[0] === 'space'}
                             >
-                                {SpaceButton}
+                                {NewSpaceButton}
                             </SpaceBtn>
                         </svg>
                     </Toggles>
@@ -69,7 +69,25 @@ function Lenses(props) {
             </BigLens>
             <Line></Line>
             <SmallLens>
-
+                <Toggles>
+                    <svg height="32" width="82">
+                        <SentimentBtn 
+                            onClick={() => handleChangeType(1, "sentiment")}
+                            isSentiment={currLens.types[1] === 'sentiment'}
+                        >
+                            {SentimentButton}
+                        </SentimentBtn>
+                        <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
+                        <EmotionBtn
+                            transform={`translate(50, 0)`} 
+                            onClick={() => handleChangeType(1, "emotion")}
+                            isEmotion={currLens.types[1] === 'emotion'}
+                        >
+                            {EmotionButton}
+                        </EmotionBtn>
+                    </svg>
+                </Toggles>
+                <GenerationRatings lens={currLens} type={currLens.types[1]}/>
             </SmallLens>
         </LensContainer>
     )
@@ -112,8 +130,10 @@ const Toggles = styled.div`
 const ListBtn = styled.g`
     cursor: pointer;
     stroke: ${props => props.isList ? "#0066FF" : "#ccc"};
+    fill: ${props => props.isList ? "#0066FF" : "#ccc"};
     &:hover {
         stroke: ${props => props.isList ? "#0066FF" : "#0066FF66"};
+        fill: ${props => props.isList ? "#0066FF" : "#ccc"};
     }
 `;
 
@@ -126,6 +146,28 @@ const SpaceBtn = styled.g`
         fill: ${props => props.isSpace ? "#0066FF" : "#0066FF66"};
     }
 `;
+
+const EmotionBtn = styled.g`
+    cursor: pointer;
+    stroke: ${props => props.isEmotion ? "#0066FF" : "#ccc"};
+    fill: ${props => props.isEmotion ? "#0066FF" : "#ccc"};
+    &:hover {
+        stroke: ${props => props.isEmotion ? "#0066FF" : "#0066FF66"};
+        fill: ${props => props.isEmotion ? "#0066FF" : "#0066FF66"};
+    }
+`;
+
+const SentimentBtn = styled.g`
+    cursor: pointer;
+    stroke: ${props => props.isSentiment ? "#0066FF" : "#ccc"};
+    fill: ${props => props.isSentiment ? "#0066FF" : "#ccc"};
+    &:hover {
+        stroke: ${props => props.isSentiment ? "#0066FF" : "#0066FF66"};
+        fill: ${props => props.isSentiment ? "#0066FF" : "#0066FF66"};
+    }
+`;
+
+
 
 const BigContent = styled.div`
     margin: 0 0 0 16px;
@@ -162,6 +204,7 @@ const SmallLens = styled.div`
     border: solid 2px #0066FF;
     border-radius: 20px;
     box-shadow: 0 8px 8px rgba(0, 0, 0, 0.25);
+    padding: 16px;
 `;
 
 const Line = styled.div`
