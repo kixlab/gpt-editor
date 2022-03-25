@@ -6,6 +6,8 @@ import torch
 from scipy.spatial.distance import cdist
 import json
 import random
+import numpy as np
+from scipy.special import softmax
 
 openai.api_key = os.getenv("OPEN_API_KEY")
 
@@ -70,24 +72,18 @@ def draw_graph(sentences, cossim):
     
     return coord
 
-def get_sentiment(sentences):
-    res = []
-    for s in sentences:
-        pct = random.randrange(0, 100, 5)
-        pct2 = random.randrange(0, 100 - pct, 5)
-        res.append([pct, pct2, 100 - pct - pct2])
-    return res
+def get_classification(sentences, model, tokenizer):
+    inputs = tokenizer(sentences, padding=True, truncation=True, return_tensors="pt")
 
-def get_emotion(sentences):
-    res = []
-    for s in sentences:
-        pct = random.randrange(0, 100, 5)
-        pct2 = random.randrange(0, 100 - pct, 5)
-        pct3 = random.randrange(0, 100 - pct - pct2, 5)
-        res.append([pct, pct2, pct3, 100 - pct - pct2 - pct3])
-    return res
+    # Get the embeddings
+    with torch.no_grad():
+        output = model(**inputs)
+    scores = output.logits.numpy()
+    scores = softmax(scores, axis=1)
 
-def create_api(model, tokenizer) -> Blueprint:
+    return scores
+
+def create_api(sst, sentiment, emotion) -> Blueprint:
     api = Blueprint('api', __name__)
 
     @api.route('/api/generate-new', methods=['POST'])
@@ -95,7 +91,7 @@ def create_api(model, tokenizer) -> Blueprint:
         sentences = get_sentences(request, 1)
         existing = request.json['existing']
         combined = list(map(lambda entry: entry['text'], existing))+sentences
-        embeddings, cossim = process_simcse(model, tokenizer, combined)
+        embeddings, cossim = process_simcse(sst.model, sst.tokenizer, combined)
         coord = draw_graph(combined, cossim)
         result = []
         for i in range(len(existing)):
@@ -117,18 +113,16 @@ def create_api(model, tokenizer) -> Blueprint:
         sentences = get_sentences(request, 1)
         return jsonify([{'text': sentences[0]}])
 
-
-
     @api.route('/api/generate-length', methods=['POST'])
     def generate_length():
         sentences = get_sentences(request, request.json['length'])
         existing = request.json['existing']
 
-        sentiments = get_sentiment(sentences)
-        emotions = get_emotion(sentences)
+        sentiments = get_classification(sentences, sentiment.model, sentiment.tokenizer)
+        emotions = get_classification(sentences, emotion.model, emotion.tokenizer)
 
         combined = list(map(lambda entry: entry['text'], existing))+sentences
-        embeddings, cossim = process_simcse(model, tokenizer, combined)
+        embeddings, cossim = process_simcse(sst.model, sst.tokenizer, combined)
         coord = draw_graph(combined, cossim)
 
         result = []
@@ -145,8 +139,8 @@ def create_api(model, tokenizer) -> Blueprint:
                 'switchId': request.json['switchId'], 
                 'text': sentences[i], 
                 'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
-                "sentiment": sentiments[i],
-                "emotion": emotions[i]
+                "sentiment": np.around(sentiments[i] * 100).tolist(),
+                "emotion": np.around(emotions[i] * 100).tolist()
             })
         return jsonify(result)
 

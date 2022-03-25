@@ -78,8 +78,8 @@ const Rating = (props) => {
     }
 
     function handleMouseEnter() {
-        props.setHoverGen(props.genIdx);
         setIsHover(true);
+        props.setHoverGen(props.genIdx);
     }
 
     function handleMouseLeave() {
@@ -90,9 +90,11 @@ const Rating = (props) => {
     return (
         <div 
             ref={ratingRef} style={{padding: "60px 0"}} 
-            onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
         >
-            <svg width={RATING_SIZE} height={RATING_SIZE} style={{cursor: "pointer"}}>
+            <svg 
+                width={RATING_SIZE} height={RATING_SIZE} style={{cursor: "pointer"}}
+                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+            >
                 <g>
                     {circles}
                 </g>

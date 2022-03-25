@@ -129,7 +129,7 @@ function App() {
         0: {
             types: ["list", "sentiment"],
             generations: [],
-            generationLength: 4
+            generationLength: 3
         }
     });
 
@@ -202,8 +202,13 @@ function App() {
         slotsDispatch({ type: "remove", depth, index });
         var switchIds = Object.keys(switches).filter(id => id !== 'colorIndex');
         switchIds.forEach(id => {
-            if(switches[id].path && switches[id].path[depth] === index)
+            if(switches[id].path && switches[id].path[depth] === index) {
                 switchesDispatch({ type: 'attach-path', switchId: id, path: null});
+            } else if(slots.entries[depth].length == 2 && switches[id].path[depth] === 1) {
+                var newPath = switches[id].path.slice();
+                newPath.splice(depth, 1);
+                switchesDispatch({type: 'attach-path', switchId: id, path: newPath});
+            }
         });
     }
 
