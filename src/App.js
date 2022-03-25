@@ -4,11 +4,8 @@ import axios from 'axios';
 import styled from "styled-components";
 
 import React, { useState, useReducer, useCallback } from 'react';
-import PromptEditor from './copywriting/PromptEditor';
-import Switches from './copywriting/Switches';
-import SwitchProperties from './copywriting/SwitchProperties';
-import TextEditor from './copywriting/TextEditor';
-import Lenses from './copywriting/Lenses';
+
+import TextEditor from './emailing/TextEditor';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -350,36 +347,10 @@ function App() {
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <LeftColumn>
-                <PromptEditor
-                    slots={slots}
-                    createSlots={createSlots} copySlots={copySlots} changeSlots={changeSlots}
-                    changePath={changePath} selected={selected} setSelected={setSelected}
-                    addPromptLine={addPromptLine}
-                    hoverPath={hoverPath}
-                />
-                <Switches
-                    slots={slots} switches={switches}
-                    selected={selected} setSelected={setSelected}
-                    handleGenerate={handleGenerate} setPath={setPath}
-                    hoverPath={hoverPath} setHoverPath={setHoverPath}
-                    attachPath={attachPath} onPropertyChange={onPropertyChange}
-                    createSwitch={createSwitch}
-                />
-                {selected && selected.isProperties ?
-                    <SwitchProperties
-                        switches={switches} switchId={selected.data}
-                        onPropertyChange={onPropertyChange}
-                    />
-                    : ""
-                }
+                <TextEditor text={text} changeText={changeText} />
             </LeftColumn>
             <RightColumn>
-                <TextEditor text={text} changeText={changeText} />
-                <Lenses 
-                    lenses={lenses} lensId={0} switches={switches}
-                    changeLens={changeLens} changeLensType={changeLensType}
-                    copyGeneration={copyGeneration}
-                />
+
             </RightColumn>
         </div>
     );
