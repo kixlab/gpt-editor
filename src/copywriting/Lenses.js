@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
 
 import { NewListButton, NewSpaceButton, SentimentButton, EmotionButton } from './SVG';
@@ -8,6 +8,8 @@ import GenerationRatings from './GenerationRatings';
 
 function Lenses(props) {
     const currLens = props.lenses[props.lensId];
+
+    const [hoverGen, setHoverGen] = useState(null);
 
     function handleChange(e) {
         var val = parseInt(e.target.value);
@@ -61,8 +63,14 @@ function Lenses(props) {
                     {currLens.generations.length === 0 ?
                         <div style={{color: "#ccc"}}>Get new suggestions by connecting prompts to generators and clicking on the generators...</div> :
                         (currLens.types[0] === 'list' ?
-                            <GenerationList lens={currLens} switches={props.switches} copyGeneration={props.copyGeneration} /> :
-                            <GenerationSpace lens={currLens} switches={props.switches} copyGeneration={props.copyGeneration} />
+                            <GenerationList 
+                                lens={currLens} switches={props.switches} 
+                                copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
+                            /> :
+                            <GenerationSpace 
+                                lens={currLens} switches={props.switches} 
+                                copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
+                            />
                         )
                     } 
                 </BigContent>
@@ -87,7 +95,10 @@ function Lenses(props) {
                         </EmotionBtn>
                     </svg>
                 </Toggles>
-                <GenerationRatings lens={currLens} type={currLens.types[1]}/>
+                <GenerationRatings 
+                    lens={currLens} type={currLens.types[1]}
+                    hoverGen={hoverGen} setHoverGen={setHoverGen}
+                />
             </SmallLens>
         </LensContainer>
     )

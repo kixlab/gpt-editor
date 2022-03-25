@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const RATING_SIZE = 60;
+const RATING_SIZE = 60 + 12;
 const CIRCLE_RADIUS = 24;
 
 function cleanPercentage(percentage) {
@@ -41,28 +41,64 @@ const Text = ({ percentage, color }) => {
     );
 };
 
-const Rating = ({ percentages, colors }) => {
+const Rating = (props) => {
+    const ratingRef = useRef(null);
+    const [isHover, setIsHover] = useState(false);
+
+    useEffect(() => {
+        if(isHover) return;
+        if(props.hoverGen === props.genIdx)
+            ratingRef.current.scrollIntoView({ behavior: "smooth" });
+    }, [props.hoverGen]);
+
     var circles = [];
     var totalPercentage = 0;
     var maxPercentage = 0;
     var maxColor = "#fff";
-    for(var i = 0; i < percentages.length; i++) {
-        var pct = cleanPercentage(percentages[i]);
-        circles.unshift(<Circle color={colors[i]} percentage={pct} prevPercentage={totalPercentage} />);
+    for(var i = 0; i < props.percentages.length; i++) {
+        var pct = cleanPercentage(props.percentages[i]);
+        circles.unshift(<Circle color={props.colors[i]} percentage={pct} prevPercentage={totalPercentage} />);
         totalPercentage += pct;
         if(pct > maxPercentage) {
             maxPercentage = pct;
-            maxColor = colors[i];
+            maxColor = props.colors[i];
         }
+    }
+    if(props.hoverGen === props.genIdx) {
+        circles.unshift(
+            <circle 
+                r={CIRCLE_RADIUS + 8}
+                cx={RATING_SIZE/2}
+                cy={RATING_SIZE/2}
+                fill="#fff"
+                stroke={"#0066FF"}
+                strokeWidth={"3px"}
+            />
+        )
+    }
+
+    function handleMouseEnter() {
+        props.setHoverGen(props.genIdx);
+        setIsHover(true);
+    }
+
+    function handleMouseLeave() {
+        props.setHoverGen(null);
+        setIsHover(false);
     }
 
     return (
-        <svg width={RATING_SIZE} height={RATING_SIZE}>
-            <g>
-                {circles}
-            </g>
-            <Text percentage={maxPercentage} color={maxColor} />
-        </svg>
+        <div 
+            ref={ratingRef} style={{padding: "60px 0"}} 
+            onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+        >
+            <svg width={RATING_SIZE} height={RATING_SIZE} style={{cursor: "pointer"}}>
+                <g>
+                    {circles}
+                </g>
+                <Text percentage={maxPercentage} color={maxColor} />
+            </svg>
+        </div>
     );
 };
 

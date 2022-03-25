@@ -12,7 +12,7 @@ function GenerationRatings(props) {
         var entry = props.lens.generations[i];
         ratingsHTML.push(
             <Rating
-                key={i} style={{height: document.getElementById("hey").height}}
+                key={i} genIdx={i} hoverGen={props.hoverGen} setHoverGen={props.setHoverGen}
                 percentages={props.type === 'sentiment' ? entry.sentiment : entry.emotion}
                 colors={props.type === 'sentiment' ? SENTIMENT_COLORS : EMOTION_COLORS}
             />
@@ -29,6 +29,15 @@ const RatingsContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: calc(100% - 32px);
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+    }
 `;
 
 

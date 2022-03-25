@@ -4,7 +4,6 @@ import styled from "styled-components";
 function GenerationSpace(props) {
     const containerRef = useRef(null);
     const [containerDims, setContainerDims] = useState([0, 0]);
-    const [spaceHover, setSpaceHover] = useState(null);
 
     useLayoutEffect(() => {
         // I don't think it can be null at this point, but better safe than sorry
@@ -29,22 +28,18 @@ function GenerationSpace(props) {
         return [xNew, yNew];
     }
 
-    function handleSpaceHover(e, isHover) {
-        if(isHover) {
-            var text = e.target.getAttribute('data-text');
-            setSpaceHover({
-                text: text, 
-                x: parseInt(e.target.getAttribute('data-x')), 
-                y: parseInt(e.target.getAttribute('data-y'))
-            });
-        } else {
-            setSpaceHover(null);
-        }
-    }
-
     function handleItemClick(e) {
         var index = parseInt(e.target.getAttribute("data-idx"));
         props.copyGeneration(props.lens.generations[index].text);
+    }
+
+    function handleMouseEnter(e) {
+        var index = parseInt(e.target.getAttribute("data-idx"));
+        props.setHoverGen(index);
+    }
+
+    function handleMouseLeave(e) {
+        props.setHoverGen(null);
     }
 
     var xRange = [1000000, -1000000];
@@ -64,12 +59,12 @@ function GenerationSpace(props) {
         var [x, y] = translateCoordinates(generation.coordinates, xRange, yRange);
         pointsSvg.push(
             <circle
-                key={i} cx={x} cy={y} r="6" style={{cursor: "pointer"}}
+                key={i} cx={x} cy={y} r={props.hoverGen === i ? "12" : "6"} style={{cursor: "pointer"}}
                 fill={props.switches[generation.switchId].color} 
-                stroke="#fff" strokeWidth="1" data-text={generation.text} data-x={x} data-y={y}
+                stroke={props.hoverGen === i ? "#0066FF" : "#fff"} strokeWidth={props.hoverGen === i ? "3" : "1"}
+                data-text={generation.text} data-x={x} data-y={y}
                 data-idx={i} onClick={handleItemClick}
-                onMouseEnter={(e) => handleSpaceHover(e, true)} 
-                onMouseLeave={(e) => handleSpaceHover(e, false)}
+                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
             />
         )
     }
@@ -83,7 +78,7 @@ function GenerationSpace(props) {
                 >
                     <HoverText>
                         <div>
-                            {spaceHover ? spaceHover.text : ''}
+                            {props.hoverGen !== null ? props.lens.generations[props.hoverGen].text : ""}
                         </div>
                     </HoverText>
                 </foreignObject>
@@ -104,7 +99,7 @@ const HoverText = styled.div`
     width: 100%;
     align-items: center;
     padding: 8px;
-    color: #0066ff88;
+    color: #0066ff99;
     -webkit-user-select: none; /* Safari */        
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */

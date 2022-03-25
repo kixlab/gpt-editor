@@ -247,6 +247,9 @@ function App() {
         .post(`http://localhost:5000/api/generate-length`, data)
         .then((response) => {
             var newGenerations = response.data;
+            newGenerations = newGenerations.map(generation => {
+                return {...generation, text: generation.text.trim()}
+            })
             lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
             switchesDispatch({ type: 'loading', switchId, isLoading: false });
         });

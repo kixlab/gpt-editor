@@ -179,9 +179,10 @@ function Switches(props) {
                 >
                     <rect
                         id={"switch-" + switchId}
-                        className="switch" x={xPosition} y={yPosition}
+                        className={currSwitch.path !== null ? "switch" : "switch-inactive"} 
+                        x={xPosition} y={yPosition}
                         width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
-                        fill={currSwitch.color}
+                        fill={currSwitch.color + (currSwitch.path !== null ? "FF" : "88")}
                     />
                     {isSelected ? selectionRing : ""}
                     {textOrLoadingSvg}
@@ -189,7 +190,7 @@ function Switches(props) {
                         data-type="switch" data-id={switchId}
                         x={xPosition - 4} y={yPosition - 4}
                         width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
-                        fill="#00000000" style={{ cursor: "pointer" }}
+                        fill="#00000000" style={currSwitch.path !== null ?{ cursor: "pointer" } : {}}
                     />
                     {isSelected ? triangle : ""}
                 </g>
