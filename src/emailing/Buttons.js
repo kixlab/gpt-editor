@@ -139,7 +139,7 @@ function Buttons(props) {
                         width={BUTTON_SIZE + 8} height={BUTTON_SIZE + 8}
                         fill="#00000000" style={{ cursor: "pointer" }}
                     />
-                    {hoverButton && hoverButton === buttonId ? triangle : ""}
+                    {(hoverButton && hoverButton === buttonId) || (buttonId !== -1 && currButton.isExpanded) ? triangle : ""}
                 </g>
             </g>
         )

@@ -252,6 +252,16 @@ function App() {
     }
 
     function expandButton(buttonId, isExpanded) {
+        if(isExpanded) {
+            for(var i = 0; i < Object.keys(buttons).length; i++){
+                var otherId = Object.keys(buttons)[i];
+                var button = buttons[otherId];
+                if(button.isExpanded) {
+                    buttonsDispatch({type: 'change-toggle', buttonId: otherId, property: 'isExpanded', value: false});
+                    break;
+                }
+            }
+        }
         buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isExpanded', value: isExpanded});
     }   
 
