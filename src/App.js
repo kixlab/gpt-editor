@@ -320,11 +320,20 @@ function App() {
         setSelected({type: null});
     }
 
+    function handleGenerate(buttonId) {
+        console.log(buttonId);
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <Container>
                 <TextEditor text={text} setText={setText} />
-                <Buttons buttons={buttons} slots={slots} switches={switches} lenses={lenses}/>
+                <Buttons 
+                    buttons={buttons} slots={slots} switches={switches} lenses={lenses}
+                    createButton={createButton} expandButton={expandButton}
+                    handleGenerate={handleGenerate}
+                    selected={selected} setSelected={setSelected}
+                />
             </Container>
         </div>
     );
