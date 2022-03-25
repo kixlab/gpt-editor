@@ -11,19 +11,19 @@ function TextEditor(props) {
 
     function handleChange(e) {
         setCurrValue(e.target.value);
-        props.changeText(e.target.value);
+        props.setText(e.target.value);
     }
 
     return (
-        <Editor placeholder="Start typing or add a generations from below..." value={currValue} onChange={handleChange}/>
+        <Editor placeholder="Type your email's content..." value={currValue} onChange={handleChange}/>
     )
 }
 
 const Editor = styled.textarea`
-    width: 100%;
-    height: calc(45% - 60px - 30px);
-    margin-bottom: 30px;
+    width: 40%;
+    height: calc(100% - 240px);
     padding: 32px;
+    margin: 120px 0;
     color: #333;
     font-size: 18px;
     outline: none !important;

@@ -6,6 +6,7 @@ import styled from "styled-components";
 import React, { useState, useReducer, useCallback } from 'react';
 
 import TextEditor from './emailing/TextEditor';
+import Buttons from './emailing/Buttons';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -14,52 +15,94 @@ function generateId() {
 const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
 
 function App() {
+    const buttonsReducer = useCallback((buttons, action) => {
+        var newButtons = JSON.parse(JSON.stringify(buttons));
+        switch (action.type) {
+            case 'create':
+                var { buttonId, newButton } = action;
+                newButtons[buttonId] = newButton;
+                return newButtons
+            case 'remove':
+                var { buttonId } = action;
+                delete newButtons[buttonId];
+                return newButtons
+            case 'add-slot':
+                var { buttonId, slotId, index } = action;
+                newButtons[buttonId].slots.splice(index, 0, slotId);
+                return newButtons
+            case 'remove-slot':
+                var { buttonId, slotId } = action;
+                newButtons[buttonId].slots = newButtons[buttonId].slots.filter(id => id !== slotId);
+                return newButtons
+            case 'add-switch':
+                var { buttonId, switchId } = action;
+                newButtons[buttonId].switches.push(switchId);
+                return newButtons
+            case 'remove-switch':
+                var { buttonId, switchId } = action;
+                newButtons[buttonId].switches = newButtons[buttonId].switches.filter(id => id !== switchId);
+                return newButtons
+            case 'set-lens':
+                var { buttonId, lensId } = action;
+                newButtons[buttonId].lens = lensId;
+                return newButtons
+            case 'change-output':
+                var { buttonId, text } = action;
+                newButtons[buttonId].outputPrefix = text;
+                return newButtons
+            case 'change-toggle':
+                var { buttonId, property, value } = action;
+                newButtons[buttonId][property] = value;
+                return newButtons
+            default:
+                throw new Error();
+        }
+    });
+    const [buttons, buttonsDispatch] = useReducer(buttonsReducer, {
+        0 : {
+            slots: [],
+            switches: [],
+            lens: -1,
+            outputPrefix: "Output:",
+            isLoading: false,
+            isExpanded: false
+        }
+    });
+
+
     const slotsReducer = useCallback((slots, action) => {
         var newSlots = JSON.parse(JSON.stringify(slots));
         switch (action.type) {
             case 'create':
-                var { newText, depth } = action;
-                newSlots.entries[depth].unshift(newText);
-                newSlots.path[depth] = 0;
+                var { slotId, type, text } = action;
+                newSlots[slotId] = {type: type, text: text};
                 return newSlots;
             case 'change':
-                var { changedText, depth, index } = action;
-                newSlots.entries[depth][index] = changedText;
+                var { slotId, changedText } = action;
+                newSlots[slotId] = changedText;
                 return newSlots;
             case 'remove':
-                var { depth, index } = action;
-                //TODO: check if path would be error
-                newSlots.entries[depth].splice(index, 1);
-                if(newSlots.entries[depth].length === 1) {
-                    newSlots.entries.splice(depth, 1);
-                    newSlots.path.splice(depth, 1);
-                } else if(newSlots.entries[depth].length <= newSlots.path[depth]) {
-                    newSlots.path[depth] = 0;
-                }
-                return newSlots;
-            case 'create-line':
-                newSlots.entries.push(['', null]);
-                newSlots.path.push(0);
-                return newSlots;
-            case 'change-path':
-                var { depth, index } = action;
-                newSlots.path[depth] = index;
-                return newSlots;
-            case 'set-path':
-                var { path } = action;
-                newSlots.path = path;
+                var { slotId } = action;
+                delete newSlots[slotId];
                 return newSlots;
             default:
                 throw new Error();
         }
     }, []);
-    const [slots, slotsDispatch] = useReducer(slotsReducer, 
-        {entries: [
-            ['Write a creative ad for the following product to run on Facebook aimed at parents:', null ],
-            ["Product: Learning Room is a virtual environment to help students from kindergarten to high school excel in school.", null]
-        ],
-        path: [0, 0]}
-    );
+    const [slots, slotsDispatch] = useReducer(slotsReducer, {
+        0: {
+            type: 'input',
+            text: "Complete this email with a friendly tone:",
+        },
+        1: {
+            type: 'whole',
+            text: "Input:"
+        },
+        1: {
+            type: 'selection',
+            text: "Original text:"
+        }
+    });
 
     const switchesReducer = useCallback((switches, action) => {
         var newSwitches = { ...switches };
@@ -69,14 +112,8 @@ function App() {
                 newSwitches[switchId] = newSwitch;
                 return newSwitches;
             case 'remove':
-                var { switchesToRemove } = action;
-                for (var i = 0; i < switchesToRemove.length; i++) {
-                    delete newSwitches[switchesToRemove[i]];
-                }
-                return newSwitches;
-            case 'attach-path':
-                var { switchId, path } = action;
-                newSwitches[switchId].path = path;
+                var { switchId } = action;
+                delete newSwitches[switchId];
                 return newSwitches;
             case 'change':
                 var { switchId, property, value } = action;
@@ -89,11 +126,6 @@ function App() {
                     currSwitch.isChanged = true;
                 }
                 return newSwitches;
-            case 'loading':
-                var { switchId, isLoading } = action; 
-                if(newSwitches[switchId] === undefined) return newSwitches;
-                newSwitches[switchId].isLoading = isLoading;
-                return newSwitches;
             default:
                 throw new Error();
         }
@@ -103,6 +135,14 @@ function App() {
     const lensesReducer = useCallback((lenses, action) => {
         var newLenses = { ...lenses };
         switch (action.type) {
+            case 'create':
+                var { lensId, type, properties } = action;
+                newLenses[lensId] = {
+                    type: type,
+                    properties: properties,
+                    generations: []
+                };
+                return newLenses;
             case 'set-generations':
                 var { lensId, generations } = action;
                 if(newLenses[lensId] === undefined) return newLenses;
@@ -113,48 +153,31 @@ function App() {
                 var currLens = newLenses[lensId];
                 currLens[property] = value;
                 return newLenses;
-            case 'change-type':
-                var { lensId, typeIndex, newType } = action;
-                newLenses[lensId].types[typeIndex] = newType;
+            case 'remove':
+                var { lensId } = action;
+                delete newLenses[lensId];
                 return newLenses;
             default:
                 throw new Error();
         }
     })
-
     const [lenses, lensesDispatch] = useReducer(lensesReducer, {
         0: {
-            types: ["list", "sentiment"],
+            type: "list",
             generations: [],
-            generationLength: 3
+            properties: null
         }
     });
 
     const [isMeta, setIsMeta] = useState(false);
     const [selected, setSelected] = useState({type: null})
-    const [hoverPath, setHoverPath] = useState(null);
     const [text, setText] = useState("");
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
             setIsMeta(true);
-        } else if(e.key === 'c' && isMeta) {
-            if(selected.type === 'slots') {
-                copySlots(selected.data, slots.path[selected.data]);
-            } else if(selected.type === 'switch') {
-                copySwitch(selected.data);
-            }
-        } else if(e.key === 'd' && isMeta) {
-            e.preventDefault();
-            if(selected.type === 'slots') {
-                removeSlot(selected.data, slots.path[selected.data]);
-            } else if(selected.type === 'switch') {
-                switchesDispatch({type: 'remove', switchesToRemove: [selected.data]});
-            }
-        } else if(e.key === "g" && isMeta) {
-            e.preventDefault();
-            createSwitch();
-        }
+        } 
+        // TODO: copy buttons, copy slots, copy switches
     }
 
     function handleKeyUp(e) {
@@ -163,209 +186,155 @@ function App() {
         }
     }
 
-    function createSlots(text, depth) {
-        slotsDispatch({
-            type: 'create',
-            newText: "",
-            depth: depth
-        });
-    }
-    
-    function copySlots(depth, index) {
-        var newText = slots.entries[depth][index];
-        setSelected({type: null})
-        slotsDispatch({
-            type: 'create',
-            newText: newText,
-            depth: depth
-        });
-    }
-
-    function changeSlots(changedText, depth, index) {
-        slotsDispatch({ type: "change", changedText, depth, index });
-    }
-
-    function changePath(depth, index) {
-        if(selected.type === 'slots') setSelected({type: null})
-        slotsDispatch({ type: 'change-path', depth, index})
-    }
-
-    function setPath(path) {
-        slotsDispatch({ type: 'set-path', path})
-    }
-
-    function removeSlot(depth, index) {
-        setSelected({type: null});
-        slotsDispatch({ type: "remove", depth, index });
-        var switchIds = Object.keys(switches).filter(id => id !== 'colorIndex');
-        switchIds.forEach(id => {
-            if(switches[id].path && switches[id].path[depth] === index) {
-                switchesDispatch({ type: 'attach-path', switchId: id, path: null});
-            } else if(slots.entries[depth].length == 2 && switches[id].path[depth] === 1) {
-                var newPath = switches[id].path.slice();
-                newPath.splice(depth, 1);
-                switchesDispatch({type: 'attach-path', switchId: id, path: newPath});
-            }
-        });
-    }
-
-    function addPromptLine() {
-        slotsDispatch({ type: 'create-line' });
-        var switchIds = Object.keys(switches).filter(id => id !== 'colorIndex');
-        switchIds.forEach(id => {
-            switchesDispatch({ type: 'attach-path', switchId: id, path: switches[id].path ? [...switches[id].path, 1] : null});
-        });
-    }
-
-    function textify() {
-        var result = "";
-        for(var i = 0; i < slots.path.length; i++) {
-            var index = slots.path[i];
-            var entry = slots.entries[i][index];
-            if(entry === null) continue;
-            result += entry + "\n\n";
+    function createButton() {
+        var newButtonId = "b" + generateId();
+        var newButton = {
+            slots: [],
+            switches: [],
+            lens: -1,
+            outputPrefix: "",
+            isLoading: false,
+            isExpanded: false
         }
-        return result;
+        buttonsDispatch({type: 'create', buttonId: newButtonId, newButton: newButton});
     }
 
-    function handleGenerate(switchId) {
-        if (switches[switchId].isLoading || switches[switchId].path === null) return;
+    function copyButton(buttonId) {
+        // TODO: copy all slots, switches, and lenses
+        var toCopyButon = buttons[buttonId];
 
-        var currSwitch = switches[switchId];
-        switchesDispatch({ type: 'loading', switchId: switchId, isLoading: true });
-        
-        var currSwitch = switches[switchId];
-        var currLens = lenses[0];
-        var data = { ...currSwitch.properties };
-        data.text = textify();
-
-        switchesDispatch({ type: 'loading', switchId, isLoading: true });
-
-        data.n = 3;
-        data.length = currLens.generationLength;
-        data.switchId = switchId;
-        data.existing = currLens.generations;
-        axios
-        .post(`http://localhost:5000/api/generate-length`, data)
-        .then((response) => {
-            var newGenerations = response.data;
-            newGenerations = newGenerations.map(generation => {
-                return {...generation, text: generation.text.trim()}
-            })
-            lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
-            switchesDispatch({ type: 'loading', switchId, isLoading: false });
-        });
-    }
-
-    function attachPath(switchId, path) {
-        switchesDispatch({ type: 'attach-path', switchId, path})
-    }
-
-    function onPropertyChange(switchId, property, value) {
-        switch (property) {
-            case "temperature":
-            case "topP":
-                value = parseFloat(value);
-                if (isNaN(value) || value < 0 || value > 1) return;
-                break;
-            case "frequencyPen":
-            case "presencePen":
-                value = parseFloat(value);
-                if (isNaN(value) || value < 0 || value > 2) return;
-                break;
-            case "bestOf":
-                value = parseInt(value);
-                if (isNaN(value) || value < 1 || value > 20) return;
-                break;
+        var copiedSlots = [];
+        var copiedSwitches = [];
+        var copiedLens = "";
+        for(var i = 0; i < toCopyButon.slots.length; i++) {
+            var newSlotId = "s" + generateId();
+            var slot = slots[toCopyButon.slots[i]];
+            slotsDispatch({type: 'create', slotId: newSlotId, type: slot.type, text: slot.text});
+            copiedSlots.push(newSlotId);
         }
-        switchesDispatch({ type: 'change', switchId, property, value });
+        for(var i = 0; i < toCopyButon.switches.length; i++) {
+            var newSwitchId = "sw" + generateId();
+            var switchToCopy = Object.parse(Object.stringify(switches[toCopyButon.switches[i]]));
+            switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: switchToCopy});
+            copiedSwitches.push(newSwitchId);
+        }
+        if(toCopyButon.lens !== -1) {
+            var newLensId = "l" + generateId();
+            var lensToCopy = Object.parse(Object.stringify(lenses[toCopyButon.lens]));
+            lensesDispatch({type: 'create', lensId: newLensId, type: lensToCopy.type, properties: lensToCopy.properties});
+            copiedLens = newLensId;
+        }
+        var newButtonId = "b" + generateId();
+        var newButton = {
+            slots: copiedSlots,
+            switches: copiedSwitches,
+            lens: copiedLens,
+            outputPrefix: toCopyButon.outputPrefix,
+            isLoading: false,
+            isExpanded: false
+        }
+        buttonsDispatch({type: 'create', buttonId: newButtonId, newButton: newButton});
     }
 
-    function createSwitch() {
-        var newSwitchId = "s" + generateId();
-        switchesDispatch({ 
-            type: 'create', switchId: newSwitchId,
-            newSwitch: {
-                model: "GPT-3",
-                path: null,
-                color: "#71AAFF",
-                isChanged: false,
-                properties: {
-                    engine: "text-davinci-002",
-                    temperature: 0.7,
-                    topP: 1,
-                    frequencyPen: 0,
-                    presencePen: 0,
-                    bestOf: 1
-                }
-            }
-        })
+    function removeButton(buttonId) {
+        // remove all slots, switches, and lens
+        var toRemoveButton = buttons[buttonId];
+        for(var i = 0; i < toRemoveButton.slots.length; i++) {
+            slotsDispatch({type: 'remove', slotId: toRemoveButton.slots[i]});
+        }
+        for(var i = 0; i < toRemoveButton.switches.length; i++) {
+            switchesDispatch({type: 'remove', switchId: toRemoveButton.switches[i]});
+        }
+        if(toRemoveButton.lens !== -1) {
+            lensesDispatch({type: 'remove', lensId: toRemoveButton.lens});
+        }
+        buttonsDispatch({type: 'remove', buttonId: buttonId});
     }
 
-    function copySwitch(switchId) {
-        var newSwitchId = "s" + generateId();
-        var toCopy = switches[switchId];
-        switchesDispatch({ 
-            type: 'create', switchId: newSwitchId,
-            newSwitch: {
-                model: toCopy.model,
-                path: toCopy.path,
-                color: toCopy.color,
-                isChanged: false,
-                properties: {
-                    engine: toCopy.properties.engine,
-                    temperature: toCopy.properties.temperature,
-                    topP: toCopy.properties.topP,
-                    frequencyPen: toCopy.properties.frequencyPen,
-                    presencePen: toCopy.properties.presencePen,
-                    bestOf: toCopy.properties.bestOf
-                }
+    function expandButton(buttonId, isExpanded) {
+        buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isExpanded', value: isExpanded});
+    }   
+
+    function createSlot(buttonId, type, index) {
+        var newSlotId = "s" + generateId();
+        slotsDispatch({type: 'create', slotId: newSlotId, type: type, text: ""});
+        buttonsDispatch({type: 'add-slot', buttonId: buttonId, slotId: newSlotId, index: index});
+    }
+
+    function copySlot(buttonId, slotId, index) {
+        var toCopySlot = slots[slotId];
+        var newSlotId = "s" + generateId();
+        slotsDispatch({type: 'create', slotId: newSlotId, type: toCopySlot.type, text: toCopySlot.text});
+        buttonsDispatch({type: 'add-slot', buttonId: buttonId, slotId: newSlotId, index: index+1});
+    }
+
+    function removeSlot(buttonId, slotId) {
+        buttonsDispatch({type: 'remove-slot', buttonId: buttonId, slotId: slotId});
+        slotsDispatch({type: 'remove', slotId: slotId});
+    }
+
+    function createSwitch(buttonId) {
+        var newSwitchId = "sw" + generateId();
+        var newSwitch = {
+            model: "GPT-3",
+            color: "#71AAFF",
+            isChanged: false,
+            properties: {
+                engine: "text-davinci-002",
+                temperature: 0.7,
+                topP: 1,
+                frequencyPen: 0,
+                presencePen: 0,
+                bestOf: 1
             }
-        })
+        }
+        switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: newSwitch});
+        buttonsDispatch({type: 'add-switch', buttonId: buttonId, switchId: newSwitchId});
+    }
+
+    function copySwitch(buttonId, switchId) {
+        var toCopySwitch = switches[switchId];
+        var newSwitchId = "sw" + generateId();
+        var newSwitch = Object.parse(Object.stringify(toCopySwitch));
+        newSwitch.isChanged = false;
+        switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: newSwitch});
+        buttonsDispatch({type: 'add-switch', buttonId: buttonId, switchId: newSwitchId});
+    }
+
+    function removeSwitch(buttonId, switchId) {
+        buttonsDispatch({type: 'remove-switch', buttonId: buttonId, switchId: switchId});
+        switchesDispatch({type: 'remove', switchId: switchId});
+    }
+
+    function createLens(buttonId, type, properties) {
+        var newLensId = "l" + generateId();
+        lensesDispatch({type: 'create', lensId: newLensId, type: type, properties: properties});
+        buttonsDispatch({type: 'set-lens', buttonId: buttonId, lensId: newLensId});
+    }
+
+    function changeLens(buttonId, type, properties) {
+        lensesDispatch({type: 'change', lensId: buttons[buttonId].lens, type: type, properties: properties});
     }
 
     function handleCanvasClick(e) {
         setSelected({type: null});
     }
-    
-    function changeText(newText) {
-        setText(newText);
-    }
-
-    function changeLens(lensId, property, value) {
-        lensesDispatch({ type: 'change', lensId, property, value });
-    }
-
-    function changeLensType(lensId, typeIndex, newType) {
-        lensesDispatch({ type: 'change-type', lensId, typeIndex, newType });
-    }
-
-    function copyGeneration(newText) {
-        setText(text + " " + newText);
-    }
 
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
-            <LeftColumn>
-                <TextEditor text={text} changeText={changeText} />
-            </LeftColumn>
-            <RightColumn>
-
-            </RightColumn>
+            <Container>
+                <TextEditor text={text} setText={setText} />
+                <Buttons buttons={buttons} slots={slots} switches={switches} lenses={lenses}/>
+            </Container>
         </div>
     );
 }
 
-const LeftColumn = styled.div`
-    width: calc(40% - 120px - 30px);
-    margin-left: 120px;
-    margin-top: 60px;
-`;
-
-const RightColumn = styled.div`
-    width: calc(60% - 120px - 30px);
-    margin-left: 60px;
-    margin-top: 60px;
+const Container = styled.div`
+    display: flex;
+    flex-direction: row;
+    padding: 0 120px;
+    width: 100%
 `;
 
 export default App;
