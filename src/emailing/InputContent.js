@@ -27,12 +27,53 @@ function InputContent(props) {
     function handleClickSlot(e) {
         if(e.target.tagName === 'TEXTAREA') return;
         e.stopPropagation();
-        props.setSelected({type: 'slot', data: e.target.getAttribute('data-id')});
+        setClickedSeparator(null);
+        var data = e.target.getAttribute('data-id');
+        if(props.selected && props.selected.type === 'slot' && props.selected.data === data)
+            props.setSelected({type: null});
+        else
+            props.setSelected({type: 'slot', data: e.target.getAttribute('data-id')});
+    }
+
+    function drawSeparator(idx) {
+        var result = null;
+        if(clickedSeparator === null || clickedSeparator !== idx) {
+            result = (
+                <Separator key={"s-" + idx} data-idx={idx} onClick={handleClickSeparator}>
+                    <SeparatorButton></SeparatorButton>
+                </Separator>
+            )
+        } else if(clickedSeparator === idx) {
+            result = (
+                <TypeButtonCont key="separator-buttons">
+                    <TypeButton 
+                        style={{border: "solid 2px #0066FF", backgroundColor: "#fff", color: "#ccc"}}
+                        onClick={() => handleCreateSlot('input')}
+                    >
+                        Input text...
+                    </TypeButton>
+                    <TypeButton
+                        onClick={() => handleCreateSlot('whole')}
+                    >
+                        [ Whole Text ]
+                    </TypeButton>
+                    <TypeButton
+                        onClick={() => handleCreateSlot('selection')}
+                    >
+                        [ Selection ]
+                    </TypeButton>
+                </TypeButtonCont>
+            )
+        }
+        return result;
     }
 
     function drawSlots() {
         var result = [];
         var slotIds = props.buttons[props.buttonId].slots;
+
+        result.push(drawSeparator(0))
+
         for(var i = 0; i < slotIds.length; i++) {
             var slot = props.slots[slotIds[i]];
 
@@ -97,34 +138,8 @@ function InputContent(props) {
                     </DualCont>
                 )
             }
-            if(clickedSeparator === null || clickedSeparator !== i+1) {
-                result.push(
-                    <Separator key={"s-" + i+1} data-idx={i+1} onClick={handleClickSeparator}>
-                        <SeparatorButton></SeparatorButton>
-                    </Separator>
-                )
-            } else if(clickedSeparator === i+1) {
-                result.push(
-                    <TypeButtonCont>
-                        <TypeButton 
-                            style={{border: "solid 2px #0066FF", backgroundColor: "#fff", color: "#ccc"}}
-                            onClick={() => handleCreateSlot('input')}
-                        >
-                            Input text...
-                        </TypeButton>
-                        <TypeButton
-                            onClick={() => handleCreateSlot('whole')}
-                        >
-                            [ Whole Text ]
-                        </TypeButton>
-                        <TypeButton
-                            onClick={() => handleCreateSlot('selection')}
-                        >
-                            [ Selection ]
-                        </TypeButton>
-                    </TypeButtonCont>
-                )
-            }
+
+            result.push(drawSeparator(i+1));
         }
 
         result.push(
@@ -229,13 +244,13 @@ const Separator = styled.div`
         opacity: 1;
         height: 24px;
         margin: 0;
-        padding: 8px 0;
+        padding: 9px 0;
     }
 `;
 
 const SeparatorButton = styled.div`
     width: 100%;
-    height: 8px;
+    height: 6px;
     background-color: #0066FF66;
 `;
 

@@ -89,7 +89,7 @@ function Buttons(props) {
 
         if(currButton !== undefined) {
             label = props.slots[currButton.slots[0]] ? props.slots[currButton.slots[0]].text : "I";
-            label = label[0].toUpperCase()
+            label = label.length === 0 ? "I" : label[0].toUpperCase()
 
             var trianglePoints = [
                 [xPosition + BUTTON_SIZE + (currButton.isExpanded ? 24 : 4), yPosition + BUTTON_SIZE/2 - 10],
@@ -255,7 +255,6 @@ const ContainerHeader = styled.div`
     font-size: 18px;
     color: #0066FF;
     width: 100%;
-    padding-bottom: 12px;
 `;
 
 const Line = styled.div`

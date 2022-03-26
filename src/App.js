@@ -74,8 +74,8 @@ function App() {
         var newSlots = JSON.parse(JSON.stringify(slots));
         switch (action.type) {
             case 'create':
-                var { slotId, slotType, text } = action;
-                newSlots[slotId] = {type: slotType, text: text};
+                var { slotId, slotType, text, button } = action;
+                newSlots[slotId] = {type: slotType, text: text, button: button};
                 return newSlots;
             case 'change':
                 var { slotId, changedText } = action;
@@ -93,14 +93,17 @@ function App() {
         'hey': {
             type: 'input',
             text: "Complete this email with a friendly tone:",
+            button: 0
         },
         'ho': {
             type: 'whole',
-            text: "Input:"
+            text: "Input:",
+            button: 0
         },
         'hu': {
             type: 'selection',
-            text: "Original text:"
+            text: "Original text:",
+            button: 0
         }
     });
 
@@ -177,7 +180,24 @@ function App() {
     function handleKeyDown(e) {
         if (e.key === "Meta") {
             setIsMeta(true);
-        } 
+        } else if(isMeta && e.key === 'c') {
+            if(selected.type === null) return;
+            e.preventDefault()
+            if(selected.type === 'button') {
+                console.log('button')
+            } else if(selected.type === 'slot') {
+                var buttonId = slots[selected.data].button
+                copySlot(buttonId, selected.data);
+                setSelected({type: null})
+            }
+        } else if(e.key === 'Backspace') {
+            if(selected.type === null) return;
+            if(selected.type === 'slot') {
+                var buttonId = slots[selected.data].button
+                removeSlot(buttonId, selected.data);
+                setSelected({type: null})
+            }
+        }
         // TODO: copy buttons, copy slots, copy switches
     }
 
@@ -203,6 +223,7 @@ function App() {
     function copyButton(buttonId) {
         // TODO: copy all slots, switches, and lenses
         var toCopyButon = buttons[buttonId];
+        var newButtonId = "b" + generateId();
 
         var copiedSlots = [];
         var copiedSwitches = [];
@@ -210,7 +231,7 @@ function App() {
         for(var i = 0; i < toCopyButon.slots.length; i++) {
             var newSlotId = "s" + generateId();
             var slot = slots[toCopyButon.slots[i]];
-            slotsDispatch({type: 'create', slotId: newSlotId, slotType: slot.type, text: slot.text});
+            slotsDispatch({type: 'create', slotId: newSlotId, slotType: slot.type, text: slot.text, button: newButtonId});
             copiedSlots.push(newSlotId);
         }
         for(var i = 0; i < toCopyButon.switches.length; i++) {
@@ -225,7 +246,6 @@ function App() {
             lensesDispatch({type: 'create', lensId: newLensId, lensType: lensToCopy.type, properties: lensToCopy.properties});
             copiedLens = newLensId;
         }
-        var newButtonId = "b" + generateId();
         var newButton = {
             slots: copiedSlots,
             switches: copiedSwitches,
@@ -272,14 +292,15 @@ function App() {
 
     function createSlot(buttonId, type, index) {
         var newSlotId = "s" + generateId();
-        slotsDispatch({type: 'create', slotId: newSlotId, slotType: type, text: ""});
+        slotsDispatch({type: 'create', slotId: newSlotId, slotType: type, text: "", button: buttonId});
         buttonsDispatch({type: 'add-slot', buttonId: buttonId, slotId: newSlotId, index: index});
     }
 
     function copySlot(buttonId, slotId, index) {
         var toCopySlot = slots[slotId];
+        var index = buttons[buttonId].slots.findIndex(id => id === slotId);
         var newSlotId = "s" + generateId();
-        slotsDispatch({type: 'create', slotId: newSlotId, slotType: toCopySlot.type, text: toCopySlot.text});
+        slotsDispatch({type: 'create', slotId: newSlotId, slotType: toCopySlot.type, text: toCopySlot.text, button: toCopySlot.button});
         buttonsDispatch({type: 'add-slot', buttonId: buttonId, slotId: newSlotId, index: index+1});
     }
 
