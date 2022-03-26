@@ -1,12 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
+import InputContent from './InputContent';
+
 const BUTTON_SIZE = 64;
 const BUTTON_Y_OFFSET = 16;
 
 function Buttons(props) {
+    const [expandedButton, setExpandedButton] = useState(null);
     const [hoverButton, setHoverButton] = useState(null);
     const clickTimer = useRef(null);
+
+    useEffect(() => {
+        var buttonIds = Object.keys(props.buttons);
+        for(var i = 0; i < buttonIds.length; i++) {
+            var buttonId = buttonIds[i];
+            var button = props.buttons[buttonId];
+            if(button.isExpanded) {
+                setExpandedButton({id: buttonId, idx: i});
+                return;
+            }
+        }
+        setExpandedButton(null);
+    }, [props.buttons]);
 
     function handleMouseEnter(e) {
         if(e.target.getAttribute("data-id") === "-1") return;
@@ -136,12 +152,50 @@ function Buttons(props) {
                     <rect
                         data-type="button" data-id={buttonId}
                         x={xPosition - 4} y={yPosition - 4}
-                        width={BUTTON_SIZE + 8} height={BUTTON_SIZE + 8}
+                        width={BUTTON_SIZE + 24} height={BUTTON_SIZE + 8}
                         fill="#00000000" style={{ cursor: "pointer" }}
                     />
                     {(hoverButton && hoverButton === buttonId) || (buttonId !== -1 && currButton.isExpanded) ? triangle : ""}
                 </g>
             </g>
+        )
+    }
+
+    function drawExpanded() {
+        if(expandedButton === null) return "";
+        var buttonId = expandedButton.id;
+        var currButton = props.buttons[buttonId];
+        var buttonIdx = expandedButton.idx;
+
+        var xPosition = 32 + 64 + 32;
+        var yPosition = buttonIdx*(BUTTON_SIZE + BUTTON_Y_OFFSET) + 120;
+
+        return (
+            <ExpandedDetails xPosition={xPosition} yPosition={yPosition}>
+                <InputContainer>
+                    <ContainerHeader>
+                        Input
+                    </ContainerHeader>
+                    <InputContent 
+                        buttons={props.buttons} buttonId={expandedButton.id}
+                        slots={props.slots} changeSlot={props.changeSlot} createSlot={props.createSlot}
+                        changeOutputPrefix={props.changeOutputPrefix}
+                        selected={props.selected} setSelected={props.setSelected}
+                    />
+                </InputContainer>
+                <Line></Line>
+                <ModelContainer>
+                    <ContainerHeader>
+                        Model
+                    </ContainerHeader>
+                </ModelContainer>
+                <Line></Line>
+                <OutputContainer>
+                    <ContainerHeader>
+                        Output
+                    </ContainerHeader>
+                </OutputContainer>
+            </ExpandedDetails>
         )
     }
 
@@ -154,6 +208,7 @@ function Buttons(props) {
                 {buttonIds.map((buttonId, idx) => drawOneButton(buttonId, idx))}
                 {drawOneButton(-1, buttonIds.length)}
             </svg>
+            {drawExpanded()}
         </SVGContainer>
     )
 }
@@ -185,6 +240,50 @@ const SVGContainer = styled.div`
     width: 60%;
     height: 100%;
     padding: 60px 0;
+    position: relative;
+`;
+
+const ExpandedDetails = styled.div`
+    position: absolute; 
+    top: ${props => props.yPosition}px;
+    left: ${props => props.xPosition}px;
+    display: flex;
+    flex-direction: row;
+`;
+
+const ContainerHeader = styled.div`
+    font-size: 18px;
+    color: #0066FF;
+    width: 100%;
+    padding-bottom: 12px;
+`;
+
+const Line = styled.div`
+    width: 20px;
+    height: 2px;
+    background-color: #0066FF;
+    margin-top: 24px;
+`;
+
+const InputContainer = styled.div`
+    width: 340px;
+    padding: 8px 16px 16px 16px;
+    background-color: #0066FF1A;
+    border-radius: 12px;
+`;
+
+const ModelContainer = styled.div`
+    padding: 8px 16px 16px 16px;
+    background-color: #0066FF1A;
+    border-radius: 12px;
+    height: fit-content;
+`;
+
+const OutputContainer = styled.div`
+    padding: 8px 16px 16px 16px;
+    background-color: #0066FF1A;
+    border-radius: 12px;
+    height: fit-content;
 `;
 
 export default Buttons;

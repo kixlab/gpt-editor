@@ -60,7 +60,7 @@ function App() {
     });
     const [buttons, buttonsDispatch] = useReducer(buttonsReducer, {
         0 : {
-            slots: [],
+            slots: ['hey', 'ho', 'hu'],
             switches: [],
             lens: -1,
             outputPrefix: "Output:",
@@ -74,12 +74,12 @@ function App() {
         var newSlots = JSON.parse(JSON.stringify(slots));
         switch (action.type) {
             case 'create':
-                var { slotId, type, text } = action;
-                newSlots[slotId] = {type: type, text: text};
+                var { slotId, slotType, text } = action;
+                newSlots[slotId] = {type: slotType, text: text};
                 return newSlots;
             case 'change':
                 var { slotId, changedText } = action;
-                newSlots[slotId] = changedText;
+                newSlots[slotId].text = changedText;
                 return newSlots;
             case 'remove':
                 var { slotId } = action;
@@ -90,15 +90,15 @@ function App() {
         }
     }, []);
     const [slots, slotsDispatch] = useReducer(slotsReducer, {
-        0: {
+        'hey': {
             type: 'input',
             text: "Complete this email with a friendly tone:",
         },
-        1: {
+        'ho': {
             type: 'whole',
             text: "Input:"
         },
-        1: {
+        'hu': {
             type: 'selection',
             text: "Original text:"
         }
@@ -136,9 +136,9 @@ function App() {
         var newLenses = { ...lenses };
         switch (action.type) {
             case 'create':
-                var { lensId, type, properties } = action;
+                var { lensId, lensType, properties } = action;
                 newLenses[lensId] = {
-                    type: type,
+                    type: lensType,
                     properties: properties,
                     generations: []
                 };
@@ -149,9 +149,10 @@ function App() {
                 newLenses[lensId].generations = generations;
                 return newLenses;
             case 'change':
-                var { lensId, property, value } = action;
+                var { lensId, lensType, properties } = action;
                 var currLens = newLenses[lensId];
-                currLens[property] = value;
+                currLens['lensType'] = lensType;
+                currLens['properties'] = properties;
                 return newLenses;
             case 'remove':
                 var { lensId } = action;
@@ -209,7 +210,7 @@ function App() {
         for(var i = 0; i < toCopyButon.slots.length; i++) {
             var newSlotId = "s" + generateId();
             var slot = slots[toCopyButon.slots[i]];
-            slotsDispatch({type: 'create', slotId: newSlotId, type: slot.type, text: slot.text});
+            slotsDispatch({type: 'create', slotId: newSlotId, slotType: slot.type, text: slot.text});
             copiedSlots.push(newSlotId);
         }
         for(var i = 0; i < toCopyButon.switches.length; i++) {
@@ -221,7 +222,7 @@ function App() {
         if(toCopyButon.lens !== -1) {
             var newLensId = "l" + generateId();
             var lensToCopy = Object.parse(Object.stringify(lenses[toCopyButon.lens]));
-            lensesDispatch({type: 'create', lensId: newLensId, type: lensToCopy.type, properties: lensToCopy.properties});
+            lensesDispatch({type: 'create', lensId: newLensId, lensType: lensToCopy.type, properties: lensToCopy.properties});
             copiedLens = newLensId;
         }
         var newButtonId = "b" + generateId();
@@ -263,19 +264,27 @@ function App() {
             }
         }
         buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isExpanded', value: isExpanded});
-    }   
+    }
+
+    function changeOutputPrefix(buttonId, text) {
+        buttonsDispatch({type: 'change-output', buttonId: buttonId, text: text});
+    }
 
     function createSlot(buttonId, type, index) {
         var newSlotId = "s" + generateId();
-        slotsDispatch({type: 'create', slotId: newSlotId, type: type, text: ""});
+        slotsDispatch({type: 'create', slotId: newSlotId, slotType: type, text: ""});
         buttonsDispatch({type: 'add-slot', buttonId: buttonId, slotId: newSlotId, index: index});
     }
 
     function copySlot(buttonId, slotId, index) {
         var toCopySlot = slots[slotId];
         var newSlotId = "s" + generateId();
-        slotsDispatch({type: 'create', slotId: newSlotId, type: toCopySlot.type, text: toCopySlot.text});
+        slotsDispatch({type: 'create', slotId: newSlotId, slotType: toCopySlot.type, text: toCopySlot.text});
         buttonsDispatch({type: 'add-slot', buttonId: buttonId, slotId: newSlotId, index: index+1});
+    }
+
+    function changeSlot(slotId, changedText) {
+        slotsDispatch({type: 'change', slotId: slotId, changedText});
     }
 
     function removeSlot(buttonId, slotId) {
@@ -318,12 +327,12 @@ function App() {
 
     function createLens(buttonId, type, properties) {
         var newLensId = "l" + generateId();
-        lensesDispatch({type: 'create', lensId: newLensId, type: type, properties: properties});
+        lensesDispatch({type: 'create', lensId: newLensId, lensType: type, properties: properties});
         buttonsDispatch({type: 'set-lens', buttonId: buttonId, lensId: newLensId});
     }
 
     function changeLens(buttonId, type, properties) {
-        lensesDispatch({type: 'change', lensId: buttons[buttonId].lens, type: type, properties: properties});
+        lensesDispatch({type: 'change', lensId: buttons[buttonId].lens, lensType: type, properties: properties});
     }
 
     function handleCanvasClick(e) {
@@ -343,6 +352,8 @@ function App() {
                     createButton={createButton} expandButton={expandButton}
                     handleGenerate={handleGenerate}
                     selected={selected} setSelected={setSelected}
+                    createSlot={createSlot} changeSlot={changeSlot} 
+                    changeOutputPrefix={changeOutputPrefix}
                 />
             </Container>
         </div>
