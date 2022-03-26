@@ -8,22 +8,8 @@ const BUTTON_SIZE = 64;
 const BUTTON_Y_OFFSET = 16;
 
 function Buttons(props) {
-    const [expandedButton, setExpandedButton] = useState(null);
     const [hoverButton, setHoverButton] = useState(null);
     const clickTimer = useRef(null);
-
-    useEffect(() => {
-        var buttonIds = Object.keys(props.buttons);
-        for(var i = 0; i < buttonIds.length; i++) {
-            var buttonId = buttonIds[i];
-            var button = props.buttons[buttonId];
-            if(button.isExpanded) {
-                setExpandedButton({id: buttonId, idx: i});
-                return;
-            }
-        }
-        setExpandedButton(null);
-    }, [props.buttons]);
 
     function handleMouseEnter(e) {
         if(e.target.getAttribute("data-id") === "-1") return;
@@ -66,7 +52,7 @@ function Buttons(props) {
     function handleClickExpand(e) {
         e.stopPropagation();
         var buttonId = e.target.getAttribute("data-id");
-        props.expandButton(buttonId, !props.buttons[buttonId].isExpanded);
+        props.expandButton(buttonId);
     }
 
     function drawOneButton(buttonId, buttonIdx) {
@@ -89,21 +75,29 @@ function Buttons(props) {
         )
 
         if(currButton !== undefined) {
+            var isExpanded = buttonId === props.expandedButton;
             label = props.slots[currButton.slots[0]] ? props.slots[currButton.slots[0]].text : "I";
             label = label.length === 0 ? "I" : label[0].toUpperCase()
 
             var trianglePoints = [
-                [xPosition + BUTTON_SIZE + (currButton.isExpanded ? 24 : 4), yPosition + BUTTON_SIZE/2 - 10],
-                [xPosition + BUTTON_SIZE + (currButton.isExpanded ? 4 : 24), yPosition + BUTTON_SIZE/2],
-                [xPosition + BUTTON_SIZE + (currButton.isExpanded ? 24 : 4), yPosition + BUTTON_SIZE/2 + 10]
+                [xPosition + BUTTON_SIZE + (isExpanded ? 24 : 4), yPosition + BUTTON_SIZE/2 - 10],
+                [xPosition + BUTTON_SIZE + (isExpanded ? 4 : 24), yPosition + BUTTON_SIZE/2],
+                [xPosition + BUTTON_SIZE + (isExpanded ? 24 : 4), yPosition + BUTTON_SIZE/2 + 10]
             ]
             var pointsStr = trianglePoints.map((point) => point.join(',')).join(' ');
             var triangle = (
-                <polygon
-                    data-id={buttonId}
-                    points={pointsStr} style={{ fill: "#0066FF", cursor: "pointer" }}
-                    onClick={handleClickExpand}
-                />
+                <>
+                    <polygon
+                        data-id={buttonId}
+                        points={pointsStr} style={{ fill: "#0066FF" }}
+                    />
+                    <rect 
+                        data-id={buttonId} style={{ fill: "#00000000", cursor: "pointer" }}
+                        x={xPosition + BUTTON_SIZE + 4} y={yPosition}
+                        width={20} height={BUTTON_SIZE}
+                        onClick={handleClickExpand}
+                    />
+                </>
             );
 
             isSelected = props.selected && props.selected.type === "button" && props.selected.data === buttonId;
@@ -153,20 +147,21 @@ function Buttons(props) {
                     <rect
                         data-type="button" data-id={buttonId}
                         x={xPosition - 4} y={yPosition - 4}
-                        width={BUTTON_SIZE + 24} height={BUTTON_SIZE + 8}
+                        width={BUTTON_SIZE + 8} height={BUTTON_SIZE + 8}
                         fill="#00000000" style={{ cursor: "pointer" }}
                     />
-                    {(hoverButton && hoverButton === buttonId) || (buttonId !== -1 && currButton.isExpanded) ? triangle : ""}
+                    {(hoverButton && hoverButton === buttonId) || (buttonId !== -1 && isExpanded) ? triangle : ""}
                 </g>
             </g>
         )
     }
 
     function drawExpanded() {
-        if(expandedButton === null) return "";
-        var buttonId = expandedButton.id;
+        if(props.expandedButton === null) return "";
+        var buttonId = props.expandedButton;
         var currButton = props.buttons[buttonId];
-        var buttonIdx = expandedButton.idx;
+        var buttonIds = Object.keys(props.buttons);
+        var buttonIdx = buttonIds.indexOf(buttonId);
 
         var xPosition = 32 + 64 + 32;
         var yPosition = buttonIdx*(BUTTON_SIZE + BUTTON_Y_OFFSET) + 120;
@@ -178,7 +173,7 @@ function Buttons(props) {
                         Input
                     </ContainerHeader>
                     <InputContent 
-                        buttons={props.buttons} buttonId={expandedButton.id}
+                        buttons={props.buttons} buttonId={buttonId}
                         slots={props.slots} changeSlot={props.changeSlot} createSlot={props.createSlot}
                         changeOutputPrefix={props.changeOutputPrefix}
                         selected={props.selected} setSelected={props.setSelected}
@@ -190,7 +185,7 @@ function Buttons(props) {
                         Model
                     </ContainerHeader>
                     <SwitchContent
-                        buttons={props.buttons} buttonId={expandedButton.id} switches={props.switches}
+                        buttons={props.buttons} buttonId={buttonId} switches={props.switches}
                         selected={props.selected} setSelected={props.setSelected}
                         createSwitch={props.createSwitch} onPropertyChange={props.onPropertyChange}
                     />

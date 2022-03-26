@@ -64,8 +64,7 @@ function App() {
             switches: ['one', 'three'],
             lens: -1,
             outputPrefix: "Output:",
-            isLoading: false,
-            isExpanded: false
+            isLoading: false
         }
     });
 
@@ -152,7 +151,7 @@ function App() {
             model: "GPT-3",
             color: colorWheel[3],
             isChanged: false,
-            button: 0,
+            button: -1,
             properties: {
                 engine: "text-davinci-002",
                 temperature: 0.7,
@@ -166,7 +165,7 @@ function App() {
             model: "GPT-3",
             color: colorWheel[4],
             isChanged: false,
-            button: -1,
+            button: 0,
             properties: {
                 engine: "text-davinci-002",
                 temperature: 0.7,
@@ -219,6 +218,7 @@ function App() {
     const [isMeta, setIsMeta] = useState(false);
     const [selected, setSelected] = useState({type: null})
     const [text, setText] = useState("");
+    const [expandedButton, setExpandedButton] = useState(null);
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -227,17 +227,29 @@ function App() {
             if(selected.type === null) return;
             e.preventDefault()
             if(selected.type === 'button') {
-                console.log('button')
+                copyButton(selected.data);
+                setSelected({type: null});
             } else if(selected.type === 'slot') {
                 var buttonId = slots[selected.data].button
                 copySlot(buttonId, selected.data);
                 setSelected({type: null})
+            } else if(selected.type === 'switch') {
+                var buttonId = switches[selected.data].button;
+                copySwitch(buttonId, selected.data);
+                setSelected({type: null})
             }
         } else if(e.key === 'Backspace') {
             if(selected.type === null) return;
-            if(selected.type === 'slot') {
+            if(selected.type === 'button') {
+                removeButton(selected.data);
+                setSelected({type: null});
+            } else if(selected.type === 'slot') {
                 var buttonId = slots[selected.data].button
                 removeSlot(buttonId, selected.data);
+                setSelected({type: null})
+            } else if(selected.type === 'switch') {
+                var buttonId = switches[selected.data].button
+                removeSwitch(buttonId, selected.data);
                 setSelected({type: null})
             }
         }
@@ -257,8 +269,7 @@ function App() {
             switches: [],
             lens: -1,
             outputPrefix: "",
-            isLoading: false,
-            isExpanded: false
+            isLoading: false
         }
         buttonsDispatch({type: 'create', buttonId: newButtonId, newButton: newButton});
     }
@@ -279,13 +290,13 @@ function App() {
         }
         for(var i = 0; i < toCopyButon.switches.length; i++) {
             var newSwitchId = "sw" + generateId();
-            var switchToCopy = Object.parse(Object.stringify(switches[toCopyButon.switches[i]]));
+            var switchToCopy = JSON.parse(JSON.stringify(switches[toCopyButon.switches[i]]));
             switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: switchToCopy});
             copiedSwitches.push(newSwitchId);
         }
         if(toCopyButon.lens !== -1) {
             var newLensId = "l" + generateId();
-            var lensToCopy = Object.parse(Object.stringify(lenses[toCopyButon.lens]));
+            var lensToCopy = JSON.parse(JSON.stringify(lenses[toCopyButon.lens]));
             lensesDispatch({type: 'create', lensId: newLensId, lensType: lensToCopy.type, properties: lensToCopy.properties});
             copiedLens = newLensId;
         }
@@ -294,8 +305,7 @@ function App() {
             switches: copiedSwitches,
             lens: copiedLens,
             outputPrefix: toCopyButon.outputPrefix,
-            isLoading: false,
-            isExpanded: false
+            isLoading: false
         }
         buttonsDispatch({type: 'create', buttonId: newButtonId, newButton: newButton});
     }
@@ -312,21 +322,18 @@ function App() {
         if(toRemoveButton.lens !== -1) {
             lensesDispatch({type: 'remove', lensId: toRemoveButton.lens});
         }
+        if(expandedButton === buttonId) {
+            setExpandedButton(null);
+        }
         buttonsDispatch({type: 'remove', buttonId: buttonId});
     }
 
-    function expandButton(buttonId, isExpanded) {
-        if(isExpanded) {
-            for(var i = 0; i < Object.keys(buttons).length; i++){
-                var otherId = Object.keys(buttons)[i];
-                var button = buttons[otherId];
-                if(button.isExpanded) {
-                    buttonsDispatch({type: 'change-toggle', buttonId: otherId, property: 'isExpanded', value: false});
-                    break;
-                }
-            }
+    function expandButton(buttonId) {
+        if(expandedButton === buttonId) {
+            setExpandedButton(null);
+        } else {
+            setExpandedButton(buttonId);
         }
-        buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isExpanded', value: isExpanded});
     }
 
     function changeOutputPrefix(buttonId, text) {
@@ -379,7 +386,7 @@ function App() {
     function copySwitch(buttonId, switchId) {
         var toCopySwitch = switches[switchId];
         var newSwitchId = "sw" + generateId();
-        var newSwitch = Object.parse(Object.stringify(toCopySwitch));
+        var newSwitch = JSON.parse(JSON.stringify(toCopySwitch));
         newSwitch.isChanged = false;
         switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: newSwitch});
         buttonsDispatch({type: 'add-switch', buttonId: buttonId, switchId: newSwitchId});
@@ -418,7 +425,7 @@ function App() {
                 <TextEditor text={text} setText={setText} />
                 <Buttons 
                     buttons={buttons} slots={slots} switches={switches} lenses={lenses}
-                    createButton={createButton} expandButton={expandButton}
+                    createButton={createButton} expandButton={expandButton} expandedButton={expandedButton}
                     handleGenerate={handleGenerate}
                     selected={selected} setSelected={setSelected}
                     createSlot={createSlot} changeSlot={changeSlot} 
