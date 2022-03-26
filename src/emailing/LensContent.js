@@ -21,8 +21,6 @@ function LensContent(props) {
         props.changeLens(currLensId, currLens.type, newProperties);
     }
 
-    console.log(currButton, currLensId, currLens, props.lenses);
-
     return(
         <div>
             <ButtonCont height={LENS_BUTTON_SIZE} width={(LENS_BUTTON_SIZE+8)*3 - 8}>

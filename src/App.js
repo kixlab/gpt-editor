@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import styled from "styled-components";
 
-import React, { useState, useReducer, useCallback } from 'react';
+import React, { useState, useReducer, useCallback, useEffect } from 'react';
 
 import TextEditor from './emailing/TextEditor';
 import Buttons from './emailing/Buttons';
@@ -215,6 +215,7 @@ function App() {
     const [isMeta, setIsMeta] = useState(false);
     const [selected, setSelected] = useState({type: null})
     const [text, setText] = useState("");
+    const [selectedText, setSelectedText] = useState("");
     const [expandedButton, setExpandedButton] = useState(null);
 
     function handleKeyDown(e) {
@@ -250,7 +251,6 @@ function App() {
                 setSelected({type: null})
             }
         }
-        // TODO: copy buttons, copy slots, copy switches
     }
 
     function handleKeyUp(e) {
@@ -282,7 +282,6 @@ function App() {
     }
 
     function copyButton(buttonId) {
-        // TODO: copy all slots, switches, and lenses
         var toCopyButon = buttons[buttonId];
         var newButtonId = "b" + generateId();
 
@@ -419,12 +418,23 @@ function App() {
 
     function handleGenerate(buttonId) {
         console.log(buttonId);
+        setAddGeneration("hey");
+        setAddGeneration(null);
     }
+
+    const [addGeneration, setAddGeneration] = useState(null);
+
+    useEffect(() => {
+        console.log(selectedText);
+    }, [selectedText])
 
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <Container>
-                <TextEditor text={text} setText={setText} />
+                <TextEditor 
+                    text={text} setText={setText} setSelectedText={setSelectedText}
+                    addGeneration={addGeneration} 
+                />
                 <Buttons 
                     buttons={buttons} slots={slots} switches={switches} lenses={lenses}
                     createButton={createButton} expandButton={expandButton} expandedButton={expandedButton}

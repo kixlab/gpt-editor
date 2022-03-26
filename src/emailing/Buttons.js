@@ -21,6 +21,7 @@ function Buttons(props) {
     }
     function handleClick(e) {
         e.stopPropagation();
+        e.preventDefault();
         var buttonId = e.target.getAttribute("data-id");
         if(buttonId === "-1") {
             props.createButton();
@@ -255,6 +256,12 @@ const ExpandedDetails = styled.div`
     left: ${props => props.xPosition}px;
     display: flex;
     flex-direction: row;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 `;
 
 const ContainerHeader = styled.div`
