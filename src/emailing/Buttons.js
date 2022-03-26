@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import InputContent from './InputContent';
 import SwitchContent from './SwitchContent';
+import LensContent from './LensContent';
 
 const BUTTON_SIZE = 64;
 const BUTTON_Y_OFFSET = 16;
@@ -181,7 +182,7 @@ function Buttons(props) {
                 </InputContainer>
                 <Line></Line>
                 <ModelContainer>
-                    <ContainerHeader>
+                    <ContainerHeader style={{marginBottom: "4px"}}>
                         Model
                     </ContainerHeader>
                     <SwitchContent
@@ -192,9 +193,13 @@ function Buttons(props) {
                 </ModelContainer>
                 <Line></Line>
                 <OutputContainer>
-                    <ContainerHeader>
+                    <ContainerHeader style={{marginBottom: "4px"}}>
                         Output
                     </ContainerHeader>
+                    <LensContent
+                        buttons={props.buttons} buttonId={buttonId}
+                        lenses={props.lenses} changeLens={props.changeLens}
+                    />
                 </OutputContainer>
             </ExpandedDetails>
         )

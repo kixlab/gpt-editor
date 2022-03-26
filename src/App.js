@@ -62,7 +62,7 @@ function App() {
         0 : {
             slots: ['hey', 'ho', 'hu'],
             switches: ['one', 'three'],
-            lens: -1,
+            lens: 0,
             outputPrefix: "Output:",
             isLoading: false
         }
@@ -181,12 +181,8 @@ function App() {
         var newLenses = { ...lenses };
         switch (action.type) {
             case 'create':
-                var { lensId, lensType, properties } = action;
-                newLenses[lensId] = {
-                    type: lensType,
-                    properties: properties,
-                    generations: []
-                };
+                var { lensId, newLens } = action;
+                newLenses[lensId] = newLens;
                 return newLenses;
             case 'set-generations':
                 var { lensId, generations } = action;
@@ -196,7 +192,7 @@ function App() {
             case 'change':
                 var { lensId, lensType, properties } = action;
                 var currLens = newLenses[lensId];
-                currLens['lensType'] = lensType;
+                currLens['type'] = lensType;
                 currLens['properties'] = properties;
                 return newLenses;
             case 'remove':
@@ -209,9 +205,10 @@ function App() {
     })
     const [lenses, lensesDispatch] = useReducer(lensesReducer, {
         0: {
-            type: "list",
+            type: 'list',
             generations: [],
-            properties: null
+            properties: {x: 'Positive', y: 'Joy'},
+            button: 0,
         }
     });
 
@@ -264,14 +261,24 @@ function App() {
 
     function createButton() {
         var newButtonId = "b" + generateId();
+        var newLensId = "l" + generateId();
+
         var newButton = {
             slots: [],
             switches: [],
-            lens: -1,
+            lens: newLensId,
             outputPrefix: "",
             isLoading: false
         }
+        var newLens = {
+            type: 'list',
+            generations: [],
+            properties: {x: "Positive", y: "Joy"},
+            button: newButtonId,
+        }
+
         buttonsDispatch({type: 'create', buttonId: newButtonId, newButton: newButton});
+        lensesDispatch({type: "create", lensId: newLensId, newLens: newLens});
     }
 
     function copyButton(buttonId) {
@@ -297,7 +304,8 @@ function App() {
         if(toCopyButon.lens !== -1) {
             var newLensId = "l" + generateId();
             var lensToCopy = JSON.parse(JSON.stringify(lenses[toCopyButon.lens]));
-            lensesDispatch({type: 'create', lensId: newLensId, lensType: lensToCopy.type, properties: lensToCopy.properties});
+            lensToCopy.button = newButtonId;
+            lensesDispatch({type: 'create', lensId: newLensId, newsLens: lensToCopy});
             copiedLens = newLensId;
         }
         var newButton = {
@@ -401,14 +409,8 @@ function App() {
         switchesDispatch({type: 'change', switchId: switchId, property, value});
     }
 
-    function createLens(buttonId, type, properties) {
-        var newLensId = "l" + generateId();
-        lensesDispatch({type: 'create', lensId: newLensId, lensType: type, properties: properties});
-        buttonsDispatch({type: 'set-lens', buttonId: buttonId, lensId: newLensId});
-    }
-
-    function changeLens(buttonId, type, properties) {
-        lensesDispatch({type: 'change', lensId: buttons[buttonId].lens, lensType: type, properties: properties});
+    function changeLens(lensId, type, properties) {
+        lensesDispatch({type: 'change', lensId: lensId, lensType: type, properties: properties});
     }
 
     function handleCanvasClick(e) {
@@ -431,6 +433,7 @@ function App() {
                     createSlot={createSlot} changeSlot={changeSlot} 
                     changeOutputPrefix={changeOutputPrefix}
                     createSwitch={createSwitch} onPropertyChange={onPropertyChange}
+                    changeLens={changeLens}
                 />
             </Container>
         </div>
