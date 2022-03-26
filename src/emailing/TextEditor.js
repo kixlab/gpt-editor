@@ -16,8 +16,20 @@ function TextEditor(props) {
         return <Leaf {...props} />
     }, [])
 
+
+    const valueToText = (value) => {
+        var text = "";
+        for(var i = 0; i < value[0].children.length; i++) {
+            var child = value[0].children[i];
+            if(child.text !== undefined) {
+                text += child.text;
+            }
+        }
+        return text;
+    }
+
     const handleChange = (newValue) => {
-        console.log(newValue)
+        props.handleTextChange(valueToText(newValue));
         setValue(newValue);
     }
 
@@ -48,12 +60,14 @@ function TextEditor(props) {
                             editor.insertText('\n');
                         }
                     }}
-                    onMouseUp={event => {
+                    onFocus={event => {
                         Transforms.setNodes(
                             editor,
                             { highlight: null },
                             { at: [], match: n => Text.isText(n) && n.highlight, mode: "all" }
                         )
+                    }}
+                    onBlur={event => {
                         Transforms.setNodes(
                             editor,
                             { highlight: true },

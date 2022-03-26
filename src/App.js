@@ -422,6 +422,12 @@ function App() {
         setAddGeneration(null);
     }
 
+    function handleTextChange(newText) {
+        if(text === newText) return;
+        console.log(newText);
+        setText(newText);
+    }
+
     const [addGeneration, setAddGeneration] = useState(null);
 
     useEffect(() => {
@@ -432,7 +438,7 @@ function App() {
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <Container>
                 <TextEditor 
-                    text={text} setText={setText} setSelectedText={setSelectedText}
+                    text={text} handleTextChange={handleTextChange} setSelectedText={setSelectedText}
                     addGeneration={addGeneration} 
                 />
                 <Buttons 
