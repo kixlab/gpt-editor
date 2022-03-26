@@ -61,7 +61,7 @@ function App() {
     const [buttons, buttonsDispatch] = useReducer(buttonsReducer, {
         0 : {
             slots: ['hey', 'ho', 'hu'],
-            switches: [],
+            switches: ['one', 'three'],
             lens: -1,
             outputPrefix: "Output:",
             isLoading: false,
@@ -133,7 +133,50 @@ function App() {
                 throw new Error();
         }
     }, []);
-    const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0});
+    const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0,
+        'one': {
+            model: "GPT-3",
+            color: "#71AAFF",
+            isChanged: false,
+            button: 0,
+            properties: {
+                engine: "text-davinci-002",
+                temperature: 0.7,
+                topP: 1,
+                frequencyPen: 0,
+                presencePen: 0,
+                bestOf: 1
+            }
+        }, 
+        'two': {
+            model: "GPT-3",
+            color: colorWheel[3],
+            isChanged: false,
+            button: 0,
+            properties: {
+                engine: "text-davinci-002",
+                temperature: 0.7,
+                topP: 1,
+                frequencyPen: 0,
+                presencePen: 0,
+                bestOf: 1
+            }
+        },
+        'three': {
+            model: "GPT-3",
+            color: colorWheel[4],
+            isChanged: false,
+            button: -1,
+            properties: {
+                engine: "text-davinci-002",
+                temperature: 0.7,
+                topP: 1,
+                frequencyPen: 0,
+                presencePen: 0,
+                bestOf: 1
+            }
+        }
+    });
 
     const lensesReducer = useCallback((lenses, action) => {
         var newLenses = { ...lenses };
@@ -319,6 +362,7 @@ function App() {
             model: "GPT-3",
             color: "#71AAFF",
             isChanged: false,
+            button: buttonId,
             properties: {
                 engine: "text-davinci-002",
                 temperature: 0.7,
@@ -344,6 +388,10 @@ function App() {
     function removeSwitch(buttonId, switchId) {
         buttonsDispatch({type: 'remove-switch', buttonId: buttonId, switchId: switchId});
         switchesDispatch({type: 'remove', switchId: switchId});
+    }
+
+    function onPropertyChange(switchId, property, value) {
+        switchesDispatch({type: 'change', switchId: switchId, property, value});
     }
 
     function createLens(buttonId, type, properties) {
@@ -375,6 +423,7 @@ function App() {
                     selected={selected} setSelected={setSelected}
                     createSlot={createSlot} changeSlot={changeSlot} 
                     changeOutputPrefix={changeOutputPrefix}
+                    createSwitch={createSwitch} onPropertyChange={onPropertyChange}
                 />
             </Container>
         </div>

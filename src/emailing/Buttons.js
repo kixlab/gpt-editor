@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import InputContent from './InputContent';
+import SwitchContent from './SwitchContent';
 
 const BUTTON_SIZE = 64;
 const BUTTON_Y_OFFSET = 16;
@@ -188,6 +189,11 @@ function Buttons(props) {
                     <ContainerHeader>
                         Model
                     </ContainerHeader>
+                    <SwitchContent
+                        buttons={props.buttons} buttonId={expandedButton.id} switches={props.switches}
+                        selected={props.selected} setSelected={props.setSelected}
+                        createSwitch={props.createSwitch} onPropertyChange={props.onPropertyChange}
+                    />
                 </ModelContainer>
                 <Line></Line>
                 <OutputContainer>
@@ -269,6 +275,7 @@ const InputContainer = styled.div`
     padding: 8px 16px 16px 16px;
     background-color: #0066FF1A;
     border-radius: 12px;
+    height: fit-content;
 `;
 
 const ModelContainer = styled.div`
