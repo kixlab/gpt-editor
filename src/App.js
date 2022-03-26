@@ -59,10 +59,10 @@ function App() {
         }
     });
     const [buttons, buttonsDispatch] = useReducer(buttonsReducer, {
-        0 : {
+        'a' : {
             slots: ['hey', 'ho', 'hu'],
             switches: ['one', 'three'],
-            lens: 0,
+            lens: 'b',
             outputPrefix: "Output:",
             isLoading: false
         }
@@ -204,11 +204,11 @@ function App() {
         }
     })
     const [lenses, lensesDispatch] = useReducer(lensesReducer, {
-        0: {
+        'b': {
             type: 'list',
             generations: [],
             properties: {x: 'Positive', y: 'Joy'},
-            button: 0,
+            button: 'a',
         }
     });
 
@@ -301,17 +301,17 @@ function App() {
             switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: switchToCopy});
             copiedSwitches.push(newSwitchId);
         }
-        if(toCopyButon.lens !== -1) {
-            var newLensId = "l" + generateId();
-            var lensToCopy = JSON.parse(JSON.stringify(lenses[toCopyButon.lens]));
-            lensToCopy.button = newButtonId;
-            lensesDispatch({type: 'create', lensId: newLensId, newsLens: lensToCopy});
-            copiedLens = newLensId;
-        }
+
+        var newLensId = "l" + generateId();
+        var lensToCopy = JSON.parse(JSON.stringify(lenses[toCopyButon.lens]));
+        lensToCopy.button = newButtonId;
+        lensesDispatch({type: 'create', lensId: newLensId, newLens: lensToCopy});
+        copiedLens = newLensId;
+
         var newButton = {
             slots: copiedSlots,
             switches: copiedSwitches,
-            lens: copiedLens,
+            lens: newLensId,
             outputPrefix: toCopyButon.outputPrefix,
             isLoading: false
         }
@@ -327,9 +327,9 @@ function App() {
         for(var i = 0; i < toRemoveButton.switches.length; i++) {
             switchesDispatch({type: 'remove', switchId: toRemoveButton.switches[i]});
         }
-        if(toRemoveButton.lens !== -1) {
-            lensesDispatch({type: 'remove', lensId: toRemoveButton.lens});
-        }
+
+        lensesDispatch({type: 'remove', lensId: toRemoveButton.lens});
+
         if(expandedButton === buttonId) {
             setExpandedButton(null);
         }
