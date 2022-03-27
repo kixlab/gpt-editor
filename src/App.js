@@ -459,12 +459,14 @@ function App() {
     }
 
     function showGeneration(genText, isPermanent) {
-        setAddGeneration({'text': genText, isPermanent: isPermanent});
+        if(genText === null) {
+            setAddGeneration(null);
+        } else {
+            setAddGeneration({'text': genText, isPermanent: isPermanent});
+            if(isPermanent)
+                setSelected({type: null})
+        }
     }
-
-    useEffect(() => {
-        console.log(addGeneration);
-    }, [addGeneration])
 
     function hideLens(lensId) {
         lensesDispatch({type: 'set-generations', lensId: lensId, generations: []});

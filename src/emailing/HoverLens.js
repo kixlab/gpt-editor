@@ -15,7 +15,7 @@ function HoverLens(props) {
         }
     }
 
-    var top = positions.top + positions.height + 8;
+    var top = positions.top + positions.height + 32;
     var left = positions.left;
 
     var editorElement = document.getElementsByClassName('email-editor')[0];
@@ -34,6 +34,16 @@ function HoverLens(props) {
         props.showGeneration(genText, true);
     }
 
+    function handleMouseEnter(e) {
+        var index = parseInt(e.target.getAttribute('data-idx'))
+        var genText = currLens.generations[index].text;
+        props.showGeneration(genText, false);
+    }
+    
+    function handleMouseLeave() {
+        props.showGeneration(null);
+    }
+
     function drawContent() {
         switch(currLens.type) {
             case 'list':
@@ -41,7 +51,11 @@ function HoverLens(props) {
                     <ListContent>
                         {currLens.generations.map((generation, index) => {
                             return (
-                                <ListItem key={index} data-idx={index}>
+                                <ListItem 
+                                    key={index} data-idx={index}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                >
                                     {generation.text}
                                 </ListItem>
                             )
