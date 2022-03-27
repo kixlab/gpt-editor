@@ -46,10 +46,10 @@ def get_sentences(request, length):
 
 def get_sentences_from_mutiple(request):
     generator_list = request.json['generators']
-    response = []
+    sentences = []
     for i in range(len(generator_list)):
         generator = generator_list[i]
-        response += openai.Completion.create(
+        response = openai.Completion.create(
             engine=generator['engine'],
             prompt=request.json['text'],
             max_tokens=256,
@@ -62,11 +62,11 @@ def get_sentences_from_mutiple(request):
             stop="\n"
         ).choices
 
-
-    sentences = []
-    print(response)
-    for i in range(len(response)):
-        sentences.append(response[i].text)
+        print(response)
+        for j in range(len(response)):
+            if len(response[j].text) == 0: 
+                continue
+            sentences.append({'switchId': generator['switchId'], 'text': response[j].text})
     
     return sentences
 
@@ -172,8 +172,8 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
 
     @api.route('/api/generate-multiple', methods=['POST'])
     def generate_multiple():
-        print(request.json)
-        sentences = get_sentences_from_mutiple(request)
+        generations = get_sentences_from_mutiple(request)
+        sentences = list(map(lambda entry: entry['text'], generations))
         existing = request.json['existing']
 
         sentiments = get_classification(sentences, sentiment.model, sentiment.tokenizer)
@@ -192,20 +192,14 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 "sentiment": existing[i]['sentiment'],
                 "emotion": existing[i]['emotion']
             })
-        switchIdx = 0
-        switchCount = 0
         for i in range(len(sentences)):
             result.append({
-                'switchId': request.json['generators'][switchIdx]['switchId'], 
+                'switchId': generations[i]['switchId'], 
                 'text': sentences[i], 
                 'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
                 "sentiment": np.around(sentiments[i] * 100).tolist(),
                 "emotion": np.around(emotions[i] * 100).tolist()
             })
-            switchCount += 1
-            if switchCount == 3:
-                switchIdx += 1
-                switchCount = 0
         return jsonify(result)
 
     return api

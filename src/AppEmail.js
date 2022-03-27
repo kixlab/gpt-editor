@@ -399,7 +399,6 @@ function App() {
 
     function removeSwitch(buttonId, switchId) {
         buttonsDispatch({type: 'remove-switch', buttonId: buttonId, switchId: switchId});
-        switchesDispatch({type: 'remove', switchId: switchId});
     }
 
     function onPropertyChange(switchId, property, value) {
