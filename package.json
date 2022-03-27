@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.8.2",
+    "@emotion/styled": "^11.8.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.16",
+    "@mui/material": "^5.5.2",
     "@reduxjs/toolkit": "^1.5.1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^9.3.2",
@@ -22,6 +25,7 @@
     "react-redux": "^7.2.3",
     "react-scripts": "^5.0.0",
     "slate": "^0.72.8",
+    "slate-history": "^0.66.0",
     "slate-react": "^0.72.9",
     "styled-components": "^5.3.3",
     "typeface-roboto": "^1.1.13"

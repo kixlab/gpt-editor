@@ -5,6 +5,9 @@ import networkx as nx
 import torch
 from scipy.spatial.distance import cdist
 import json
+import random
+import numpy as np
+from scipy.special import softmax
 
 openai.api_key = os.getenv("OPEN_API_KEY")
 
@@ -17,11 +20,11 @@ def findSentenceEnding(text, startIdx):
         idx += 1
     return idx
 
-def get_sentences(request):
+def get_sentences(request, length):
     response = openai.Completion.create(
         engine=request.json['engine'],
         prompt=request.json['text'],
-        max_tokens=40,
+        max_tokens=40*length,
         temperature=request.json['temperature'],
         top_p=request.json['topP'],
         frequency_penalty=request.json['frequencyPen'],
@@ -34,9 +37,36 @@ def get_sentences(request):
     for i in range(len(response.choices)):
         s = response.choices[i].text
         cropIdx = 0
-        endIdx = findSentenceEnding(s, cropIdx)
-        cropIdx = endIdx + 1
+        for j in range(length):
+            endIdx = findSentenceEnding(s, cropIdx)
+            cropIdx = endIdx + 1
         sentences.append(s[:cropIdx])
+    
+    return sentences
+
+def get_sentences_from_mutiple(request):
+    generator_list = request.json['generators']
+    response = []
+    for i in range(len(generator_list)):
+        generator = generator_list[i]
+        response += openai.Completion.create(
+            engine=generator['engine'],
+            prompt=request.json['text'],
+            max_tokens=256,
+            temperature=generator['temperature'],
+            top_p=generator['topP'],
+            frequency_penalty=generator['frequencyPen'],
+            presence_penalty=generator['presencePen'],
+            best_of=(generator['bestOf'] if generator['bestOf'] >= request.json['n'] else request.json['n']),
+            n=request.json['n'],
+            stop="\n"
+        ).choices
+
+
+    sentences = []
+    print(response)
+    for i in range(len(response)):
+        sentences.append(response[i].text)
     
     return sentences
 
@@ -68,15 +98,26 @@ def draw_graph(sentences, cossim):
     
     return coord
 
-def create_api(model, tokenizer) -> Blueprint:
+def get_classification(sentences, model, tokenizer):
+    inputs = tokenizer(sentences, padding=True, truncation=True, return_tensors="pt")
+
+    # Get the embeddings
+    with torch.no_grad():
+        output = model(**inputs)
+    scores = output.logits.numpy()
+    scores = softmax(scores, axis=1)
+
+    return scores
+
+def create_api(sst, sentiment, emotion) -> Blueprint:
     api = Blueprint('api', __name__)
 
     @api.route('/api/generate-new', methods=['POST'])
     def generate():
-        sentences = get_sentences(request)
+        sentences = get_sentences(request, 1)
         existing = request.json['existing']
         combined = list(map(lambda entry: entry['text'], existing))+sentences
-        embeddings, cossim = process_simcse(model, tokenizer, combined)
+        embeddings, cossim = process_simcse(sst.model, sst.tokenizer, combined)
         coord = draw_graph(combined, cossim)
         result = []
         for i in range(len(existing)):
@@ -95,8 +136,77 @@ def create_api(model, tokenizer) -> Blueprint:
 
     @api.route('/api/generate-one', methods=['POST'])
     def generate_one():
-        sentences = get_sentences(request)
+        sentences = get_sentences(request, 1)
         return jsonify([{'text': sentences[0]}])
+
+    @api.route('/api/generate-length', methods=['POST'])
+    def generate_length():
+        sentences = get_sentences(request, request.json['length'])
+        existing = request.json['existing']
+
+        sentiments = get_classification(sentences, sentiment.model, sentiment.tokenizer)
+        emotions = get_classification(sentences, emotion.model, emotion.tokenizer)
+
+        combined = list(map(lambda entry: entry['text'], existing))+sentences
+        embeddings, cossim = process_simcse(sst.model, sst.tokenizer, combined)
+        coord = draw_graph(combined, cossim)
+
+        result = []
+        for i in range(len(existing)):
+            result.append({
+                'switchId': existing[i]['switchId'],
+                'text': existing[i]['text'], 
+                'coordinates': {'x': coord[i][0], 'y': coord[i][1]},
+                "sentiment": existing[i]['sentiment'],
+                "emotion": existing[i]['emotion']
+            })
+        for i in range(len(sentences)):
+            result.append({
+                'switchId': request.json['switchId'], 
+                'text': sentences[i], 
+                'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
+                "sentiment": np.around(sentiments[i] * 100).tolist(),
+                "emotion": np.around(emotions[i] * 100).tolist()
+            })
+        return jsonify(result)
+
+    @api.route('/api/generate-multiple', methods=['POST'])
+    def generate_multiple():
+        print(request.json)
+        sentences = get_sentences_from_mutiple(request)
+        existing = request.json['existing']
+
+        sentiments = get_classification(sentences, sentiment.model, sentiment.tokenizer)
+        emotions = get_classification(sentences, emotion.model, emotion.tokenizer)
+
+        combined = list(map(lambda entry: entry['text'], existing))+sentences
+        embeddings, cossim = process_simcse(sst.model, sst.tokenizer, combined)
+        coord = draw_graph(combined, cossim)
+
+        result = []
+        for i in range(len(existing)):
+            result.append({
+                'switchId': existing[i]['switchId'],
+                'text': existing[i]['text'], 
+                'coordinates': {'x': coord[i][0], 'y': coord[i][1]},
+                "sentiment": existing[i]['sentiment'],
+                "emotion": existing[i]['emotion']
+            })
+        switchIdx = 0
+        switchCount = 0
+        for i in range(len(sentences)):
+            result.append({
+                'switchId': request.json['generators'][switchIdx]['switchId'], 
+                'text': sentences[i], 
+                'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
+                "sentiment": np.around(sentiments[i] * 100).tolist(),
+                "emotion": np.around(emotions[i] * 100).tolist()
+            })
+            switchCount += 1
+            if switchCount == 3:
+                switchIdx += 1
+                switchCount = 0
+        return jsonify(result)
 
     return api
 

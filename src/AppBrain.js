@@ -4,9 +4,9 @@ import "typeface-roboto";
 import axios from 'axios';
 
 import React, { useState, useReducer, useCallback } from 'react';
-import TextEditor from './components/Editor';
-import WidgetArea from './components/WidgetArea';
-import { loremipsum } from './components/LoremIpsum'
+import TextEditor from './brainstorming/Editor';
+import WidgetArea from './brainstorming/WidgetArea';
+import { loremipsum } from './brainstorming/LoremIpsum'
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
 function generateId() {

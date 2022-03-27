@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 
-import {
-    SWITCH_SIZE,
-    SWITCH_PROPERTY_WIDTH
-} from './Sizes';
+const SWITCH_SIZE = 64;
+const SWITCH_PROPERTY_WIDTH = 160;
+const SWITCH_PROPERTY_HEIGHT = 50;
 
 const defaultProperties = {
     engine: "davinci",
@@ -58,14 +57,14 @@ function SwitchProperties(props) {
                         <select className="dropdown" value={properties[name]} data-property={name} onChange={handleChange}>
                             <option value="text-davinci-002">text-davinci-002</option>
                             <option value="text-curie-001">text-curie-001</option>
-                            <option value="text-baggage-001">text-baggage-001</option>
+                            <option value="text-babbage-001">text-babbage-001</option>
                             <option value="text-ada-001">text-ada-001</option>
                             <option value="text-davinci-001">text-davinci-001</option>
                             <option value="davinci-instruct-beta">davinci-instruct-beta</option>
                             <option value="davinci">davinci</option>
                             <option value="curie-instruct-beta">curie-instruct-beta</option>
                             <option value="curie">curie</option>
-                            <option value="baggage">baggage</option>
+                            <option value="babbage">babbage</option>
                             <option value="ada">ada</option>
                         </select>
                     )
@@ -105,13 +104,20 @@ function SwitchProperties(props) {
 
     var propsHTML = propertiesToHTML(Object.keys(properties), properties);
 
+    var top = position.y - propsHTML.length*(SWITCH_PROPERTY_HEIGHT+4) - 2;
+    var left = position.x;
+
     return (
-        <div style={{position: "absolute", top: position.y + "px", left: position.x + SWITCH_SIZE + 6 + "px"}}>
+        <div style={{position: "absolute", top: top + "px", left: left + "px"}} onClick={(e) => e.stopPropagation()}>
             {propsHTML}
             {propsHTML.length !== 6 ?
                 <ShowAllButton 
-                    style={{borderTopColor: currSwitch.color, marginLeft: SWITCH_PROPERTY_WIDTH / 2 - 20 + "px"}} 
-                    onClick={() => setShowAll(!showAll)}
+                    style={{
+                        borderBottomColor: currSwitch.color, 
+                        marginLeft: SWITCH_PROPERTY_WIDTH / 2 - 20 + "px",
+                        marginTop: -1 * propsHTML.length*(SWITCH_PROPERTY_HEIGHT+4) - 20 - 4+ "px"
+                    }} 
+                    onClick={(e) => setShowAll(!showAll)}
                 />
                 : ""
             }
@@ -120,7 +126,7 @@ function SwitchProperties(props) {
 }
 
 const PropertyContainer = styled.div`
-    height: ${SWITCH_SIZE}px;
+    height: ${SWITCH_PROPERTY_HEIGHT}px;
     width: ${SWITCH_PROPERTY_WIDTH}px;
     border-radius: 4px;
     background-color: #fff;
@@ -147,11 +153,10 @@ const PropertyHeader = styled.div`
 const ShowAllButton = styled.div`
     width: 0;
     height: 0;
-    margin-top: 8px;
 	border-left: 10px solid transparent;
 	border-right: 10px solid transparent;
-	border-top: 20px solid;
-    border-bottom: 0;
+	border-bottom: 20px solid;
+    border-top: 0;
     cursor: pointer;
 `;
 
