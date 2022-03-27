@@ -7,6 +7,7 @@ import React, { useState, useReducer, useCallback, useEffect } from 'react';
 
 import TextEditor from './emailing/TextEditor';
 import Buttons from './emailing/Buttons';
+import HoverLens from './emailing/HoverLens';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -60,10 +61,10 @@ function App() {
     });
     const [buttons, buttonsDispatch] = useReducer(buttonsReducer, {
         'a' : {
-            slots: ['hey', 'ho', 'hu'],
+            slots: ['hey', 'hu'],
             switches: ['one', 'three'],
             lens: 'b',
-            outputPrefix: "Output:",
+            outputPrefix: "Changed text:",
             isLoading: false
         }
     });
@@ -91,18 +92,13 @@ function App() {
     const [slots, slotsDispatch] = useReducer(slotsReducer, {
         'hey': {
             type: 'input',
-            text: "Complete this email with a friendly tone:",
-            button: 0
-        },
-        'ho': {
-            type: 'whole',
-            text: "Input:",
-            button: 0
+            text: "Change text to be more polite and friendly.",
+            button: 'a'
         },
         'hu': {
             type: 'selection',
             text: "Original text:",
-            button: 0
+            button: 'a'
         }
     });
 
@@ -137,7 +133,7 @@ function App() {
             model: "GPT-3",
             color: "#71AAFF",
             isChanged: false,
-            button: 0,
+            button: 'a',
             properties: {
                 engine: "text-davinci-002",
                 temperature: 0.7,
@@ -153,7 +149,7 @@ function App() {
             isChanged: false,
             button: -1,
             properties: {
-                engine: "text-davinci-002",
+                engine: "text-curie-001",
                 temperature: 0.7,
                 topP: 1,
                 frequencyPen: 0,
@@ -165,9 +161,9 @@ function App() {
             model: "GPT-3",
             color: colorWheel[4],
             isChanged: false,
-            button: 0,
+            button: 'a',
             properties: {
-                engine: "text-davinci-002",
+                engine: "text-curie-001",
                 temperature: 0.7,
                 topP: 1,
                 frequencyPen: 0,
@@ -217,6 +213,7 @@ function App() {
     const [text, setText] = useState("");
     const [selectedText, setSelectedText] = useState("");
     const [expandedButton, setExpandedButton] = useState(null);
+    const [addGeneration, setAddGeneration] = useState(null);
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -417,20 +414,62 @@ function App() {
     }
 
     function handleGenerate(buttonId) {
-        setAddGeneration([{'text': "hey"}, {'text': "hohoho"}, {'text': "huehuehue", 'isPermanent': true}][Math.floor(Math.random() * 3)]);
-        setAddGeneration(null);
+        var currButton = buttons[buttonId];
+        var slotIds = currButton.slots;
+        var switchIds = currButton.switches;
+        if(switchIds.length === 0) return;
+        var currLens = lenses[currButton.lens];
+        var data = {text: "", generators: [], n: 3, existing: currLens.generations};
+
+        buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isLoading', value: true});
+
+        for(var i = 0; i < slotIds.length; i++) {
+            var slot = slots[slotIds[i]];
+            if(slot.type === 'input') {
+                data.text += slot.text + "\n\n";
+            } else if(slot.type === 'whole') {
+                data.text += slot.text + " " + text + "\n\n";
+            } else if(slot.type === 'selection') {
+                data.text += slot.text + " " + selectedText + "\n\n";
+            }
+        }
+        data.text += currButton.outputPrefix;
+
+        console.log(data.text);
+
+        for(i = 0; i < switchIds.length; i++) {
+            var switchId = switchIds[i];
+            var currSwitch = switches[switchId];
+            data.generators.push({...currSwitch.properties, switchId: switchId});
+        }
+
+        axios
+        .post(`http://localhost:5000/api/generate-multiple`, data)
+        .then((response) => {
+            lensesDispatch({type: 'set-generations', lensId: currButton.lens, generations: response.data});
+            buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isLoading', value: false});
+            setSelected({type: 'lens', data: currButton.lens});
+        });
     }
 
     function handleTextChange(newText) {
         if(text === newText) return;
+        console.log(newText);
         setText(newText);
     }
 
-    const [addGeneration, setAddGeneration] = useState(null);
+    function showGeneration(genText, isPermanent) {
+        setAddGeneration({'text': genText, isPermanent: isPermanent});
+    }
 
     useEffect(() => {
-        console.log(selectedText);
-    }, [selectedText])
+        console.log(addGeneration);
+    }, [addGeneration])
+
+    function hideLens(lensId) {
+        lensesDispatch({type: 'set-generations', lensId: lensId, generations: []});
+        setSelected({type: null});
+    }
 
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
@@ -449,6 +488,10 @@ function App() {
                     createSwitch={createSwitch} onPropertyChange={onPropertyChange}
                     changeLens={changeLens}
                 />
+                <HoverLens
+                    lenses={lenses} selected={selected} hideLens={hideLens}
+                    showGeneration={showGeneration}
+                />
             </Container>
         </div>
     );
@@ -458,7 +501,8 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     padding: 0 120px;
-    width: 100%
+    width: 100%;
+    position: relative;
 `;
 
 export default App;

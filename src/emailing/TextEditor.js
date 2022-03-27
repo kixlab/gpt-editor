@@ -34,9 +34,10 @@ function TextEditor(props) {
     }
 
     useEffect(() => {
-        console.log(props.addGeneration);
+        console.log(props.addGeneration)
         if(props.addGeneration === null) return;
-        if(props.addGeneration.isPermanent) {
+
+        if(value[0].children.length > editor.selection.focus.path[1] + 1) {
             Transforms.removeNodes(
                 editor,
                 { 
@@ -44,27 +45,15 @@ function TextEditor(props) {
                     match: n => Text.isText(n) && n.color 
                 }
             )
-            Transforms.insertNodes(
-                editor,
-                { text: props.addGeneration.text },
-                { at: [ 0, editor.selection.focus.path[1] + 1 ]}
-            )
-        } else {
-            if(value[0].children.length > editor.selection.focus.path[1] + 1) {
-                Transforms.removeNodes(
-                    editor,
-                    { 
-                        at: [ 0, editor.selection.focus.path[1] + 1 ],
-                        match: n => Text.isText(n) && n.color 
-                    }
-                )
-            }
-            Transforms.insertNodes(
-                editor,
-                { text: props.addGeneration.text, color: "#0066FF" },
-                { at: [ 0, editor.selection.focus.path[1] + 1 ]}
-            )
         }
+        Transforms.insertNodes(
+            editor,
+            props.addGeneration.isPermanent ?
+                { text: props.addGeneration.text } :    
+                { text: props.addGeneration.text, color: "#0066FF" }
+            ,
+            { at: [ 0, editor.selection.focus.path[1] + 1 ]}
+        )
     }, [props.addGeneration]);
 
     return (
@@ -109,9 +98,11 @@ function TextEditor(props) {
 }
 
 const Leaf = props => {
+    console.log(props);
     return (
         <span
             {...props.attributes}
+            className="email-text"
             style={{ 
                 backgroundColor: props.leaf.highlight ? '#0066FF33' : 'none',
                 color: props.leaf.color ? props.leaf.color : "#333"
