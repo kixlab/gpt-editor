@@ -10,7 +10,8 @@ function LensContent(props) {
     var currLensId = currButton.lens;
     var currLens = props.lenses[currLensId];
 
-    function handleClick(type) {
+    function handleClick(e, type) {
+        e.stopPropagation();
         props.changeLens(currLensId, type, currLens.properties);
     }
 
@@ -27,7 +28,7 @@ function LensContent(props) {
                 <g 
                     fill={currLens.type === 'list' ? "#0066FF" : "#CCC"} 
                     stroke={currLens.type === 'list' ? "#0066FF" : "#CCC"}
-                    onClick={() => handleClick('list')} style={{cursor: "pointer"}}
+                    onClick={(e) => handleClick(e, 'list')} style={{cursor: "pointer"}}
                     transform={`scale(${LENS_BUTTON_SIZE/50})`}
                 >
                     {ListButton}
@@ -35,7 +36,7 @@ function LensContent(props) {
                 <g 
                     fill={currLens.type === 'axis' ? "#0066FF" : "#CCC"} 
                     stroke={currLens.type === 'axis' ? "#0066FF" : "#CCC"}
-                    onClick={() => handleClick('axis')} style={{cursor: "pointer"}}
+                    onClick={(e) => handleClick(e, 'axis')} style={{cursor: "pointer"}}
                     transform={`translate(${(LENS_BUTTON_SIZE+8)*1}, 0) scale(${LENS_BUTTON_SIZE/50})`}
                 >
                     {AxisButton}
@@ -43,7 +44,7 @@ function LensContent(props) {
                 <g
                     fill={currLens.type === 'space' ? "#0066FF" : "#CCC"} 
                     stroke={currLens.type === 'space' ? "#0066FF" : "#CCC"}
-                    onClick={() => handleClick('space')} style={{cursor: "pointer"}}
+                    onClick={(e) => handleClick(e, 'space')} style={{cursor: "pointer"}}
                     transform={`translate(${(LENS_BUTTON_SIZE+8)*2}, 0) scale(${LENS_BUTTON_SIZE/50})`}
                 >
                     {SpaceButton}

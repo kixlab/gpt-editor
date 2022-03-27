@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import styled from "styled-components";
 
 function HoverLens(props) {
-    if(props.selected.type !== 'lens') return "";
-    var currLens = props.lenses[props.selected.data];
+    if(props.activeLens === null) return "";
+    var currLens = props.lenses[props.activeLens];
 
     var textElements = document.getElementsByClassName('email-text');
     var positions = textElements[textElements.length - 1].getBoundingClientRect();
@@ -39,9 +39,29 @@ function HoverLens(props) {
         var genText = currLens.generations[index].text;
         props.showGeneration(genText, false);
     }
-    
-    function handleMouseLeave() {
-        props.showGeneration(null);
+
+    var xRange = [1000000, -1000000];
+    var yRange = [1000000, -1000000];
+    for(var i = 0; i < currLens.generations.length; i++) {
+        var generation = currLens.generations[i];
+        var coordinates = generation.coordinates;
+        xRange[0] = Math.min(xRange[0], coordinates.x);
+        xRange[1] = Math.max(xRange[1], coordinates.x);
+        yRange[0] = Math.min(yRange[0], coordinates.y);
+        yRange[1] = Math.max(yRange[1], coordinates.y);
+    }
+
+    function translateCoordinates(coordinates, xRange, yRange) {
+        var {x, y} = coordinates;
+        var [xLoOld, xHiOld] = xRange;
+        var [yLoOld, yHiOld] = yRange;
+        const xLoNew = 12;
+        const xHiNew = 260 - 12 - 12;
+        const yLoNew = 12;
+        const yHiNew = 260 - 12 - 12;
+        var xNew = (x-xLoOld) / (xHiOld-xLoOld) * (xHiNew-xLoNew) + xLoNew;
+        var yNew = (y-yLoOld) / (yHiOld-yLoOld) * (yHiNew-yLoNew) + yLoNew;
+        return [xNew, yNew];
     }
 
     function drawContent() {
@@ -54,7 +74,6 @@ function HoverLens(props) {
                                 <ListItem 
                                     key={index} data-idx={index}
                                     onMouseEnter={handleMouseEnter}
-                                    onMouseLeave={handleMouseLeave}
                                 >
                                     {generation.text}
                                 </ListItem>
@@ -64,14 +83,26 @@ function HoverLens(props) {
                 )
             case 'axis':
                 return (
-                    <svg width="100%" height="100%">
+                    <svg width="100%" height="100%" style={{margin: "6px"}}>
                         <circle cx="10" cy="10" r="4" fill="red" />
                     </svg>
                 )
             case 'space':
                 return (
-                    <svg width="100%" height="100%">
-                        <circle cx="10" cy="10" r="4" fill="red" />
+                    <svg width="100%" height="100%" style={{margin: "6px"}}>
+                        {currLens.generations.map((generation, index) => {
+                            var [x, y] = translateCoordinates(generation.coordinates, xRange, yRange);
+                            var color = props.switches[generation.switchId].color;
+                            return (
+                                <circle
+                                    key={index} data-idx={index}
+                                    onMouseEnter={handleMouseEnter}
+                                    cx={x} cy={y} r="6 " fill={color}
+                                    stroke="#fff" strokeWidth="1"
+                                    style={{cursor: "pointer"}}
+                                />
+                            )
+                        })}
                     </svg>
                 )
         }

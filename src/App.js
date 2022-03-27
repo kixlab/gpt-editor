@@ -214,6 +214,7 @@ function App() {
     const [selectedText, setSelectedText] = useState("");
     const [expandedButton, setExpandedButton] = useState(null);
     const [addGeneration, setAddGeneration] = useState(null);
+    const [activeLens, setActiveLens] = useState(null);
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -402,7 +403,23 @@ function App() {
     }
 
     function onPropertyChange(switchId, property, value) {
-        switchesDispatch({type: 'change', switchId: switchId, property, value});
+        switch (property) {
+            case "temperature":
+            case "topP":
+                value = parseFloat(value);
+                if (isNaN(value) || value < 0 || value > 1) return;
+                break;
+            case "frequencyPen":
+            case "presencePen":
+                value = parseFloat(value);
+                if (isNaN(value) || value < 0 || value > 2) return;
+                break;
+            case "bestOf":
+                value = parseInt(value);
+                if (isNaN(value) || value < 1 || value > 20) return;
+                break;
+        }
+        switchesDispatch({ type: 'change', switchId, property, value });
     }
 
     function changeLens(lensId, type, properties) {
@@ -411,6 +428,10 @@ function App() {
 
     function handleCanvasClick(e) {
         setSelected({type: null});
+        if(activeLens !== null)
+            hideLens();
+        if(addGeneration !== null && !addGeneration.isPermanent)
+            setAddGeneration(null);
     }
 
     function handleGenerate(buttonId) {
@@ -448,7 +469,7 @@ function App() {
         .then((response) => {
             lensesDispatch({type: 'set-generations', lensId: currButton.lens, generations: response.data});
             buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isLoading', value: false});
-            setSelected({type: 'lens', data: currButton.lens});
+            setActiveLens(currButton.lens);
         });
     }
 
@@ -464,13 +485,13 @@ function App() {
         } else {
             setAddGeneration({'text': genText, isPermanent: isPermanent});
             if(isPermanent)
-                setSelected({type: null})
+                hideLens();
         }
     }
 
-    function hideLens(lensId) {
-        lensesDispatch({type: 'set-generations', lensId: lensId, generations: []});
-        setSelected({type: null});
+    function hideLens() {
+        lensesDispatch({type: 'set-generations', lensId: activeLens, generations: []});
+        setActiveLens(null);
     }
 
     return (
@@ -491,8 +512,8 @@ function App() {
                     changeLens={changeLens}
                 />
                 <HoverLens
-                    lenses={lenses} selected={selected} hideLens={hideLens}
-                    showGeneration={showGeneration}
+                    lenses={lenses} activeLens={activeLens} hideLens={hideLens}
+                    showGeneration={showGeneration} switches={switches}
                 />
             </Container>
         </div>

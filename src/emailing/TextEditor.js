@@ -34,18 +34,16 @@ function TextEditor(props) {
     }
 
     useEffect(() => {
-        console.log(props.addGeneration)
-        if(props.addGeneration === null) return;
+        Transforms.removeNodes(
+            editor,
+            { 
+                at: [ 0 ],
+                match: n => Text.isText(n) && n.color 
+            }
+        )
 
-        if(value[0].children.length > editor.selection.focus.path[1] + 1) {
-            Transforms.removeNodes(
-                editor,
-                { 
-                    at: [ 0, editor.selection.focus.path[1] + 1 ],
-                    match: n => Text.isText(n) && n.color 
-                }
-            )
-        }
+        if(props.addGeneration === null) return;
+        
         Transforms.insertNodes(
             editor,
             props.addGeneration.isPermanent ?
