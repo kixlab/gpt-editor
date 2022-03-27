@@ -21,7 +21,7 @@ function TextEditor(props) {
         var text = "";
         for(var i = 0; i < value[0].children.length; i++) {
             var child = value[0].children[i];
-            if(child.text !== undefined) {
+            if(child.text !== undefined && child.color === undefined ) {
                 text += child.text;
             }
         }
@@ -36,11 +36,35 @@ function TextEditor(props) {
     useEffect(() => {
         console.log(props.addGeneration);
         if(props.addGeneration === null) return;
-        Transforms.insertText(
-            editor,
-            props.addGeneration,
-            { at: { path: [0, 0], offset: 0 }}
-        )
+        if(props.addGeneration.isPermanent) {
+            Transforms.removeNodes(
+                editor,
+                { 
+                    at: [ 0, editor.selection.focus.path[1] + 1 ],
+                    match: n => Text.isText(n) && n.color 
+                }
+            )
+            Transforms.insertNodes(
+                editor,
+                { text: props.addGeneration.text },
+                { at: [ 0, editor.selection.focus.path[1] + 1 ]}
+            )
+        } else {
+            if(value[0].children.length > editor.selection.focus.path[1] + 1) {
+                Transforms.removeNodes(
+                    editor,
+                    { 
+                        at: [ 0, editor.selection.focus.path[1] + 1 ],
+                        match: n => Text.isText(n) && n.color 
+                    }
+                )
+            }
+            Transforms.insertNodes(
+                editor,
+                { text: props.addGeneration.text, color: "#0066FF" },
+                { at: [ 0, editor.selection.focus.path[1] + 1 ]}
+            )
+        }
     }, [props.addGeneration]);
 
     return (
@@ -88,7 +112,10 @@ const Leaf = props => {
     return (
         <span
             {...props.attributes}
-            style={{ backgroundColor: props.leaf.highlight ? '#0066FF33' : 'none' }}
+            style={{ 
+                backgroundColor: props.leaf.highlight ? '#0066FF33' : 'none',
+                color: props.leaf.color ? props.leaf.color : "#333"
+            }}
         >
             {props.children}
         </span>

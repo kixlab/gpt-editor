@@ -417,14 +417,12 @@ function App() {
     }
 
     function handleGenerate(buttonId) {
-        console.log(buttonId);
-        setAddGeneration("hey");
+        setAddGeneration([{'text': "hey"}, {'text': "hohoho"}, {'text': "huehuehue", 'isPermanent': true}][Math.floor(Math.random() * 3)]);
         setAddGeneration(null);
     }
 
     function handleTextChange(newText) {
         if(text === newText) return;
-        console.log(newText);
         setText(newText);
     }
 
