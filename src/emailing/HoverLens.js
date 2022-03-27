@@ -64,6 +64,24 @@ function HoverLens(props) {
         return [xNew, yNew];
     }
 
+    function getAxisCoordinates(generation) {
+        const SENTIMENT_LABELS = ["Negative", "Neutral", "Positive"];
+        const EMOTION_LABELS = ["Anger", "Joy", "Optimism", "Sadness"];
+        
+        var coordinates = ['x', 'y'];
+        coordinates = coordinates.map((axis) => {
+            var property = currLens.properties[axis];
+            var sentimentIdx = SENTIMENT_LABELS.indexOf(property);
+            var emotionIdx = EMOTION_LABELS.indexOf(property);
+            if(sentimentIdx !== -1) {
+                return generation.sentiment[sentimentIdx];
+            } else if(emotionIdx !== -1) {
+                return generation.emotion[emotionIdx];
+            }
+        })
+        return {x: coordinates[0], y: coordinates[1]};
+    }
+
     function drawContent() {
         switch(currLens.type) {
             case 'list':
@@ -84,7 +102,34 @@ function HoverLens(props) {
             case 'axis':
                 return (
                     <svg width="100%" height="100%" style={{margin: "6px"}}>
-                        <circle cx="10" cy="10" r="4" fill="red" />
+                        <line x1="12" y1="236" x2="236" y2="236" stroke="#0066ff66" strokeWidth="2"/>
+                        <text 
+                            x="130" y="248" fontSize="12" fill="#0066ff"
+                            textAnchor="middle"
+                        >
+                            {currLens.properties.x}
+                        </text>
+                        <line x1="12" y1="12" x2="12" y2="236" stroke="#0066ff66" strokeWidth="2"/>
+                        <text 
+                            fontSize="12" fill="#0066ff"
+                            textAnchor="middle" transform="translate(8, 130) rotate(-90)"
+                        >
+                            {currLens.properties.y}
+                        </text>
+                        {currLens.generations.map((generation, index) => {
+                            var coordinates = getAxisCoordinates(generation);
+                            var [x, y] = translateCoordinates(coordinates, [0, 100], [0, 100]);
+                            var color = props.switches[generation.switchId].color;
+                            return (
+                                <circle
+                                    key={index} data-idx={index}
+                                    onMouseEnter={handleMouseEnter}
+                                    cx={x} cy={y} r="6 " fill={color}
+                                    stroke="#fff" strokeWidth="1"
+                                    style={{cursor: "pointer"}}
+                                />
+                            )
+                        })}
                     </svg>
                 )
             case 'space':

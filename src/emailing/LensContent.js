@@ -54,7 +54,10 @@ function LensContent(props) {
                 <PropertiesCont>
                     <div>
                         <div>Horizontal Axis</div>
-                        <Dropdown className="dropdown" value={currLens.properties.x} data-axis='horizontal' onChange={handleChange}>
+                        <Dropdown 
+                            className="dropdown" value={currLens.properties.x} data-axis='horizontal' 
+                            onClick={e => e.stopPropagation()} onChange={handleChange}
+                        >
                             <option value="Negative">Negative</option>
                             <option value="Neutral">Neutral</option>
                             <option value="Positive">Positive</option>
@@ -66,7 +69,10 @@ function LensContent(props) {
                     </div>
                     <div>
                         <div>Vertical Axis</div>
-                        <Dropdown value={currLens.properties.y} data-axis='vertical' onChange={handleChange}>
+                        <Dropdown 
+                            className="dropdown" value={currLens.properties.y} data-axis='vertical' 
+                            onClick={e => e.stopPropagation()} onChange={handleChange}
+                        >
                             <option value="Negative">Negative</option>
                             <option value="Neutral">Neutral</option>
                             <option value="Positive">Positive</option>
