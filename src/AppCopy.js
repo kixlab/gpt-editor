@@ -120,6 +120,13 @@ function App() {
                 var { lensId, typeIndex, newType } = action;
                 newLenses[lensId].types[typeIndex] = newType;
                 return newLenses;
+            case 'detatch-switch':
+                var { lensId, list } = action;
+                for(var i = 0; i < list.length; i++) {
+                    var switchId = list[i];
+                    newLenses[lensId].generations = newLenses[lensId].generations.filter(g => g.switchId !== switchId);
+                }
+                return newLenses;
             default:
                 throw new Error();
         }
@@ -147,12 +154,15 @@ function App() {
             } else if(selected.type === 'switch') {
                 copySwitch(selected.data);
             }
-        } else if(e.key === 'd' && isMeta) {
+        } else if(e.key === 'Backspace' && selected.type !== null) {
             e.preventDefault();
             if(selected.type === 'slots') {
                 removeSlot(selected.data, slots.path[selected.data]);
+                setSelected({type: null});
             } else if(selected.type === 'switch') {
+                lensesDispatch({type: "detatch-switch", lensId: 0, list: [selected.data]})
                 switchesDispatch({type: 'remove', switchesToRemove: [selected.data]});
+                setSelected({type: null});
             }
         }
     }
@@ -348,6 +358,10 @@ function App() {
         setText(text + " " + newText);
     }
 
+    function clearLens() {
+        lensesDispatch({type: "set-generations", lensId: 0, generations: []});
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <LeftColumn>
@@ -379,7 +393,7 @@ function App() {
                 <Lenses 
                     lenses={lenses} lensId={0} switches={switches}
                     changeLens={changeLens} changeLensType={changeLensType}
-                    copyGeneration={copyGeneration}
+                    copyGeneration={copyGeneration} clearLens={clearLens}
                 />
             </RightColumn>
         </div>

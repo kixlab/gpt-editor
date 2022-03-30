@@ -22,7 +22,7 @@ function GenerationRatings(props) {
         var colors = props.type === 'sentiment' ? SENTIMENT_COLORS : EMOTION_COLORS;
         for(var i = 0; i < ratings.length; i++) {
             result.push(
-                <div style={{fontSize: "10px", color: colors[i]}}>{labels[i]}: <b>{ratings[i]}%</b></div>
+                <div key={i} style={{fontSize: "10px", color: colors[i]}}>{labels[i]}: <b>{ratings[i]}%</b></div>
             )
         }
         return result;

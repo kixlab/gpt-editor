@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
 
-import { NewListButton, NewSpaceButton, SentimentButton, EmotionButton } from './SVG';
+import { NewListButton, NewSpaceButton, SentimentButton, EmotionButton, ClearButton } from './SVG';
 import GenerationList from './GenerationList';
 import GenerationSpace from './GenerationSpace';
 import GenerationRatings from './GenerationRatings';
@@ -35,10 +35,17 @@ function Lenses(props) {
                         <div style={{marginLeft: "4px", marginRight: "4px"}}> sentences</div>
                         <input 
                             className="slider" value={currLens.generationLength}
-                            style={{width: "100px"}} type="range" 
+                            style={{width: "100px", marginRight: "16px"}} type="range" 
                             min="1" max="6" step="1" 
                             onChange={handleChange}
                         />
+                        <div>
+                            <svg height="32" width="32">
+                                <ClearBtn stroke="#ccc" fill="#ccc" transform="scale(1.27)" onClick={() => props.clearLens()}>
+                                    {ClearButton}
+                                </ClearBtn>
+                            </svg>
+                        </div>
                     </LengthAdjust>
                     <Toggles>
                         <svg height="32" width="82">
@@ -178,6 +185,15 @@ const SentimentBtn = styled.g`
     }
 `;
 
+const ClearBtn = styled.g`
+    cursor: pointer;
+    stroke: #ccc;
+    fill: #ccc;
+    &:hover {
+        stroke: #0066FF;
+        fill: #0066FF;
+    }
+`;
 
 
 const BigContent = styled.div`

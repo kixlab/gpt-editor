@@ -21,6 +21,7 @@ function Switches(props) {
     function handleMouseEnter(e) {
         if(dragging !== null) return;
         var hoverSwitch = e.target.getAttribute('data-id');
+        if(hoverSwitch === '-1') return;
         if(props.switches[hoverSwitch].path)
             props.setHoverPath(props.switches[hoverSwitch].path);
     }
