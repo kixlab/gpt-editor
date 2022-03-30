@@ -173,7 +173,7 @@ function Slots(props) {
             {<Switches 
                 switches={props.switches} slots={props.slots} lastSlot={props.lastSlot}
                 selected={props.selected} setHoverSlot={props.setHoverSlot} setSelected={props.setSelected}
-                showSwitchProperties={props.showSwitchProperties} createSwitch={props.createSwitch}
+                showSwitchSide={props.showSwitchSide} createSwitch={props.createSwitch}
                 handleGenerate={props.handleGenerate} lenses={props.lenses} chooseLens={props.chooseLens}
                 slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
             />}

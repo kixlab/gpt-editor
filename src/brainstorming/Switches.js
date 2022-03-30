@@ -9,6 +9,12 @@ import {
     LENS_X_OFFSET
 } from './Sizes';
 
+import {
+    HistoryButton,
+    SettingButton
+} from './SVG';
+
+
 import Lens from './Lens';
 
 function Switches(props) {
@@ -18,7 +24,7 @@ function Switches(props) {
 
     function handleMouseEnter(e) {
         var hoverSwitch = e.target.getAttribute('data-id');
-        if(hoverSwitch === "-1") return;
+        if(hoverSwitch === "-1" || e.target.classList.contains("sidebutton")) return;
         setHoverSwitch(hoverSwitch);
         var hoverSlot = props.switches[hoverSwitch].slot;
         props.setHoverSlot(hoverSlot);
@@ -31,7 +37,7 @@ function Switches(props) {
     
     function handleClick(e) {
         let data = e.target.getAttribute("data-id");
-        if(e.target.tagName === "polygon") return;
+        if(e.target.classList.contains("sidebutton")) return;
         
         if(data === "-1") {
             props.createSwitch(props.lastSlot);
@@ -61,6 +67,7 @@ function Switches(props) {
         yPosition = yPosition - (isPinned ? SWITCH_SIZE + 16 : 0);
 
         if(currSwitch !== null) {
+            /*
             var trianglePoints = [
                 [xPosition + SWITCH_SIZE + 8, yPosition + SWITCH_SIZE/2 - 10],
                 [xPosition + SWITCH_SIZE + 8, yPosition + SWITCH_SIZE/2 + 10],
@@ -71,9 +78,29 @@ function Switches(props) {
                 <polygon 
                     data-id={switchId}
                     points={pointsStr} style={{fill: currSwitch.color, cursor: "pointer"}} 
-                    onClick={(e) => props.showSwitchProperties({x: e.pageX, y: e.pageY})}
+                    onClick={(e) => props.showSwitchProperties()}
                 />
-            );
+            );*/
+            var sideButtons = [
+                <g 
+                    data-id={switchId} style={{cursor: "pointer"}}
+                    className="sidebutton"
+                    onClick={(e) => props.showSwitchSide('properties')}
+                    transform={`translate(${xPosition+SWITCH_SIZE+8}, ${yPosition})`} 
+                    stroke={currSwitch.color} fill={currSwitch.color}
+                >
+                    {SettingButton}
+                </g>,
+                <g
+                    data-id={switchId} style={{cursor: "pointer"}}
+                    className="sidebutton"
+                    onClick={(e) => props.showSwitchSide('history')}
+                    transform={`translate(${xPosition+SWITCH_SIZE+8}, ${yPosition + 25})`} 
+                    stroke={currSwitch.color} fill={currSwitch.color}
+                >
+                    {HistoryButton}
+                </g>
+            ]
 
             var isSelected = props.selected && props.selected.type === "switch" && props.selected.data === switchId;
             var selectionRing = (
@@ -90,7 +117,7 @@ function Switches(props) {
                 key={switchId + "-text"}
                 x={xPosition + SWITCH_SIZE/2} y={yPosition + SWITCH_SIZE/2}
                 textAnchor="middle" alignmentBaseline="middle"
-                fontSize="18px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
+                fontSize="32px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
             >
                 +
             </text>) : 
@@ -133,7 +160,7 @@ function Switches(props) {
                     width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
                     fill="#00000000" style={{cursor: "pointer"}}
                 />
-                {currSwitch === null ? "" : (isSelected ? triangle : "")}
+                {currSwitch === null ? "" : (isSelected ? sideButtons : "")}
             </g>
         )
     }

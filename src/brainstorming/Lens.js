@@ -84,7 +84,7 @@ function Lens(props) {
                 connectors.push(
                     <line 
                         key={edgeStr+"drawn"}
-                        x1={LENS_X_OFFSET - 28} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
+                        x1={LENS_X_OFFSET - 28 - 32} y1={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} 
                         x2={LENS_X_OFFSET + 4} y2={i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position}  
                         stroke={isSelected ? 'rgb(0, 194, 255)' : "#0066FF"} 
                         strokeWidth={isSelected ? "4px" : "2px"}
@@ -103,7 +103,7 @@ function Lens(props) {
                     />
                 )
             } else {
-                var pathD = `M${LENS_X_OFFSET - 28} ${i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} h ${16} V ${SWITCH_SIZE/2 + props.position} h ${16}`
+                var pathD = `M${LENS_X_OFFSET - 28 - 32} ${i*(SWITCH_SIZE + SWITCH_Y_SPACE) + SWITCH_SIZE/2 + props.position} h ${16} V ${SWITCH_SIZE/2 + props.position} h ${16}`
                 connectors.unshift(
                     <path 
                         key={edgeStr} onClick={clickEdge}

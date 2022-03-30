@@ -374,7 +374,8 @@ function App() {
 
     function attachSwitch(slotId, switchId) {
         slotsDispatch({ type: 'attach-switch', slotId: slotId, switchId: switchId });
-        slotsDispatch({ type: 'detatch-switch', slotId: switches[switchId].slot, switchId: switchId });
+        if(switches[switchId].slot !== null)
+            slotsDispatch({ type: 'detatch-switch', slotId: switches[switchId].slot, switchId: switchId });
         switchesDispatch({ type: "attach-slot", switchId: switchId, slotId: slotId });
     }
 

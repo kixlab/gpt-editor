@@ -92,6 +92,36 @@ const PinButton = (
     </g>
 );
 
+const SettingButton = (
+    <g className="sidebutton">
+        <circle cx="12.5" cy="12.5" r="12.5" fill="#00000000" stroke="none" className="sidebutton"/>
+        <rect className="sidebutton" x="2.80762" y="5.63672" width="4" height="5" rx="1" transform="rotate(-45 2.80762 5.63672)" stroke="none"/>
+        <rect className="sidebutton" x="18.364" y="2.80762" width="4" height="5" rx="1" transform="rotate(45 18.364 2.80762)" stroke="none"/>
+        <rect className="sidebutton" x="10" y="1" width="4" height="5" rx="1" stroke="none"/>
+        <rect className="sidebutton" x="10" y="18" width="4" height="5" rx="1" stroke="none"/>
+        <rect className="sidebutton" x="18" y="14.0005" width="4" height="5" rx="1" transform="rotate(-90 18 14.0005)" stroke="none"/>
+        <rect className="sidebutton" x="1" y="14.0005" width="4" height="5" rx="1" transform="rotate(-90 1 14.0005)" stroke="none"/>
+        <rect className="sidebutton" x="6.34302" y="14.8286" width="4" height="5" rx="1" transform="rotate(45 6.34302 14.8286)" stroke="none"/>
+        <rect className="sidebutton" x="21.1924" y="18.3643" width="4" height="5" rx="1" transform="rotate(135 21.1924 18.3643)" stroke="none"/>
+        <circle className="sidebutton"cx="12" cy="12" r="6" transform="rotate(-45 12 12)" fill="none" strokeWidth="4"/>
+    </g>
+)
+
+const HistoryButton = (
+    <g className="sidebutton">
+        <circle cx="12.5" cy="12.5" r="12.5" fill="#00000000" stroke="none" className="sidebutton"/>
+        <path className="sidebutton" d="M4.59142 12.1043C4.59142 10.1923 5.25438 8.33945 6.46734 6.86146C7.6803 5.38346 9.36821 4.37177 11.2435 3.99875C13.1187 3.62574 15.0653 3.91449 16.7516 4.8158C18.4378 5.71711 19.7593 7.17522 20.491 8.94168C21.2227 10.7081 21.3193 12.6736 20.7643 14.5033C20.2092 16.333 19.037 17.9136 17.4472 18.9759C15.8574 20.0381 13.9485 20.5163 12.0457 20.3289C10.1429 20.1414 8.36398 19.3001 7.01199 17.9481" fill="none" strokeWidth="3" strokeLinecap="round"/>
+        <line className="sidebutton" x1="2.12132" y1="11.186" x2="4.54516" y2="13.6099" fill="none" strokeWidth="3" strokeLinecap="round"/>
+        <line className="sidebutton" x1="2.12132" y1="11.186" x2="4.54516" y2="13.6099" fill="none" strokeWidth="3" strokeLinecap="round"/>
+        <line className="sidebutton" x1="2.12132" y1="11.186" x2="4.54516" y2="13.6099" fill="none" strokeWidth="3" strokeLinecap="round"/>
+        <line className="sidebutton" x1="4.59106" y1="13.6565" x2="7.0149" y2="11.2327" fill="none" strokeWidth="3" strokeLinecap="round"/>
+        <line className="sidebutton" x1="4.59106" y1="13.6565" x2="7.0149" y2="11.2327" fill="none" strokeWidth="3" strokeLinecap="round"/>
+        <line className="sidebutton" x1="4.59106" y1="13.6565" x2="7.0149" y2="11.2327" fill="none" strokeWidth="3" strokeLinecap="round"/>
+        <line className="sidebutton" x1="12.9375" y1="7.59473" x2="12.9375" y2="12.0226" fill="none" strokeWidth="2" strokeLinecap="round"/>
+        <line className="sidebutton" x1="15.9" y1="15.6445" x2="12.8556" y2="12.6001" fill="none" strokeWidth="2" strokeLinecap="round"/>
+    </g>
+)
+
 
 export {
     ListSmall,
@@ -103,5 +133,7 @@ export {
     Collapse,
     SpaceButton,
     ListButton,
-    PinButton
+    PinButton,
+    SettingButton,
+    HistoryButton
 }

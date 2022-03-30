@@ -129,9 +129,9 @@ function WidgetArea(props) {
         )
     }
 
-    function showSwitchProperties() {
+    function showSwitchSide(type) {
         var copy = { ...selected };
-        copy.isProperties = true;
+        copy.isSideOpen = type;
         setSelected(copy);
     }
 
@@ -149,13 +149,13 @@ function WidgetArea(props) {
                     changeLastSlot={props.changeLastSlot} changeDepth={props.changeDepth}
                     hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
                     selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
-                    switches={props.switches} showSwitchProperties={showSwitchProperties}
+                    switches={props.switches} showSwitchSide={showSwitchSide}
                     createSwitch={props.createSwitch} handleGenerate={props.handleGenerate}
                     lenses={props.lenses} chooseLens={props.chooseLens}
                     slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
                 />
             </SvgContainer>
-            {selected && selected.isProperties ?
+            {selected && selected.isSideOpen === 'properties' ?
                 <SwitchProperties
                     switches={props.switches} switchId={selected.data}
                     onPropertyChange={props.onPropertyChange}
