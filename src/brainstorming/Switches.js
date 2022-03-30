@@ -191,6 +191,7 @@ function Switches(props) {
                         lensId={lensId} switchId={switchId} 
                         lenses={props.lenses} position={nextPosition}
                         chooseLens={props.chooseLens}
+                        clearLens={props.clearLens}
                     />
                 )
                 nextPosition += SWITCH_SIZE + SWITCH_Y_SPACE;
@@ -202,6 +203,7 @@ function Switches(props) {
                         lenses={props.lenses} position={currPinnedPosition} switches={props.switches}
                         selected={props.selected} setSelected={props.setSelected}
                         slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
+                        clearLens={props.clearLens}
                     />
                 )
                 nextPinnedPosition += SWITCH_SIZE + 16 + LENS_SIZE + 16;
@@ -221,6 +223,7 @@ function Switches(props) {
                             lenses={props.lenses} position={nextPosition} switches={props.switches}
                             selected={props.selected} setSelected={props.setSelected}
                             slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
+                            clearLens={props.clearLens}
                         />
                     )
                     nextPosition += lensSize + SWITCH_Y_SPACE;

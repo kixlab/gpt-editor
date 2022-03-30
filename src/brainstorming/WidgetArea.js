@@ -153,6 +153,7 @@ function WidgetArea(props) {
                     createSwitch={props.createSwitch} handleGenerate={props.handleGenerate}
                     lenses={props.lenses} chooseLens={props.chooseLens}
                     slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
+                    clearLens={props.clearLens}
                 />
             </SvgContainer>
             {selected && selected.isSideOpen === 'properties' ?

@@ -124,14 +124,15 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
             result.append({
                 'switchId': existing[i]['switchId'],
                 'text': existing[i]['text'], 
-                'coordinates': {'x': coord[i][0], 'y': coord[i][1]
-            }})
+                'coordinates': {'x': coord[i][0], 'y': coord[i][1]}
+            })
         for i in range(len(sentences)):
             result.append({
                 'switchId': request.json['switchId'], 
                 'text': sentences[i], 
-                'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]
-            }})
+                'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
+                'isNew': True
+            })
         return jsonify(result)
 
     @api.route('/api/generate-one', methods=['POST'])

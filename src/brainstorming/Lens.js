@@ -149,6 +149,7 @@ function Lens(props) {
                             switches={props.switches} position={props.position}
                             slotifyGenerations={props.slotifyGenerations}
                             changeLensProperty={props.changeLensProperty}
+                            clearLens={props.clearLens}
                         />
                     )
                 }
@@ -171,6 +172,7 @@ function Lens(props) {
                             switches={props.switches} position={props.position}
                             slotifyGenerations={props.slotifyGenerations}
                             changeLensProperty={props.changeLensProperty}
+                            clearLens={props.clearLens}
                         />
                     )
                 }

@@ -123,6 +123,19 @@ function App() {
                 if(newSwitches[switchId] === undefined) return newSwitches;
                 newSwitches[switchId].isLoading = isLoading;
                 return newSwitches;
+            case 'track-generations':
+                var { switchId, textInput, generations, isLoading } = action;
+                var currSwitch = newSwitches[switchId];
+                var data = {
+                    type: 'generation',
+                    data: {
+                        input: textInput,
+                        generations: generations
+                    }
+                }
+                currSwitch.history.push(data);
+                currSwitch.isLoading = isLoading === undefined ? false : isLoading;
+                return newSwitches;
             case 'attach-lens':
                 var { switchId, lensId } = action;
                 newSwitches[switchId].lens = lensId;
@@ -184,8 +197,13 @@ function App() {
                     axios
                     .post(`http://localhost:5000/api/generate-one`, data)
                     .then((response) => {
-                        console.log(response.data);
                         var newGenerations = response.data;
+                        switchesDispatch({ 
+                            type: 'track-generations', 
+                            switchId: currLens.switches[0], textInput: data.text, 
+                            generations: newGenerations.map(g => g.text),
+                            isLoading: true
+                        });
                         newGenerations = currLens.generations.concat(newGenerations);
                         lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
                     });
@@ -211,7 +229,6 @@ function App() {
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
-            console.log(switches);
             setIsMeta(true);
         }
     }
@@ -404,7 +421,8 @@ function App() {
     function copySwitch(switchId) {
         var toCopy = switches[switchId];
         var newSwitchId = "sw" + generateId();
-        slotsDispatch({ type: 'attach-switch', slotId: toCopy.slot, switchId: newSwitchId });
+        if(toCopy.slot !== null)
+            slotsDispatch({ type: 'attach-switch', slotId: toCopy.slot, switchId: newSwitchId });
         if(lenses[toCopy.lens] !== undefined && lenses[toCopy.lens].switches.length < 4 && lenses[toCopy.lens].type !== 'peek') {
             var copiedProperties = {
                 engine: toCopy.properties.engine,
@@ -494,7 +512,7 @@ function App() {
                 isOtherLoading = true;
             }
         }
-        if (switches[switchId].isLoading || isOtherLoading) return;
+        if (switches[switchId].slot === null || switches[switchId].isLoading || isOtherLoading) return;
 
         var currSwitch = switches[switchId];
         var currLens = lenses[currSwitch.lens];
@@ -521,7 +539,11 @@ function App() {
 
                 switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
                 */
-                switchesDispatch({ type: 'loading', switchId, isLoading: false });
+                switchesDispatch({ 
+                    type: 'track-generations', 
+                    switchId, textInput: data.text, 
+                    generations: [response.data[0].text]
+                });
 
                 slotsDispatch({
                     type: "create", slotId: newSlotId, slot: {
@@ -544,7 +566,11 @@ function App() {
             .then((response) => {
                 var newGenerations = response.data;
                 lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
-                switchesDispatch({ type: 'loading', switchId, isLoading: false });
+                switchesDispatch({ 
+                    type: 'track-generations', 
+                    switchId, textInput: data.text, 
+                    generations: newGenerations.filter(g => g.switchId === switchId && g.isNew).map(g => g.text)
+                });
             });
         } else if(currLens.type === 'peek') {
             lensesDispatch({ type: 'set-timer', lensId: switches[switchId].lens });
@@ -580,9 +606,9 @@ function App() {
     }
 
     function slotifyGenerations(switchId, values) {
-        console.log(switches[switchId]);
         var currSwitch = switches[switchId];
         var parentSlot = currSwitch.slot;
+        if(values.length === 0 ) return;
         for(var i = 0; i < values.length; i++) {
             var newSlotId = generateId();
             var newSwitchId = 'sw' + generateId();
@@ -615,6 +641,10 @@ function App() {
         lensesDispatch({ type: 'change', lensId, property, value });
     }
 
+    function clearLens(lensId) {
+        lensesDispatch({type: "set-generations", lensId: lensId, generations: []});
+    }
+
     return (
         <div className="AppBrain" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <TextEditor
@@ -630,7 +660,7 @@ function App() {
                 reattachSlot={reattachSlot} getSlotPath={getSlotPath}
                 switches={switches} createSwitch={createSwitch} attachSwitch={attachSwitch} 
                 removeSwitch={removeSwitch} onPropertyChange={onPropertyChange} copySwitch={copySwitch}
-                handleGenerate={handleGenerate}
+                handleGenerate={handleGenerate} clearLens={clearLens}
                 lenses={lenses} chooseLens={chooseLens} attachLens={attachLens} detatchLens={detatchLens}
                 slotifyGenerations={slotifyGenerations} changeLensProperty={changeLensProperty}
             />

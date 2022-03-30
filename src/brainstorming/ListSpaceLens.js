@@ -3,13 +3,11 @@ import styled from "styled-components";
 
 import { LENS_X_OFFSET, LENS_SIZE } from  './Sizes';
 
-import { ListBig, SpaceBig, Collapse, SpaceButton, ListButton } from './SVG.js'
+import { ListBig, SpaceBig, Collapse, SpaceButton, ListButton, ClearButton } from './SVG.js'
 
 function ListSpaceLens(props) {
     const lens = props.lenses[props.lensId];
 
-    const [collapseHover, setCollapseHover] = useState(false);
-    const [alternateHover, setAlternateHover] = useState(false);
     const [spaceHover, setSpaceHover] = useState(null);
 
     function handleCollapseClick() {
@@ -119,22 +117,24 @@ function ListSpaceLens(props) {
         >
             {lens.type === 'list' ? ListBig : SpaceBig}
             {drawLensContent()}
-            <g 
-                transform="translate(188, 10) scale(1.44)" style={{cursor: "pointer"}}
-                onMouseEnter={() => setCollapseHover(true)} onMouseLeave={() => setCollapseHover(false)}
-                onClick={handleCollapseClick} fill={collapseHover ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
-                stroke={collapseHover ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
+            <ButtonContainer 
+                transform="translate(188, 10) scale(1.44)" 
+                onClick={handleCollapseClick}
             >
                 {Collapse}
-            </g>
-            <g 
-                transform="translate(16, 10) scale(1.44)" style={{cursor: "pointer"}}
-                onMouseEnter={() => setAlternateHover(true)} onMouseLeave={() => setAlternateHover(false)}
-                onClick={handleAlternateClick} fill={alternateHover ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
-                stroke={alternateHover ? "rgba(0, 102, 255, 0.7)" : "#ccc"} 
+            </ButtonContainer>
+            <ButtonContainer
+                transform="translate(100, 10) scale(1.5)"
+                onClick={handleAlternateClick}
             >
                 {lens.type === 'list' ? SpaceButton : ListButton}
-            </g>
+            </ButtonContainer>
+            <ButtonContainer
+                transform="translate(16, 10) scale(1.2)"
+                onClick={() => props.clearLens(props.lensId)}
+            >
+                {ClearButton}
+            </ButtonContainer>
         </g>
     )
 }
@@ -184,6 +184,16 @@ const HoverText = styled.div`
     border-radius: 4px;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.25);
     padding: 0 4px;
+`;
+
+const ButtonContainer = styled.g`
+    cursor: pointer;
+    fill: #ccc;
+    stroke: #ccc;
+    &:hover {
+        fill: rgba(0, 102, 255, 0.7);
+        stroke: rgba(0, 102, 255, 0.7);
+    }
 `;
 
 export default ListSpaceLens;

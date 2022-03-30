@@ -123,6 +123,14 @@ const HistoryButton = (
 )
 
 
+const ClearButton = (
+    <g>
+        <path d="M4 1H20C21.6569 1 23 2.34315 23 4V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1Z" fill="white" strokeWidth="2"/>
+        <rect x="14.3137" y="4" width="10" height="10" rx="2" transform="rotate(45 14.3137 4)" stroke="none"/>
+        <path d="M10.071 9.65689L15.7279 15.3137L12.4853 18.5564L10.071 18.5564L7.65683 18.5564L4.41419 15.3137L10.071 9.65689Z" fill="white" strokeWidth="2"/>
+    </g>
+)
+
 export {
     ListSmall,
     SpaceSmall,
@@ -135,5 +143,6 @@ export {
     ListButton,
     PinButton,
     SettingButton,
-    HistoryButton
+    HistoryButton,
+    ClearButton
 }

@@ -3,12 +3,11 @@ import styled from "styled-components";
 
 import { LENS_X_OFFSET, LENS_SIZE } from  './Sizes';
 
-import { PeekBig, Collapse, PinButton} from './SVG.js'
+import { PeekBig, Collapse, ClearButton} from './SVG.js'
 
 function PeekLens(props) {
     const lens = props.lenses[props.lensId];
 
-    const [collapseHover, setCollapseHover] = useState(false);
     const [hoveredIndexes, setHoveredIndexes] = useState([]);
     const [pinHover, setPinHover] = useState(false);
 
@@ -63,14 +62,18 @@ function PeekLens(props) {
         >
             {PeekBig}
             {drawLensContent()}
-            <g 
-                transform="translate(188, 10) scale(1.44)" style={{cursor: "pointer"}}
-                onMouseEnter={() => setCollapseHover(true)} onMouseLeave={() => setCollapseHover(false)}
-                onClick={handleCollapseClick} fill={collapseHover ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
-                stroke={collapseHover ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
+            <ButtonContainer
+                transform="translate(16, 10) scale(1.2)"
+                onClick={() => props.clearLens(props.lensId)}
+            >
+                {ClearButton}
+            </ButtonContainer>
+            <ButtonContainer
+                transform="translate(188, 10) scale(1.44)" 
+                onClick={handleCollapseClick}
             >
                 {Collapse}
-            </g>
+            </ButtonContainer>
         </g>
     )
 }
@@ -109,5 +112,16 @@ const Content = styled.span`
     }};
     transition: color 2s ease;
 `;
+
+const ButtonContainer = styled.g`
+    cursor: pointer;
+    fill: #ccc;
+    stroke: #ccc;
+    &:hover {
+        fill: rgba(0, 102, 255, 0.7);
+        stroke: rgba(0, 102, 255, 0.7);
+    }
+`;
+
 
 export default PeekLens;

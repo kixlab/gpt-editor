@@ -176,6 +176,7 @@ function Slots(props) {
                 showSwitchSide={props.showSwitchSide} createSwitch={props.createSwitch}
                 handleGenerate={props.handleGenerate} lenses={props.lenses} chooseLens={props.chooseLens}
                 slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
+                clearLens={props.clearLens}
             />}
         </>
     );
