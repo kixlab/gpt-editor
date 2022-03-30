@@ -244,14 +244,14 @@ function TextEditor(props) {
     }
 
     function handleKeyDown(e) {
-        if(e.key === "Enter") {
-            e.preventDefault();
-            editor.insertText('\n');
-        } else if(e.key === 'g' && props.isMeta) {
+        if(e.key === 'Enter' && props.isMeta) {
             e.preventDefault();
             var valueChildren = value[0].children;
             var lastSpan = valueChildren[valueChildren.length - 1 - 1];
             props.handleCreate(lastSpan.children[0].text);
+        } else if(e.key === "Enter") {
+            e.preventDefault();
+            editor.insertText('\n');
         }
     }
     

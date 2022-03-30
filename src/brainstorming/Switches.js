@@ -215,7 +215,7 @@ function Switches(props) {
             }
         }
 
-        // switchesList.push(drawOneSwitch(switchesList, -1, null, nextPosition))
+        switchesList.push(drawOneSwitch(switchesList, -1, null, nextPosition))
 
         return lensesList.concat(switchesList);
     }

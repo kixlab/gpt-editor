@@ -143,8 +143,11 @@ function App() {
                     var {lensId, switchId} = listOfPairs[i];
                     var index = newLenses[lensId].switches.indexOf(switchId);
                     newLenses[lensId].switches.splice(index, 1);
-                    if(newLenses[lensId].switches.length === 0)
+                    if(newLenses[lensId].switches.length === 0) {
                         delete newLenses[lensId];
+                        continue
+                    }
+                    newLenses[lensId].generations = newLenses[lensId].generations.filter(g => g.switchId !== switchId);
                 }
                 return newLenses;
             case 'set-generations':
@@ -227,10 +230,11 @@ function App() {
                 type: "text",
                 text: value,
                 children: [],
-                switches: [newSwitchId]
+                switches: [] //newSwitchId]
             }
         });
         
+        /*
         switchesDispatch({type: "create", switchId: newSwitchId,
             newSwitch: {
                 model: "GPT-3",
@@ -247,6 +251,7 @@ function App() {
                     bestOf: 1
             }
         }});
+        */
 
         setLastSlot(newSlotId);
         setCurrentDepth(getSlotPath(lastSlot).length);
