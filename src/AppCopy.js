@@ -154,9 +154,6 @@ function App() {
             } else if(selected.type === 'switch') {
                 switchesDispatch({type: 'remove', switchesToRemove: [selected.data]});
             }
-        } else if(e.key === "g" && isMeta) {
-            e.preventDefault();
-            createSwitch();
         }
     }
 
@@ -286,6 +283,14 @@ function App() {
 
     function createSwitch() {
         var newSwitchId = "s" + generateId();
+        var properties = {
+            engine: "text-davinci-002",
+            temperature: 0.7,
+            topP: 1,
+            frequencyPen: 0,
+            presencePen: 0,
+            bestOf: 1
+        }
         switchesDispatch({ 
             type: 'create', switchId: newSwitchId,
             newSwitch: {
@@ -293,14 +298,8 @@ function App() {
                 path: null,
                 color: "#71AAFF",
                 isChanged: false,
-                properties: {
-                    engine: "text-davinci-002",
-                    temperature: 0.7,
-                    topP: 1,
-                    frequencyPen: 0,
-                    presencePen: 0,
-                    bestOf: 1
-                }
+                history: [{type: "create", data: {...properties}}],
+                properties: properties
             }
         })
     }
@@ -308,6 +307,14 @@ function App() {
     function copySwitch(switchId) {
         var newSwitchId = "s" + generateId();
         var toCopy = switches[switchId];
+        var properties = {
+            engine: toCopy.properties.engine,
+            temperature: toCopy.properties.temperature,
+            topP: toCopy.properties.topP,
+            frequencyPen: toCopy.properties.frequencyPen,
+            presencePen: toCopy.properties.presencePen,
+            bestOf: toCopy.properties.bestOf
+        }
         switchesDispatch({ 
             type: 'create', switchId: newSwitchId,
             newSwitch: {
@@ -315,14 +322,8 @@ function App() {
                 path: toCopy.path,
                 color: toCopy.color,
                 isChanged: false,
-                properties: {
-                    engine: toCopy.properties.engine,
-                    temperature: toCopy.properties.temperature,
-                    topP: toCopy.properties.topP,
-                    frequencyPen: toCopy.properties.frequencyPen,
-                    presencePen: toCopy.properties.presencePen,
-                    bestOf: toCopy.properties.bestOf
-                }
+                history: [{type: "create", data: {...properties}}],
+                properties: properties
             }
         })
     }
