@@ -71,7 +71,7 @@ function Lenses(props) {
                         <div style={{color: "#ccc"}}>Get new suggestions by connecting prompts to generators and clicking on the generators...</div> :
                         (currLens.types[0] === 'list' ?
                             <GenerationList 
-                                lens={currLens} switches={props.switches} 
+                                lens={currLens} switches={props.switches} pinGeneration={props.pinGeneration}
                                 copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
                             /> :
                             <GenerationSpace 

@@ -127,6 +127,11 @@ function App() {
                     newLenses[lensId].generations = newLenses[lensId].generations.filter(g => g.switchId !== switchId);
                 }
                 return newLenses;
+            case 'pin-generation':
+                var { lensId, idx } = action;
+                var isPinned = newLenses[lensId].generations[idx].isPinned;
+                newLenses[lensId].generations[idx].isPinned = !isPinned;
+                return newLenses;
             default:
                 throw new Error();
         }
@@ -359,7 +364,12 @@ function App() {
     }
 
     function clearLens() {
-        lensesDispatch({type: "set-generations", lensId: 0, generations: []});
+        var newGenerations = lenses[0].generations.filter(g => g.isPinned);
+        lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
+    }
+
+    function pinGeneration(idx) {
+        lensesDispatch({type: "pin-generation", lensId: 0, idx});
     }
 
     return (
@@ -394,6 +404,7 @@ function App() {
                     lenses={lenses} lensId={0} switches={switches}
                     changeLens={changeLens} changeLensType={changeLensType}
                     copyGeneration={copyGeneration} clearLens={clearLens}
+                    pinGeneration={pinGeneration}
                 />
             </RightColumn>
         </div>
