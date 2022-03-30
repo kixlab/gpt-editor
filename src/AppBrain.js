@@ -106,10 +106,9 @@ function App() {
                     newSwitches['colorIndex'] = (colorIndex + 1) % colorWheel.length;
                     currSwitch.isChanged = true;
                 }
-                var changeData = {};
-                changeData[property] = value;
+                var changeData = {property, value};
                 var lastChange = currSwitch.history[currSwitch.history.length - 1];
-                if(lastChange.type === 'change' && Object.keys(lastChange.data)[0] === property) {
+                if(lastChange.type === 'change' && lastChange.data.property === property) {
                     currSwitch.history[currSwitch.history.length - 1].data.value = value;
                 } else {
                     currSwitch.history.push({

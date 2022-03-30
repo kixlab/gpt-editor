@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import Slots from './Slots';
 import SwitchProperties from './SwitchProperties';
+import SwitchHistory from './SwitchHistory';
 
 function WidgetArea(props) {
     const [selected, setSelected] = useState(null);
@@ -135,6 +136,24 @@ function WidgetArea(props) {
         setSelected(copy);
     }
 
+    var hoverItem = "";
+    if(selected) {
+        if(selected.isSideOpen === 'properties') {
+            hoverItem = (
+                <SwitchProperties
+                    switches={props.switches} switchId={selected.data}
+                    onPropertyChange={props.onPropertyChange}
+                />
+            )
+        } else if(selected.isSideOpen === 'history') {
+            hoverItem = (
+                <SwitchHistory
+                    switches={props.switches} switchId={selected.data}
+                />
+            )
+        }
+    }
+
     return (
         <Container>
             <SvgContainer
@@ -156,13 +175,7 @@ function WidgetArea(props) {
                     clearLens={props.clearLens}
                 />
             </SvgContainer>
-            {selected && selected.isSideOpen === 'properties' ?
-                <SwitchProperties
-                    switches={props.switches} switchId={selected.data}
-                    onPropertyChange={props.onPropertyChange}
-                />
-                : ""
-            }
+            {hoverItem}
         </Container>
     )
 }
