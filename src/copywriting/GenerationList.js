@@ -63,8 +63,8 @@ const PinBtn = styled.g`
     stroke: ${props => props.isPinned ? "#0066FF" : "#ccc"};
     fill: ${props => props.isPinned ? "#0066FF" : "#ccc"};
     &:hover {
-        stroke: #0066FF66;
-        fill: #0066FF66;
+        stroke: ${props => props.isPinned ? "#0066FF" : "#0066FF66"};
+        fill: ${props => props.isPinned ? "#0066FF" : "#0066FF66"};
     }
 `;
 

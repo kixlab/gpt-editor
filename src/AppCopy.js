@@ -91,11 +91,34 @@ function App() {
                     newSwitches['colorIndex'] = (colorIndex + 1) % colorWheel.length;
                     currSwitch.isChanged = true;
                 }
+                var changeData = {property, value};
+                var lastChange = currSwitch.history[currSwitch.history.length - 1];
+                if(lastChange.type === 'change' && lastChange.data.property === property) {
+                    currSwitch.history[currSwitch.history.length - 1].data.value = value;
+                } else {
+                    currSwitch.history.push({
+                        type: 'change',
+                        data: changeData
+                    })
+                }
                 return newSwitches;
             case 'loading':
                 var { switchId, isLoading } = action; 
                 if(newSwitches[switchId] === undefined) return newSwitches;
                 newSwitches[switchId].isLoading = isLoading;
+                return newSwitches;
+            case 'track-generations':
+                var { switchId, textInput, generations, isLoading } = action;
+                var currSwitch = newSwitches[switchId];
+                var data = {
+                    type: 'generation',
+                    data: {
+                        input: textInput,
+                        generations: generations
+                    }
+                }
+                currSwitch.history.push(data);
+                currSwitch.isLoading = isLoading === undefined ? false : isLoading;
                 return newSwitches;
             default:
                 throw new Error();
@@ -153,6 +176,7 @@ function App() {
     function handleKeyDown(e) {
         if (e.key === "Meta") {
             setIsMeta(true);
+            console.log(switches);
         } else if(e.key === 'c' && isMeta) {
             if(selected.type === 'slots') {
                 copySlots(selected.data, slots.path[selected.data]);
@@ -246,6 +270,9 @@ function App() {
     function handleGenerate(switchId) {
         if (switches[switchId].isLoading || switches[switchId].path === null) return;
 
+        var otherLoading = Object.keys(switches).some(id => switches[id].isLoading);
+        if(otherLoading) return;
+
         var currSwitch = switches[switchId];
         switchesDispatch({ type: 'loading', switchId: switchId, isLoading: true });
         
@@ -268,7 +295,11 @@ function App() {
                 return {...generation, text: generation.text.trim()}
             })
             lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
-            switchesDispatch({ type: 'loading', switchId, isLoading: false });
+            switchesDispatch({ 
+                type: 'track-generations', 
+                switchId, textInput: data.text, 
+                generations: newGenerations.filter(g => g.switchId === switchId && g.isNew).map(g => g.text)
+            });
         });
     }
 

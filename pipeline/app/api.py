@@ -159,7 +159,8 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'text': existing[i]['text'], 
                 'coordinates': {'x': coord[i][0], 'y': coord[i][1]},
                 "sentiment": existing[i]['sentiment'],
-                "emotion": existing[i]['emotion']
+                "emotion": existing[i]['emotion'],
+                "isPinned": existing[i]['isPinned'] if 'isPinned' in existing[i] else False
             })
         for i in range(len(sentences)):
             result.append({
@@ -167,7 +168,8 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'text': sentences[i], 
                 'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
                 "sentiment": np.around(sentiments[i] * 100).tolist(),
-                "emotion": np.around(emotions[i] * 100).tolist()
+                "emotion": np.around(emotions[i] * 100).tolist(),
+                'isNew': True
             })
         return jsonify(result)
 
