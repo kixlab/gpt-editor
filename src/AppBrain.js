@@ -100,10 +100,11 @@ function App() {
                 var { switchId, property, value } = action;
                 var currSwitch = newSwitches[switchId];
                 currSwitch.properties[property] = value;
-                if(currSwitch.color === '#71AAFF') {
+                if(!currSwitch.isChanged) {
                     var colorIndex = newSwitches['colorIndex']
                     currSwitch.color = colorWheel[colorIndex];
                     newSwitches['colorIndex'] = (colorIndex + 1) % colorWheel.length;
+                    currSwitch.isChanged = true;
                 }
                 return newSwitches;
             case 'loading':
@@ -236,6 +237,7 @@ function App() {
                 slot: newSlotId,
                 lens: -1,
                 color: "#71AAFF",
+                isChanged: false,
                 properties: {
                     engine: "davinci",
                     temperature: 0.7,
@@ -312,6 +314,18 @@ function App() {
     }
 
     function reattachSlot(parentSlot, childSlot) {
+        var currChildren = slots[childSlot].children;
+        var nextChildren = [];
+        while(currChildren.length !== 0) {
+            for(var i = 0; i < currChildren.length; i++) {
+                var childId = currChildren[i];
+                if(childId === parentSlot)
+                    return;
+                nextChildren = nextChildren.concat(slots[childId].children);
+            }
+            currChildren = nextChildren
+            nextChildren = []
+        }
         slotsDispatch({ type: 'attach', slotId: childSlot, newParentSlotId: parentSlot });
     }
 
@@ -328,15 +342,20 @@ function App() {
     }
 
     function createSwitch(slotId) {
+        if(slotId === 'ROOT') slotId = null;
+
         var newSwitchId = "sw" + generateId();
 
-        slotsDispatch({ type: 'attach-switch', slotId: slotId, switchId: newSwitchId });
+        if(slotId !== null)
+            slotsDispatch({ type: 'attach-switch', slotId: slotId, switchId: newSwitchId });
+        
         switchesDispatch({type: "create", switchId: newSwitchId,
             newSwitch: {
                 model: "GPT-3",
                 slot: slotId,
                 lens: -1,
                 color: "#71AAFF",
+                isChanged: false,
                 properties: {
                     engine: "davinci",
                     temperature: 0.7,
@@ -357,15 +376,15 @@ function App() {
     function removeSwitch(switchId) {
         var slotId = switches[switchId].slot;
         slotsDispatch({ type: 'detatch-switch', slotId, switchId });
-        switchesDispatch({ type: 'remove', switchesToRemove: [switchId]})
         lensesDispatch({ type: 'detatch-switch', lensId: switches[switchId].lens, switchId: switchId });
+        switchesDispatch({ type: 'remove', switchesToRemove: [switchId]})
     }
 
     function copySwitch(switchId) {
         var toCopy = switches[switchId];
         var newSwitchId = "sw" + generateId();
         slotsDispatch({ type: 'attach-switch', slotId: toCopy.slot, switchId: newSwitchId });
-        if(lenses[toCopy.lens].switches.length < 4 && lenses[toCopy.lens].type !== 'peek') {
+        if(lenses[toCopy.lens] !== undefined && lenses[toCopy.lens].switches.length < 4 && lenses[toCopy.lens].type !== 'peek') {
             switchesDispatch({
                 type: "create", switchId: newSwitchId,
                 newSwitch: {
@@ -373,6 +392,7 @@ function App() {
                     slot: toCopy.slot,
                     lens: toCopy.lens,
                     color: toCopy.color,
+                    isChanged: false,
                     properties: {
                         engine: toCopy.properties.engine,
                         temperature: toCopy.properties.temperature,
@@ -391,6 +411,7 @@ function App() {
                     slot: toCopy.slot,
                     lens: -1,
                     color: toCopy.color,
+                    isChanged: false,
                     properties: {
                         engine: toCopy.properties.engine,
                         temperature: toCopy.properties.temperature,
@@ -440,7 +461,14 @@ function App() {
             lensesDispatch({ type: 'clear-timer', lensId: switches[switchId].lens });
             return;
         }
-        if (switches[switchId].isLoading) return;
+
+        var isOtherLoading = false;
+        for (var i = 0; i < lenses[switches[switchId].lens].switches.length; i++) {
+            if (switches[lenses[switches[switchId].lens].switches[i]].isLoading) {
+                isOtherLoading = true;
+            }
+        }
+        if (switches[switchId].isLoading || isOtherLoading) return;
 
         var currSwitch = switches[switchId];
         var currLens = lenses[currSwitch.lens];
@@ -458,13 +486,15 @@ function App() {
             .then((response) => {
                 var newSlotId = generateId();
                 var newSwitchId = 'sw' + generateId();
-
+                /*
                 var newSwitch = JSON.parse(JSON.stringify(currSwitch));
                 newSwitch.slot = newSlotId;
                 newSwitch.lens = -1;
                 newSwitch.isLoading = false;
+                newSwitch.isChanged = false;
 
                 switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
+                */
                 switchesDispatch({ type: 'loading', switchId, isLoading: false });
 
                 slotsDispatch({
@@ -473,7 +503,7 @@ function App() {
                         type: "text",
                         text: response.data[0].text,
                         children: [],
-                        switches: [newSwitchId]
+                        switches: []
                     }
                 });
                 
@@ -531,12 +561,15 @@ function App() {
             var newSlotId = generateId();
             var newSwitchId = 'sw' + generateId();
 
+            /*
             var newSwitch = JSON.parse(JSON.stringify(currSwitch));
             newSwitch.slot = newSlotId;
             newSwitch.lens = -1;
             newSwitch.isLoading = false;
+            newSwitch.isChanged = false;
 
             switchesDispatch({ type: 'create', switchId: newSwitchId, newSwitch: newSwitch });
+            */
 
             slotsDispatch({
                 type: "create", slotId: newSlotId, slot: {
@@ -544,7 +577,7 @@ function App() {
                     type: "text",
                     text: values[i],
                     children: [],
-                    switches: [newSwitchId]
+                    switches: []
                 }
             });
             parentSlot = newSlotId;
@@ -553,12 +586,11 @@ function App() {
     }
 
     function changeLensProperty(lensId, property, value) {
-        console.log(lensId, property, value, lenses)
         lensesDispatch({ type: 'change', lensId, property, value });
     }
 
     return (
-        <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+        <div className="AppBrain" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
             <TextEditor
                 isMeta={isMeta} slots={slots} lastSlot={lastSlot} currentDepth={currentDepth} hoverSlot={hoverSlot}
                 changeSlots={changeSlots} handleCreate={handleCreate} setIsInsert={setIsInsert}

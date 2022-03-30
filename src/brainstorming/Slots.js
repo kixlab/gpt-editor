@@ -43,7 +43,7 @@ function Slots(props) {
         props.setHoverSlot(null);
     }
 
-    function recursiveSlotDrawing(slotId, depth, numInLevel, slotPath, slotHoverPath, slotsInDepth) {
+    function recursiveSlotDrawing(slotId, depth, numInLevel, slotPath, slotHoverPath) {
         var elements = [];
 
         if(depth !== -1 && numInLevel[depth] == undefined) numInLevel.push(0);
@@ -55,16 +55,14 @@ function Slots(props) {
             var currSize = SLOT_SIZE;
             // TODO: check if slot's switch's lens is pinned];
             var inDepth = props.currentDepth == depth;
-            if(inDepth) {
-                currSize += props.currentDepth === depth ? 4 : 0;
-                slotsInDepth.push(slotId);
-            }
+            var isPath = slotPath.includes(slotId);
+
+            currSize += inDepth && isPath ? 4 : 0;
 
             if(node !== undefined) {
                 for(var i = 0; i < node.switches.length; i++) {
                     var switchId = node.switches[i];
                     var lensId = props.switches[switchId].lens;
-                    if(!inDepth && (props.lenses[lensId] === undefined || !props.lenses[lensId].isPinned)) continue;
                     elements.push(
                         <rect
                             key={slotId+"-switch-"+switchId} id={slotId+"-switch-"+switchId}
@@ -74,10 +72,6 @@ function Slots(props) {
                         />
                     )
                 }
-            }
-
-            if(node !== undefined) {
-                var isPath = slotPath.includes(slotId);
                 elements.push(
                     <circle 
                         key={slotId} data-type="slot" data-id={slotId}
@@ -116,7 +110,7 @@ function Slots(props) {
             var childSlotId = children[i];
             if(childSlotId === undefined) childSlotId = "TEMP";
 
-            var [svgs, newNumInLevel] = recursiveSlotDrawing(childSlotId, depth + 1, numInLevel, slotPath, slotHoverPath, slotsInDepth);
+            var [svgs, newNumInLevel] = recursiveSlotDrawing(childSlotId, depth + 1, numInLevel, slotPath, slotHoverPath);
             elements = elements.concat(svgs);
 
             if(depth === -1)
@@ -163,10 +157,10 @@ function Slots(props) {
 
         numInLevel[depth] += 1;
         
-        return [elements, numInLevel, slotsInDepth];
+        return [elements, numInLevel];
     }
 
-    var [elements, numInLevel, slotsInDepth] = recursiveSlotDrawing(
+    var [elements, numInLevel] = recursiveSlotDrawing(
         'ROOT', -1, [], 
         props.getSlotPath(props.lastSlot), 
         props.hoverSlot ? props.getSlotPath(props.hoverSlot) : [], 
@@ -177,10 +171,10 @@ function Slots(props) {
         <>
             {elements}
             {<Switches 
-                switches={props.switches} slots={props.slots} slotsInDepth={slotsInDepth} 
+                switches={props.switches} slots={props.slots} lastSlot={props.lastSlot}
                 selected={props.selected} setHoverSlot={props.setHoverSlot} setSelected={props.setSelected}
-                showSwitchProperties={props.showSwitchProperties} handleGenerate={props.handleGenerate}
-                lenses={props.lenses} chooseLens={props.chooseLens}
+                showSwitchProperties={props.showSwitchProperties} createSwitch={props.createSwitch}
+                handleGenerate={props.handleGenerate} lenses={props.lenses} chooseLens={props.chooseLens}
                 slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
             />}
         </>

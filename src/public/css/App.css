@@ -11,6 +11,16 @@
   outline: none;
 }
 
+.AppBrain {
+  height: auto;
+  min-height: 100% !important;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  background-color: #EEE;
+  outline: none;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

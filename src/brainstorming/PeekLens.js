@@ -71,13 +71,6 @@ function PeekLens(props) {
             >
                 {Collapse}
             </g>
-            <g 
-                transform="translate(16, 10) scale(1.44)" style={{cursor: "pointer"}}
-                onMouseEnter={() => setPinHover(true)} onMouseLeave={() => setPinHover(false)}
-                onClick={handlePinClick} fill={(pinHover || lens.isPinned) ? "rgba(0, 102, 255, 0.7)" : "#ccc"}
-            >
-                {PinButton}
-            </g>
         </g>
     )
 }

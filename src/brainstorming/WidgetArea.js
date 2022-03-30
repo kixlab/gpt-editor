@@ -150,7 +150,7 @@ function WidgetArea(props) {
                     hoverSlot={props.hoverSlot} setHoverSlot={props.setHoverSlot}
                     selected={selected} setSelected={setSelected} getSlotPath={props.getSlotPath}
                     switches={props.switches} showSwitchProperties={showSwitchProperties}
-                    handleGenerate={props.handleGenerate}
+                    createSwitch={props.createSwitch} handleGenerate={props.handleGenerate}
                     lenses={props.lenses} chooseLens={props.chooseLens}
                     slotifyGenerations={props.slotifyGenerations} changeLensProperty={props.changeLensProperty}
                 />
