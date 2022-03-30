@@ -206,7 +206,7 @@ function App() {
                         newGenerations = currLens.generations.concat(newGenerations);
                         lensesDispatch({type: "set-generations", lensId: currSwitch.lens, generations: newGenerations});
                     });
-                }, 5000);
+                }, 10000);
                 return newLenses;
             case 'clear-timer':
                 var { lensId } = action;

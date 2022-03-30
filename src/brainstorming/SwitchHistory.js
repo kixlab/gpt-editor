@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+
 import {
     SWITCH_SIZE,
     SWITCH_PROPERTY_WIDTH
@@ -8,6 +11,7 @@ import {
 
 function SwitchHistory(props) {
     const currSwitch = props.switches[props.switchId];
+    const [openedInputs, setOpenedInputs] = useState([]);
 
     var position = document.getElementById('switch-' + props.switchId).getClientRects()[0];
 
@@ -30,6 +34,15 @@ function SwitchHistory(props) {
         }
     }
 
+    function toggleInput(e) {
+        var idx = parseInt(e.target.getAttribute("data-idx"));
+        if(openedInputs.includes(idx)) {
+            setOpenedInputs(openedInputs.filter(x => x !== idx));
+        } else {
+            setOpenedInputs([...openedInputs, idx]);
+        }
+    }
+
     function historyToHTML() {
         var history = currSwitch.history;
         var html = [];
@@ -42,7 +55,7 @@ function SwitchHistory(props) {
                     html.push(<div style={{color: currSwitch.color, fontWeight: "bold"}}>Create</div>)
                     for(var j = 0; j < propertyNames.length; j++) {
                         html.push(
-                            <PropertyEntry>
+                            <PropertyEntry key={"initial-" + j}>
                                 <PropertyLine style={{backgroundColor: currSwitch.color}}></PropertyLine>
                                 <PropertyName style={{backgroundColor: currSwitch.color}}>
                                     {propertyToText(propertyNames[j])}
@@ -57,7 +70,7 @@ function SwitchHistory(props) {
                 case 'change':
                     html.push(<div style={{color: currSwitch.color, fontWeight: "bold"}}>Change</div>)
                     html.push(
-                        <PropertyEntry>
+                        <PropertyEntry key={i}>
                             <PropertyLine style={{backgroundColor: currSwitch.color}}></PropertyLine>
                             <PropertyName style={{backgroundColor: currSwitch.color}}>
                                 {propertyToText(entry.data.property)}
@@ -71,17 +84,28 @@ function SwitchHistory(props) {
                 case 'generation':
                     html.push(<div style={{color: currSwitch.color, fontWeight: "bold"}}>Generate</div>)
                     var generations = entry.data.generations
+
+                    var isOpen = openedInputs.includes(i);
+
                     html.push(
-                        <PropertyEntry>
+                        <PropertyEntry key={"header-"+i}>
                             <PropertyLine style={{backgroundColor: currSwitch.color}}></PropertyLine>
-                            <PropertyName style={{backgroundColor: currSwitch.color}}>
-                                Input
-                            </PropertyName>
+                            <div data-idx={i} onClick={toggleInput} style={{flexGrow: "1", borderRadius: "4px", border: "solid 1px "+currSwitch.color}}>
+                                <InputHeader data-idx={i} style={{ color: currSwitch.color}}>
+                                    <div>Input</div> 
+                                    <FontAwesomeIcon data-idx={i} onClick={toggleInput} icon={isOpen ? faChevronUp : faChevronDown} />
+                                </InputHeader>
+                                {isOpen && (
+                                    <InputContent key={"input-" + i}>
+                                        {entry.data.input}
+                                    </InputContent>
+                                )}
+                            </div>
                         </PropertyEntry>
                     )
                     for(var j = 0; j < generations.length; j++) {
                         html.push(
-                            <PropertyEntry>
+                            <PropertyEntry key={"gen-" + j}>
                                 <PropertyLine style={{backgroundColor: currSwitch.color}}></PropertyLine>
                                 <GenerationText style={{borderColor: currSwitch.color}}>
                                     {generations[j]}
@@ -134,6 +158,7 @@ const PropertyEntry = styled.div`
     width: 100%;
     margin: 2px 0;
 `;
+
 const PropertyLine = styled.div`
     width: 4px;
     margin-right: 4px;
@@ -158,6 +183,23 @@ const GenerationText = styled.div`
     border: solid 1px;
     border-radius: 4px;
     font-size: 12px;
+    width: 100%;
+`;
+const InputHeader = styled.div`
+    width: 100%;
+    color: #fff; 
+    padding: 0 8px;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+`;
+const InputContent = styled.div`
+    color: #777;
+    font-size: 12px;
+    padding: 0 16px 0 16px;
 `;
 
 
