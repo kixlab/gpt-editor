@@ -83,6 +83,7 @@ function Switches(props) {
             );*/
             var sideButtons = [
                 <g 
+                    key={1}
                     data-id={switchId} style={{cursor: "pointer"}}
                     className="sidebutton"
                     onClick={(e) => props.showSwitchSide('properties')}
@@ -92,6 +93,7 @@ function Switches(props) {
                     {SettingButton}
                 </g>,
                 <g
+                    key={2}
                     data-id={switchId} style={{cursor: "pointer"}}
                     className="sidebutton"
                     onClick={(e) => props.showSwitchSide('history')}

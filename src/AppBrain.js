@@ -106,6 +106,17 @@ function App() {
                     newSwitches['colorIndex'] = (colorIndex + 1) % colorWheel.length;
                     currSwitch.isChanged = true;
                 }
+                var changeData = {};
+                changeData[property] = value;
+                var lastChange = currSwitch.history[currSwitch.history.length - 1];
+                if(lastChange.type === 'change' && Object.keys(lastChange.data)[0] === property) {
+                    currSwitch.history[currSwitch.history.length - 1].data.value = value;
+                } else {
+                    currSwitch.history.push({
+                        type: 'change',
+                        data: changeData
+                    })
+                }
                 return newSwitches;
             case 'loading':
                 var { switchId, isLoading } = action; 
@@ -200,6 +211,7 @@ function App() {
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
+            console.log(switches);
             setIsMeta(true);
         }
     }
@@ -354,6 +366,14 @@ function App() {
         if(slotId !== null)
             slotsDispatch({ type: 'attach-switch', slotId: slotId, switchId: newSwitchId });
         
+        var properties = {
+            engine: "davinci",
+            temperature: 0.7,
+            topP: 1,
+            frequencyPen: 0,
+            presencePen: 0,
+            bestOf: 1
+        };
         switchesDispatch({type: "create", switchId: newSwitchId,
             newSwitch: {
                 model: "GPT-3",
@@ -361,15 +381,10 @@ function App() {
                 lens: -1,
                 color: "#71AAFF",
                 isChanged: false,
-                properties: {
-                    engine: "davinci",
-                    temperature: 0.7,
-                    topP: 1,
-                    frequencyPen: 0,
-                    presencePen: 0,
-                    bestOf: 1
+                history: [{type: 'create', data: {...properties}}],
+                properties: properties
             }
-        }});
+        });
     }
 
     function attachSwitch(slotId, switchId) {
@@ -391,6 +406,14 @@ function App() {
         var newSwitchId = "sw" + generateId();
         slotsDispatch({ type: 'attach-switch', slotId: toCopy.slot, switchId: newSwitchId });
         if(lenses[toCopy.lens] !== undefined && lenses[toCopy.lens].switches.length < 4 && lenses[toCopy.lens].type !== 'peek') {
+            var copiedProperties = {
+                engine: toCopy.properties.engine,
+                temperature: toCopy.properties.temperature,
+                topP: toCopy.properties.topP,
+                frequencyPen: toCopy.properties.frequencyPen,
+                presencePen: toCopy.properties.presencePen,
+                bestOf: toCopy.properties.bestOf
+            }
             switchesDispatch({
                 type: "create", switchId: newSwitchId,
                 newSwitch: {
@@ -399,17 +422,19 @@ function App() {
                     lens: toCopy.lens,
                     color: toCopy.color,
                     isChanged: false,
-                    properties: {
-                        engine: toCopy.properties.engine,
-                        temperature: toCopy.properties.temperature,
-                        topP: toCopy.properties.topP,
-                        frequencyPen: toCopy.properties.frequencyPen,
-                        presencePen: toCopy.properties.presencePen,
-                        bestOf: toCopy.properties.bestOf
-                }
+                    history: [{type: 'create', data: {...copiedProperties}}],
+                    properties: copiedProperties
             }});
             lensesDispatch({ type: 'attach-switch', lensId: toCopy.lens, switchId: newSwitchId });
         } else {
+            var copiedProperties = {
+                engine: toCopy.properties.engine,
+                temperature: toCopy.properties.temperature,
+                topP: toCopy.properties.topP,
+                frequencyPen: toCopy.properties.frequencyPen,
+                presencePen: toCopy.properties.presencePen,
+                bestOf: toCopy.properties.bestOf
+            }
             switchesDispatch({
                 type: "create", switchId: newSwitchId,
                 newSwitch: {
@@ -418,15 +443,10 @@ function App() {
                     lens: -1,
                     color: toCopy.color,
                     isChanged: false,
-                    properties: {
-                        engine: toCopy.properties.engine,
-                        temperature: toCopy.properties.temperature,
-                        topP: toCopy.properties.topP,
-                        frequencyPen: toCopy.properties.frequencyPen,
-                        presencePen: toCopy.properties.presencePen,
-                        bestOf: toCopy.properties.bestOf
+                    history: [{type: 'create', data: {...copiedProperties}}],
+                    properties: copiedProperties
                 }
-            }});
+            });
         }
     }
 
