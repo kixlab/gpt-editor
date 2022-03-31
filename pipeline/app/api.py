@@ -201,7 +201,8 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'text': sentences[i], 
                 'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
                 "sentiment": np.around(sentiments[i] * 100).tolist(),
-                "emotion": np.around(emotions[i] * 100).tolist()
+                "emotion": np.around(emotions[i] * 100).tolist(),
+                "isNew": True
             })
         return jsonify(result)
 

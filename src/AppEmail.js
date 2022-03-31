@@ -123,53 +123,68 @@ function App() {
                     newSwitches['colorIndex'] = (colorIndex + 1) % colorWheel.length;
                     currSwitch.isChanged = true;
                 }
+                var changeData = {property, value};
+                var lastChange = currSwitch.history[currSwitch.history.length - 1];
+                if(lastChange.type === 'change' && lastChange.data.property === property) {
+                    currSwitch.history[currSwitch.history.length - 1].data.value = value;
+                } else {
+                    currSwitch.history.push({
+                        type: 'change',
+                        data: changeData
+                    })
+                }
+                return newSwitches;
+            case 'track-generations':
+                var { switchId, textInput, generations, isLoading } = action;
+                var currSwitch = newSwitches[switchId];
+                var data = {
+                    type: 'generation',
+                    data: {
+                        input: textInput,
+                        generations: generations
+                    }
+                }
+                currSwitch.history.push(data);
+                currSwitch.isLoading = isLoading === undefined ? false : isLoading;
                 return newSwitches;
             default:
                 throw new Error();
         }
     }, []);
+    var tempProps = [
+        {
+            engine: "text-davinci-002",
+            temperature: 0.7,
+            topP: 1,
+            frequencyPen: 0,
+            presencePen: 0,
+            bestOf: 1
+        },
+        {
+            engine: "text-curie-001",
+            temperature: 0.9,
+            topP: 1,
+            frequencyPen: 0,
+            presencePen: 0,
+            bestOf: 1
+        }
+    ]
     const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0,
         'one': {
             model: "GPT-3",
             color: "#71AAFF",
             isChanged: false,
             button: 'a',
-            properties: {
-                engine: "text-davinci-002",
-                temperature: 0.7,
-                topP: 1,
-                frequencyPen: 0,
-                presencePen: 0,
-                bestOf: 1
-            }
+            history: [{type: "create", data: {...tempProps[0]}}],
+            properties: tempProps[0]
         }, 
-        'two': {
-            model: "GPT-3",
-            color: colorWheel[3],
-            isChanged: false,
-            button: -1,
-            properties: {
-                engine: "text-curie-001",
-                temperature: 0.7,
-                topP: 1,
-                frequencyPen: 0,
-                presencePen: 0,
-                bestOf: 1
-            }
-        },
         'three': {
             model: "GPT-3",
             color: colorWheel[4],
             isChanged: false,
             button: 'a',
-            properties: {
-                engine: "text-curie-001",
-                temperature: 0.7,
-                topP: 1,
-                frequencyPen: 0,
-                presencePen: 0,
-                bestOf: 1
-            }
+            history: [{type: "create", data: {...tempProps[1]}}],
+            properties: tempProps[1]
         }
     });
 
@@ -219,6 +234,7 @@ function App() {
     function handleKeyDown(e) {
         if (e.key === "Meta") {
             setIsMeta(true);
+            console.log(switches);
         } else if(isMeta && e.key === 'c') {
             if(selected.type === null) return;
             e.preventDefault()
@@ -295,6 +311,9 @@ function App() {
         for(var i = 0; i < toCopyButon.switches.length; i++) {
             var newSwitchId = "sw" + generateId();
             var switchToCopy = JSON.parse(JSON.stringify(switches[toCopyButon.switches[i]]));
+            switchToCopy.isChanged = false;
+            switchToCopy.button = newButtonId;
+            switchToCopy.history = [{type: "create", data: {...switchToCopy.properties}}];
             switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: switchToCopy});
             copiedSwitches.push(newSwitchId);
         }
@@ -370,19 +389,21 @@ function App() {
 
     function createSwitch(buttonId) {
         var newSwitchId = "sw" + generateId();
+        var properties = {
+            engine: "text-davinci-002",
+            temperature: 0.7,
+            topP: 1,
+            frequencyPen: 0,
+            presencePen: 0,
+            bestOf: 1
+        }
         var newSwitch = {
             model: "GPT-3",
             color: "#71AAFF",
             isChanged: false,
             button: buttonId,
-            properties: {
-                engine: "text-davinci-002",
-                temperature: 0.7,
-                topP: 1,
-                frequencyPen: 0,
-                presencePen: 0,
-                bestOf: 1
-            }
+            history: [{type: "create", data: {...properties}}],
+            properties: properties
         }
         switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: newSwitch});
         buttonsDispatch({type: 'add-switch', buttonId: buttonId, switchId: newSwitchId});
@@ -392,6 +413,7 @@ function App() {
         var toCopySwitch = switches[switchId];
         var newSwitchId = "sw" + generateId();
         var newSwitch = JSON.parse(JSON.stringify(toCopySwitch));
+        newSwitch.history = [{type: "create", data: {...newSwitch.properties}}];
         newSwitch.isChanged = false;
         switchesDispatch({type: 'create', switchId: newSwitchId, newSwitch: newSwitch});
         buttonsDispatch({type: 'add-switch', buttonId: buttonId, switchId: newSwitchId});
@@ -465,6 +487,13 @@ function App() {
         .post(`http://localhost:5000/api/generate-multiple`, data)
         .then((response) => {
             lensesDispatch({type: 'set-generations', lensId: currButton.lens, generations: response.data});
+            for(i = 0; i < switchIds.length; i++) {
+                switchesDispatch({ 
+                    type: 'track-generations', 
+                    switchId: switchIds[i], textInput: data.text, 
+                    generations: response.data.filter(g => switchIds[i] === g.switchId && g.isNew).map(g => g.text)
+                });
+            }
             buttonsDispatch({type: 'change-toggle', buttonId: buttonId, property: 'isLoading', value: false});
             setActiveLens(currButton.lens);
         });
