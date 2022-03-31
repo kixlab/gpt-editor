@@ -203,7 +203,7 @@ function App() {
         'b': {
             type: 'list',
             generations: [],
-            properties: {x: 'Positive', y: 'Joy'},
+            properties: {x: 'Neutral', y: 'Anger'},
             button: 'a',
         }
     });
@@ -271,7 +271,7 @@ function App() {
         var newLens = {
             type: 'list',
             generations: [],
-            properties: {x: "Positive", y: "Joy"},
+            properties: {x: "Neutral", y: "Joy"},
             button: newButtonId,
         }
 
@@ -455,8 +455,6 @@ function App() {
         }
         data.text += currButton.outputPrefix;
 
-        console.log(data.text);
-
         for(i = 0; i < switchIds.length; i++) {
             var switchId = switchIds[i];
             var currSwitch = switches[switchId];
@@ -474,7 +472,6 @@ function App() {
 
     function handleTextChange(newText) {
         if(text === newText) return;
-        console.log(newText);
         setText(newText);
     }
 
@@ -491,6 +488,10 @@ function App() {
     function hideLens() {
         lensesDispatch({type: 'set-generations', lensId: activeLens, generations: []});
         setActiveLens(null);
+    }
+
+    function clearLens() {
+        lensesDispatch({type: "set-generations", lensId: activeLens, generations: []});
     }
 
     return (
@@ -513,6 +514,7 @@ function App() {
                 <HoverLens
                     lenses={lenses} activeLens={activeLens} hideLens={hideLens}
                     showGeneration={showGeneration} switches={switches}
+                    clearLens={clearLens}
                 />
             </Container>
         </div>

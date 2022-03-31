@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from "styled-components";
 
-import { createEditor, Transforms, Editor, Element as SlateElement, Text } from 'slate'
+import { createEditor, Transforms, Editor, Element as SlateElement, Text, Range } from 'slate'
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react'
 
 function TextEditor(props) {
@@ -79,11 +79,15 @@ function TextEditor(props) {
                         )
                     }}
                     onBlur={event => {
+                        if(Range.isCollapsed(editor.selection)) {
+                            props.setSelectedText("");
+                            return;
+                        }
                         Transforms.setNodes(
                             editor,
                             { highlight: true },
                             { match: n => {
-                                var isMatch = Text.isText(n) && n.text !== "";
+                                var isMatch = Text.isText(n);
                                 props.setSelectedText(n.text);
                                 return isMatch;
                             }, split: true }
@@ -96,7 +100,6 @@ function TextEditor(props) {
 }
 
 const Leaf = props => {
-    console.log(props);
     return (
         <span
             {...props.attributes}

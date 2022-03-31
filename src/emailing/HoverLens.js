@@ -2,6 +2,10 @@ import { listClasses } from '@mui/material';
 import React, { useState } from 'react';
 import styled from "styled-components";
 
+import { ClearButton } from './SVG';
+
+const LENS_SIZE = 300;
+
 function HoverLens(props) {
     if(props.activeLens === null) return "";
     var currLens = props.lenses[props.activeLens];
@@ -12,6 +16,7 @@ function HoverLens(props) {
             break;
     }
 
+    if(i === textElements.length) i -= 1;
     var positions = textElements[i].getBoundingClientRect();
     var top = positions.top + positions.height + 64;
     var left = positions.left;
@@ -20,8 +25,8 @@ function HoverLens(props) {
     var editorPos = editorElement.getBoundingClientRect();
 
     var maxLeft = editorPos.left + editorPos.width + 32;
-    if (left + 260 > maxLeft) {
-        left = maxLeft - 260;
+    if (left + LENS_SIZE > maxLeft) {
+        left = maxLeft - LENS_SIZE;
     }
 
     function handleClick(e) {
@@ -54,9 +59,9 @@ function HoverLens(props) {
         var [xLoOld, xHiOld] = xRange;
         var [yLoOld, yHiOld] = yRange;
         const xLoNew = 12;
-        const xHiNew = 260 - 12 - 12;
-        const yLoNew = 12;
-        const yHiNew = 260 - 12 - 12;
+        const xHiNew = LENS_SIZE - 12 - 12 - 24;
+        const yLoNew = 24;
+        const yHiNew = LENS_SIZE - 12 - 12;
         var xNew = (x-xLoOld) / (xHiOld-xLoOld) * (xHiNew-xLoNew) + xLoNew;
         var yNew = yHiNew - (y-yLoOld) / (yHiOld-yLoOld) * (yHiNew-yLoNew);
         return [xNew, yNew];
@@ -90,6 +95,7 @@ function HoverLens(props) {
                                 <ListItem 
                                     key={index} data-idx={index}
                                     onMouseEnter={handleMouseEnter}
+                                    color={props.switches[generation.switchId].color}
                                 >
                                     {generation.text}
                                 </ListItem>
@@ -100,17 +106,17 @@ function HoverLens(props) {
             case 'axis':
                 return (
                     <svg width="100%" height="100%" style={{margin: "6px"}}>
-                        <line x1="12" y1="236" x2="236" y2="236" stroke="#0066ff66" strokeWidth="2"/>
+                        <line x1="12" y1={LENS_SIZE - 24} x2={LENS_SIZE - 24} y2={LENS_SIZE - 24} stroke="#0066ff66" strokeWidth="2"/>
                         <text 
-                            x="130" y="248" fontSize="12" fill="#0066ff"
+                            x="130" y={LENS_SIZE - 12} fontSize="12" fill="#0066ff"
                             textAnchor="middle"
                         >
                             {currLens.properties.x}
                         </text>
-                        <line x1="12" y1="12" x2="12" y2="236" stroke="#0066ff66" strokeWidth="2"/>
+                        <line x1="12" y1="12" x2="12" y2={LENS_SIZE - 24} stroke="#0066ff66" strokeWidth="2"/>
                         <text 
                             fontSize="12" fill="#0066ff"
-                            textAnchor="middle" transform="translate(8, 130) rotate(-90)"
+                            textAnchor="middle" transform={`translate(8, ${LENS_SIZE/2}) rotate(-90)`}
                         >
                             {currLens.properties.y}
                         </text>
@@ -154,14 +160,21 @@ function HoverLens(props) {
     return (
         <LensContainer style={{ top: top + "px", left: left + "px" }} onClick={handleClick}>
             {drawContent()}
+            <ClearCont>
+                <svg height="32" width="32">
+                    <ClearBtn transform="scale(1.3)" onClick={props.clearLens}>
+                        {ClearButton}
+                    </ClearBtn>
+                </svg>
+            </ClearCont>
         </LensContainer>
     )
 }
 
 const LensContainer = styled.div`
     position: absolute;
-    height: 260px;
-    width: 260px;
+    height: ${LENS_SIZE}px;
+    width: ${LENS_SIZE}px;
     background-color: #fff;
     border-radius: 8px;
     border: solid 2px #0066FF;
@@ -188,12 +201,33 @@ const ListContent = styled.div`
 
 const ListItem = styled.div`
     padding: 4px 8px;
-    border-radius: 8px;
+    border-radius: 0 8px 8px 0;
     border: solid 1px #ccc;
+    border-left: solid 4px ${props => props.color};
     cursor: pointer;
     &:hover {
         background-color: #0066FF33;
         border: solid 2px #0066FF66;
+    }
+`;
+
+const ClearCont = styled.div`
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+`;
+
+const ClearBtn = styled.g`
+    fill: #ccc;
+    stroke: #ccc;
+    opacity: 0.5;
+    cursor: pointer;
+    &:hover {
+        opacity: 1;
+        fill: #0066FF;
+        stroke: #0066FF;
     }
 `;
 
