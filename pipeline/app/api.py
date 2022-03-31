@@ -52,20 +52,20 @@ def get_sentences_from_mutiple(request):
         response = openai.Completion.create(
             engine=generator['engine'],
             prompt=request.json['text'],
-            max_tokens=256,
+            max_tokens=40,
             temperature=generator['temperature'],
             top_p=generator['topP'],
             frequency_penalty=generator['frequencyPen'],
             presence_penalty=generator['presencePen'],
             best_of=(generator['bestOf'] if generator['bestOf'] >= request.json['n'] else request.json['n']),
             n=request.json['n'],
-            stop="\n"
         ).choices
 
         print(response)
         for j in range(len(response)):
             if len(response[j].text) == 0: 
                 continue
+            response[j].text = response[j].text.strip().split("\n")[0]
             sentences.append({'switchId': generator['switchId'], 'text': response[j].text})
     
     return sentences
