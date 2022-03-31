@@ -3,10 +3,15 @@ import styled from "styled-components";
 
 function TextEditor(props) {
     const [currValue, setCurrValue] = useState(props.text);
+    const [style, setStyle] = useState({color: "#333", transition: 'all 1s ease'});
 
     useEffect(() => {
         if(props.text === currValue) return;
         setCurrValue(props.text);
+        setStyle({color: "#0066FF", transition: "none" });
+        setTimeout(() => {
+            setStyle({color: "#333", transition: "all 1s ease"});
+        }, 500);
     }, [props.text]);
 
     function handleChange(e) {
@@ -15,7 +20,11 @@ function TextEditor(props) {
     }
 
     return (
-        <Editor placeholder="Start typing or add a generations from below..." value={currValue} onChange={handleChange}/>
+        <Editor 
+            placeholder="Start typing or add a generations from below..." 
+            value={currValue} onChange={handleChange}
+            style={style}
+        />
     )
 }
 
@@ -38,6 +47,7 @@ const Editor = styled.textarea`
         background: #ccc;
         border-radius: 4px;
     }
+    transition: all 1s ease;
 `;
 
 

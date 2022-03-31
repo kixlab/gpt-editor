@@ -26,7 +26,7 @@ function GenerationList(props) {
                 <GenerationTextContainer 
                     key={i} idx={i} text={entry.text}
                     hoverGen={props.hoverGen} setHoverGen={props.setHoverGen}
-                    copyGenerations={props.copyGenerations} lens={props.lens}
+                    copyGeneration={props.copyGeneration} lens={props.lens}
                 />
                 <div>
                     <svg width="24" height="24" data-idx={i} onClick={handlePin}>
