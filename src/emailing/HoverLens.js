@@ -7,15 +7,13 @@ function HoverLens(props) {
     var currLens = props.lenses[props.activeLens];
 
     var textElements = document.getElementsByClassName('email-text');
-    var positions = textElements[textElements.length - 1].getBoundingClientRect();
     for (var i = 0; i < textElements.length; i++) {
-        if (textElements[i].style.backgroundColor !== '') {
-            positions = textElements[i].getBoundingClientRect();
+        if (textElements[i].style.backgroundColor !== '') 
             break;
-        }
     }
 
-    var top = positions.top + positions.height + 32;
+    var positions = textElements[i].getBoundingClientRect();
+    var top = positions.top + positions.height + 64;
     var left = positions.left;
 
     var editorElement = document.getElementsByClassName('email-editor')[0];
@@ -60,7 +58,7 @@ function HoverLens(props) {
         const yLoNew = 12;
         const yHiNew = 260 - 12 - 12;
         var xNew = (x-xLoOld) / (xHiOld-xLoOld) * (xHiNew-xLoNew) + xLoNew;
-        var yNew = (y-yLoOld) / (yHiOld-yLoOld) * (yHiNew-yLoNew) + yLoNew;
+        var yNew = yHiNew - (y-yLoOld) / (yHiOld-yLoOld) * (yHiNew-yLoNew);
         return [xNew, yNew];
     }
 
