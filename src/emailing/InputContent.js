@@ -15,7 +15,13 @@ function InputContent(props) {
         }
     }
 
+    function handleClickAnywhere(e) {
+        if(e.target.classList.contains("separator"))  return;
+        setClickedSeparator(null);
+    }
+
     function handleClickSeparator(e) {
+        console.log(e.target)
         setClickedSeparator(parseInt(e.target.getAttribute('data-idx')));
     }
 
@@ -27,7 +33,6 @@ function InputContent(props) {
     function handleClickSlot(e) {
         if(e.target.tagName === 'TEXTAREA') return;
         e.stopPropagation();
-        setClickedSeparator(null);
         var data = e.target.getAttribute('data-id');
         if(props.selected && props.selected.type === 'slot' && props.selected.data === data)
             props.setSelected({type: null});
@@ -39,8 +44,8 @@ function InputContent(props) {
         var result = null;
         if(clickedSeparator === null || clickedSeparator !== idx) {
             result = (
-                <Separator key={"s-" + idx} data-idx={idx} onClick={handleClickSeparator}>
-                    <SeparatorButton></SeparatorButton>
+                <Separator key={"s-" + idx} className="separator" data-idx={idx} onClick={handleClickSeparator}>
+                    <SeparatorButton className="separator" data-idx={idx}></SeparatorButton>
                 </Separator>
             )
         } else if(clickedSeparator === idx) {
@@ -144,7 +149,7 @@ function InputContent(props) {
 
         result.push(
             <DualCont key={"output-prefix"} style={{cursor: "auto"}}>
-                <PrefixCont>
+                <PrefixCont style={{borderLeft: "solid 2px", borderColor: "#0066FF66"}}>
                     <TextareaAutosize
                         className="no-outline"
                         style={{...textareaStyle, textAlign: "right"}}
@@ -154,7 +159,7 @@ function InputContent(props) {
                         placeholder="Input text..."
                     />
                 </PrefixCont>
-                <StaticCont style={{backgroundColor: "#0066FF"}}>
+                <StaticCont style={{backgroundColor: "#0066FF66"}}>
                     [ Output ]
                 </StaticCont>
             </DualCont>
@@ -164,9 +169,14 @@ function InputContent(props) {
     }
 
     return (
-        <SlotContainer>
-            {drawSlots()}
-        </SlotContainer>
+        <InputContainer onClick={handleClickAnywhere}>
+            <ContainerHeader>
+                Input
+            </ContainerHeader>
+            <SlotContainer>
+                {drawSlots()}
+            </SlotContainer>
+        </InputContainer>
     );
 }
 
@@ -176,10 +186,24 @@ const SlotContainer = styled.div`
     justify-content: center;
 `;
 
+const InputContainer = styled.div`
+    width: 340px;
+    padding: 8px 16px 16px 16px;
+    background-color: #0066FF1A;
+    border-radius: 12px;
+    height: fit-content;
+`;
+
+const ContainerHeader = styled.div`
+    font-size: 18px;
+    color: #0066FF;
+    width: 100%;
+`;
+
 const TextAreaCont = styled.div`
     width: 100%;
     padding: 4px 8px;
-    border: solid ${props => props.isSelected ? "4px #00C2FF" : "2px #0066FF"};
+    border: solid 2px ${props => props.isSelected ? "#00C2FF" : "#0066FF"};
     border-radius: 4px;
     background-color: #fff;
     height: auto;
@@ -187,6 +211,7 @@ const TextAreaCont = styled.div`
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border-left: solid 14px ${props => props.isSelected ? "#00C2FF" : "#0066FF"};
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
 `;
 
@@ -210,7 +235,7 @@ const DualCont = styled.div`
 
 const PrefixCont = styled.div`
     padding: 4px 8px;
-    border: solid ${props => props.isSelected ? "4px #00C2FF" : "2px #0066FF"};
+    border: solid 2px ${props => props.isSelected ? "#00C2FF" : "#0066FF"};
     border-radius: 4px;
     background-color: #fff;
     height: auto;
@@ -218,6 +243,7 @@ const PrefixCont = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    border-left: solid 14px ${props => props.isSelected ? "#00C2FF" : "#0066FF"};
     text-align: right;
 `;
 
@@ -227,7 +253,7 @@ const StaticCont = styled.div`
     border: ${props => props.isSelected ? "solid 2px #00C2FF" : "none"};
     padding: 4px 8px;
     width: 110px;
-    background-color: #0066FF80;
+    background-color: #0066FF;
     font-size: 14px;
     display: flex;
     align-items: center;
@@ -236,15 +262,13 @@ const StaticCont = styled.div`
 
 const Separator = styled.div`
     width: 100%;
-    height: 8px;
+    height: 14px;
     margin: 2px 0;
     opacity: 0;
     cursor: pointer;
     &:hover {
         opacity: 1;
-        height: 24px;
-        margin: 0;
-        padding: 9px 0;
+        padding: 4px;
     }
 `;
 

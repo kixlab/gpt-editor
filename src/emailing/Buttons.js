@@ -170,17 +170,12 @@ function Buttons(props) {
 
         return (
             <ExpandedDetails xPosition={xPosition} yPosition={yPosition}>
-                <InputContainer>
-                    <ContainerHeader>
-                        Input
-                    </ContainerHeader>
-                    <InputContent 
-                        buttons={props.buttons} buttonId={buttonId}
-                        slots={props.slots} changeSlot={props.changeSlot} createSlot={props.createSlot}
-                        changeOutputPrefix={props.changeOutputPrefix}
-                        selected={props.selected} setSelected={props.setSelected}
-                    />
-                </InputContainer>
+                <InputContent 
+                    buttons={props.buttons} buttonId={buttonId}
+                    slots={props.slots} changeSlot={props.changeSlot} createSlot={props.createSlot}
+                    changeOutputPrefix={props.changeOutputPrefix}
+                    selected={props.selected} setSelected={props.setSelected}
+                />
                 <Line></Line>
                 <ModelContainer>
                     <ContainerHeader style={{marginBottom: "4px"}}>
@@ -275,14 +270,6 @@ const Line = styled.div`
     height: 2px;
     background-color: #0066FF;
     margin-top: 24px;
-`;
-
-const InputContainer = styled.div`
-    width: 340px;
-    padding: 8px 16px 16px 16px;
-    background-color: #0066FF1A;
-    border-radius: 12px;
-    height: fit-content;
 `;
 
 const ModelContainer = styled.div`
