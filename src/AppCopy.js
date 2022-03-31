@@ -9,6 +9,7 @@ import Switches from './copywriting/Switches';
 import SwitchProperties from './copywriting/SwitchProperties';
 import TextEditor from './copywriting/TextEditor';
 import Lenses from './copywriting/Lenses';
+import SwitchHistory from './copywriting/SwitchHistory';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -427,7 +428,9 @@ function App() {
                             switches={switches} switchId={selected.data}
                             onPropertyChange={onPropertyChange}
                         /> :
-                        <div>history</div>
+                        <SwitchHistory
+                            switches={switches} switchId={selected.data}
+                        />
                     ) : ""
                 }
             </LeftColumn>
