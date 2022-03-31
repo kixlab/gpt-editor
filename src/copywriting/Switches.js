@@ -1,6 +1,8 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import styled from "styled-components";
 
+import { HistoryButton, SettingButton } from './SVG';
+
 const SWITCH_X_SPACE = 16;
 const SWITCH_SIZE = 64;
 const SWITCH_PROPERTY_WIDTH = 160;
@@ -108,6 +110,12 @@ function Switches(props) {
             setDragging(newDragging);
     }
 
+    function handleClickSideBtn(e, type) {
+        e.stopPropagation();
+        var copy = { ...props.selected };
+        copy.isSideOpen = type;
+        props.setSelected(copy);
+    }
 
     function drawOneSwitch(switchId, switchIdx, numSwitches) {
         var currSwitch = props.switches[switchId];
@@ -118,22 +126,22 @@ function Switches(props) {
         var yPosition = 128;
 
         if(switchId !== -1) {
-            var trianglePoints = [
-                [xPosition, yPosition - 6],
-                [xPosition + 10, yPosition - 26],
-                [xPosition + 20, yPosition - 6]
+            var sideButtons = [
+                <SideBtn
+                    key={1} data-id={switchId} color={currSwitch.color}
+                    onClick={(e) => handleClickSideBtn(e, 'properties')}
+                    transform={`translate(${xPosition}, ${yPosition - 32 - 4}) scale(1.28)`}
+                >
+                    {SettingButton}
+                </SideBtn>,
+                <SideBtn
+                    key={2} data-id={switchId} color={currSwitch.color}
+                    onClick={(e) => handleClickSideBtn(e, 'history')}
+                    transform={`translate(${xPosition + 32 + 4}, ${yPosition - 32 - 4}) scale(1.28)`}
+                >
+                    {HistoryButton}
+                </SideBtn>
             ]
-            var pointsStr = trianglePoints.map((point) => point.join(',')).join(' ');
-            var triangle = (
-                <polygon
-                    data-id={switchId}
-                    points={pointsStr} style={{ fill: currSwitch.color, cursor: "pointer" }}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        showSwitchProperties();
-                    }}
-                />
-            );
 
             var isSelected = props.selected && props.selected.type === "switch" && props.selected.data === switchId;
             var selectionRing = (
@@ -210,7 +218,7 @@ function Switches(props) {
                         width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
                         fill="#00000000" style={currSwitch === undefined || currSwitch.path !== null ? { cursor: "pointer" } : {}}
                     />
-                    {currSwitch === undefined ? "" : (isSelected ? triangle : "")}
+                    {currSwitch === undefined ? "" : (isSelected ? sideButtons : "")}
                 </g>
             </g>
         )
@@ -242,12 +250,6 @@ function Switches(props) {
                 />
             </g>
         )
-    }
-
-    function showSwitchProperties() {
-        var copy = { ...props.selected };
-        copy.isProperties = true;
-        props.setSelected(copy);
     }
 
     var switchesIdList = Object.keys(props.switches).filter((switchId) => switchId !== 'colorIndex');
@@ -294,6 +296,12 @@ const filters = (<>
 const SVGContainer = styled.svg`
     height: 200px;
     width: 100%;
+`;
+
+const SideBtn = styled.g`
+    cursor: pointer;
+    stroke: ${props => props.color};
+    fill: ${props => props.color};
 `;
 
 export default Switches;

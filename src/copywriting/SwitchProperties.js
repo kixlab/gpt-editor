@@ -104,7 +104,7 @@ function SwitchProperties(props) {
 
     var propsHTML = propertiesToHTML(Object.keys(properties), properties);
 
-    var top = position.y - propsHTML.length*(SWITCH_PROPERTY_HEIGHT+4) - 2;
+    var top = position.y - propsHTML.length*(SWITCH_PROPERTY_HEIGHT+4) -  4;
     var left = position.x;
 
     return (

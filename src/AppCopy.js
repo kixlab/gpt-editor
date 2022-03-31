@@ -421,12 +421,14 @@ function App() {
                     attachPath={attachPath} onPropertyChange={onPropertyChange}
                     createSwitch={createSwitch}
                 />
-                {selected && selected.isProperties ?
-                    <SwitchProperties
-                        switches={switches} switchId={selected.data}
-                        onPropertyChange={onPropertyChange}
-                    />
-                    : ""
+                {selected && selected.isSideOpen ?
+                    (selected.isSideOpen === "properties" ? 
+                        <SwitchProperties
+                            switches={switches} switchId={selected.data}
+                            onPropertyChange={onPropertyChange}
+                        /> :
+                        <div>history</div>
+                    ) : ""
                 }
             </LeftColumn>
             <RightColumn>
