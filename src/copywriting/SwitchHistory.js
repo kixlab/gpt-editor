@@ -91,8 +91,13 @@ function SwitchHistory(props) {
                                     <FontAwesomeIcon data-idx={i} onClick={toggleInput} icon={isOpen ? faChevronUp : faChevronDown} />
                                 </InputHeader>
                                 {isOpen && (
-                                    <InputContent key={"input-" + i}>
-                                        {entry.data.input}
+                                    <InputContent key={"history-input-" + i}>
+                                        {entry.data.input.split('\n').map((line, i) => (
+                                            <span key={i}>
+                                                {line}
+                                                <br/>
+                                            </span>
+                                        ))}
                                     </InputContent>
                                 )}
                             </div>
@@ -195,7 +200,7 @@ const InputHeader = styled.div`
 const InputContent = styled.div`
     color: #777;
     font-size: 12px;
-    padding: 0 16px 0 16px;
+    padding: 0 16px 4px 16px;
 `;
 
 

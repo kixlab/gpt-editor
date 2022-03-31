@@ -92,7 +92,12 @@ function SwitchHistory(props) {
                                 </InputHeader>
                                 {isOpen && (
                                     <InputContent key={"history-input-" + i}>
-                                        {entry.data.input}
+                                        {entry.data.input.split('\n').map((line, i) => (
+                                            <span key={i}>
+                                                {line}
+                                                <br/>
+                                            </span>
+                                        ))}
                                     </InputContent>
                                 )}
                             </div>
@@ -183,6 +188,7 @@ const GenerationText = styled.div`
     border-radius: 4px;
     font-size: 12px;
     width: 100%;
+    white-space: pre-line;
 `;
 const InputHeader = styled.div`
     width: 100%;
@@ -198,7 +204,7 @@ const InputHeader = styled.div`
 const InputContent = styled.div`
     color: #777;
     font-size: 12px;
-    padding: 0 16px 0 16px;
+    padding: 0 16px 4px 16px;
 `;
 
 
