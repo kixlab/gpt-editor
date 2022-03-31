@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import SwitchProperties from './SwitchProperties';
+import SwitchHistory from './SwitchHistory';
+
+import { SettingButton, HistoryButton } from './SVG';
 
 const SWITCH_SIZE = 50;
 const SWITCH_Y_OFFSET = 12;
@@ -79,15 +82,70 @@ function SwitchContent(props) {
                 {switchIds.map((switchId, switchIdx) => drawOneSwitch(switchId, switchIdx))}
                 {drawOneSwitch(-1, switchIds.length)}
             </svg>
-            {props.selected && props.selected.type === 'switch' ?
-                <SwitchProperties 
+            {props.selected && props.selected.type === "switch" ? 
+                <SideButtons 
                     switches={props.switches} switchId={props.selected.data}
-                    switchIdx={switchIds.indexOf(props.selected.data)} switchLen={switchIds.length}
-                    onPropertyChange={props.onPropertyChange}
-                /> : ""
+                    switchIdx={switchIds.indexOf(props.selected.data)}
+                    selected={props.selected} setSelected={props.setSelected}
+                ></SideButtons>
+            : ""}
+            {props.selected.isSideOpen ? 
+                (props.selected.isSideOpen === 'properties' ?
+                    <SwitchProperties 
+                        switches={props.switches} switchId={props.selected.data}
+                        switchIdx={switchIds.indexOf(props.selected.data)} switchLen={switchIds.length}
+                        onPropertyChange={props.onPropertyChange}
+                    /> : 
+                    <SwitchHistory 
+                        switches={props.switches} switchId={props.selected.data}
+                        switchIdx={switchIds.indexOf(props.selected.data)}
+                    />
+                ) :
+                ""
             }
         </div>
     )
 }
+
+function SideButtons(props) {
+    var top = props.switchIdx*(SWITCH_SIZE + 12) + 4;
+    var left = 60;
+
+    function handleClickSideBtn(e, type) {
+        e.stopPropagation();
+        var copy = { ...props.selected };
+        copy.isSideOpen = type;
+        props.setSelected(copy);
+    }
+
+    return (
+        <svg
+            height={50} width={25} 
+            style={{position: "absolute", top: top + "px", left: left + "px", zIndex: 8}}
+        >
+            <SideBtn 
+                transform={`translate(0, 0)`}
+                onClick={(e) => handleClickSideBtn(e, "properties")}
+                color={props.switches[props.switchId].color}
+            >
+                {SettingButton}
+            </SideBtn>,
+            <SideBtn 
+                transform={`translate(0, 27)`}
+                onClick={(e) => handleClickSideBtn(e, "history")}
+                color={props.switches[props.switchId].color}
+            >
+                {HistoryButton}
+            </SideBtn>
+        </svg>
+    )
+}
+
+const SideBtn = styled.g`
+    cursor: pointer;
+    stroke: ${props => props.color};
+    fill: ${props => props.color};
+`;
+
 
 export default SwitchContent;

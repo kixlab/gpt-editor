@@ -208,6 +208,7 @@ const ListItem = styled.div`
     &:hover {
         background-color: #0066FF33;
         border: solid 2px #0066FF66;
+        border-left: solid 4px ${props => props.color};
     }
 `;
 
