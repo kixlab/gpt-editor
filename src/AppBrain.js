@@ -15,7 +15,7 @@ function generateId() {
 
 const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
 
-function App() {
+function AppBrain() {
     const slotsReducer = useCallback((slots, action) => {
         var newSlots = { ...slots };
         switch (action.type) {
@@ -667,4 +667,4 @@ function App() {
     );
 }
 
-export default App;
+export default AppBrain;

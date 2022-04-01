@@ -17,7 +17,7 @@ function generateId() {
 
 const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
 
-function App() {
+function AppCopy() {
     const slotsReducer = useCallback((slots, action) => {
         var newSlots = JSON.parse(JSON.stringify(slots));
         switch (action.type) {
@@ -459,4 +459,4 @@ const RightColumn = styled.div`
     margin-top: 60px;
 `;
 
-export default App;
+export default AppCopy;

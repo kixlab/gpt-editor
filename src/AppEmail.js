@@ -15,7 +15,7 @@ function generateId() {
 
 const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
 
-function App() {
+function AppEmail() {
     const buttonsReducer = useCallback((buttons, action) => {
         var newButtons = JSON.parse(JSON.stringify(buttons));
         switch (action.type) {
@@ -558,4 +558,4 @@ const Container = styled.div`
     position: relative;
 `;
 
-export default App;
+export default AppEmail;
