@@ -66,6 +66,13 @@ function AppEmail() {
             lens: 'b',
             outputPrefix: "Changed text:",
             isLoading: false
+        },
+        'c' : {
+            slots: ['hueeey', 'hohhhhu'],
+            switches: ['two'],
+            lens: 'd',
+            outputPrefix: "Output:",
+            isLoading: false
         }
     });
 
@@ -99,6 +106,16 @@ function AppEmail() {
             type: 'selection',
             text: "Original text:",
             button: 'a'
+        },
+        'hueeey': {
+            type: 'input',
+            text: "Add an apology to email.",
+            button: 'c'
+        },
+        'hohhhhu': {
+            type: 'whole',
+            text: "",
+            button: 'c'
         }
     });
 
@@ -167,7 +184,15 @@ function AppEmail() {
             frequencyPen: 0,
             presencePen: 0,
             bestOf: 1
-        }
+        },
+        {
+            engine: "text-davinci-002",
+            temperature: 0.7,
+            topP: 1,
+            frequencyPen: 0,
+            presencePen: 0,
+            bestOf: 1
+        },
     ]
     const [switches, switchesDispatch] = useReducer(switchesReducer, {'colorIndex': 0,
         'one': {
@@ -185,6 +210,14 @@ function AppEmail() {
             button: 'a',
             history: [{type: "create", data: {...tempProps[1]}}],
             properties: tempProps[1]
+        },
+        'two': {
+            model: "GPT-3",
+            color: "#71AAFF",
+            isChanged: false,
+            button: 'c',
+            history: [{type: "create", data: {...tempProps[0]}}],
+            properties: tempProps[2]
         }
     });
 
@@ -220,6 +253,12 @@ function AppEmail() {
             generations: [],
             properties: {x: 'Neutral', y: 'Anger'},
             button: 'a',
+        },
+        'd': {
+            type: 'list',
+            generations: [],
+            properties: {x: 'Neutral', y: 'Sadness'},
+            button: 'c',
         }
     });
 

@@ -232,18 +232,20 @@ function Switches(props) {
 
             if(curr.slot !== null && isHover) {
                 var thumb = document.getElementById(curr.slot + '-switch-' + switchId);
-                var startCoords = [parseInt(thumb.getAttribute("x")) + 8, parseInt(thumb.getAttribute('y'))+4];
-                var endCoords = [SWITCH_X_OFFSET, currPosition + SWITCH_SIZE/2];
-                if(isPinned) {
-                    endCoords = [LENS_X_OFFSET + LENS_SIZE + 32 + LENS_SIZE/2 - SWITCH_SIZE/2, currPinnedPosition - SWITCH_SIZE/2 - 16]
+                if(thumb !== null) {
+                    var startCoords = [parseInt(thumb.getAttribute("x")) + 8, parseInt(thumb.getAttribute('y'))+4];
+                    var endCoords = [SWITCH_X_OFFSET, currPosition + SWITCH_SIZE/2];
+                    if(isPinned) {
+                        endCoords = [LENS_X_OFFSET + LENS_SIZE + 32 + LENS_SIZE/2 - SWITCH_SIZE/2, currPinnedPosition - SWITCH_SIZE/2 - 16]
+                    }
+                    switchesList.unshift(
+                        <line key={switchId + "-hover"}
+                            x1={startCoords[0]} y1={startCoords[1]}
+                            x2={endCoords[0]} y2={endCoords[1]}
+                            stroke={curr.color + "80"} strokeWidth="4"
+                        />
+                    )
                 }
-                switchesList.unshift(
-                    <line key={switchId + "-hover"}
-                        x1={startCoords[0]} y1={startCoords[1]}
-                        x2={endCoords[0]} y2={endCoords[1]}
-                        stroke={curr.color + "80"} strokeWidth="4"
-                    />
-                )
             }
         }
 
