@@ -57,7 +57,7 @@ const Rating = (props) => {
     var maxColor = "#fff";
     for(var i = 0; i < props.percentages.length; i++) {
         var pct = cleanPercentage(props.percentages[i]);
-        circles.unshift(<Circle color={props.colors[i]} percentage={pct} prevPercentage={totalPercentage} />);
+        circles.unshift(<Circle key={i} color={props.colors[i]} percentage={pct} prevPercentage={totalPercentage} />);
         totalPercentage += pct;
         if(pct > maxPercentage) {
             maxPercentage = pct;
@@ -66,7 +66,8 @@ const Rating = (props) => {
     }
     if(props.hoverGen === props.genIdx) {
         circles.unshift(
-            <circle 
+            <circle
+                key={props.percentages.length+1}
                 r={CIRCLE_RADIUS + 8}
                 cx={RATING_SIZE/2}
                 cy={RATING_SIZE/2}

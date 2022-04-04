@@ -15,6 +15,12 @@ function generateId() {
     return Math.random().toString(36).slice(2, 12);
 }
 
+const params = new Proxy(new URLSearchParams(window.location.search), {
+get: (searchParams, prop) => searchParams.get(prop),
+});
+// Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
+let value = params.v; // "some_value"
+
 const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
 
 function AppCopy() {
@@ -59,10 +65,11 @@ function AppCopy() {
     }, []);
     const [slots, slotsDispatch] = useReducer(slotsReducer, 
         {entries: [
-            ['Write a creative ad for the following product to run on Facebook aimed at parents:', null ],
-            ["Product: Learning Room is a virtual environment to help students from kindergarten to high school excel in school.", null]
+            ['Write an ad for the following product', null ],
+            ["Product: AITeacher is a smart assistant that helps students succeed in school.", "Product: Forever Tumbler, an always-cold tumbler that automatically refills with coffee.", null],
+            ["Tone: catchy, engaging", null]
         ],
-        path: [0, 0]}
+        path: [0, 0, 0]}
     );
 
     const switchesReducer = useCallback((switches, action) => {
@@ -257,7 +264,7 @@ function AppCopy() {
         });
     }
 
-    function textify() {
+    function textify(path) {
         var result = "";
         for(var i = 0; i < slots.path.length; i++) {
             var index = slots.path[i];
@@ -269,7 +276,7 @@ function AppCopy() {
     }
 
     function handleGenerate(switchId) {
-        if (switches[switchId].isLoading || switches[switchId].path === null) return;
+        if (switches[switchId].isLoading) return;
 
         var otherLoading = Object.keys(switches).some(id => switches[id].isLoading);
         if(otherLoading) return;
@@ -280,7 +287,7 @@ function AppCopy() {
         var currSwitch = switches[switchId];
         var currLens = lenses[0];
         var data = { ...currSwitch.properties };
-        data.text = textify();
+        data.text = textify(currSwitch.path);
 
         switchesDispatch({ type: 'loading', switchId, isLoading: true });
 

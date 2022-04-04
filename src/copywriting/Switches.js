@@ -205,10 +205,10 @@ function Switches(props) {
                 >
                     <rect
                         id={"switch-" + switchId}
-                        className={currSwitch === undefined || currSwitch.path === null ? "switch-inactive" : "switch"} 
+                        className={currSwitch === undefined ? "switch-inactive" : "switch"} 
                         x={xPosition} y={yPosition}
                         width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
-                        fill={currSwitch === undefined ? "#0066FF66" : (currSwitch.color + (currSwitch.path !== null ? "FF" : "88"))}
+                        fill={currSwitch === undefined ? "#0066FF66" : currSwitch.color}
                     />
                     {currSwitch === undefined ? "" : (isSelected ? selectionRing : "")}
                     {textOrLoadingSvg}
@@ -216,7 +216,7 @@ function Switches(props) {
                         data-type="switch" data-id={switchId}
                         x={xPosition - 4} y={yPosition - 4}
                         width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
-                        fill="#00000000" style={currSwitch === undefined || currSwitch.path !== null ? { cursor: "pointer" } : {}}
+                        fill="#00000000" style={{ cursor: "pointer" }}
                     />
                     {currSwitch === undefined ? "" : (isSelected ? sideButtons : "")}
                 </g>
