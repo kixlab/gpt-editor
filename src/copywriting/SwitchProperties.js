@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const SWITCH_SIZE = 64;
 const SWITCH_PROPERTY_WIDTH = 160;
-const SWITCH_PROPERTY_HEIGHT = 50;
+const SWITCH_PROPERTY_HEIGHT = 52;
 
 const defaultProperties = {
     engine: "davinci",
@@ -16,10 +16,27 @@ const defaultProperties = {
 
 function SwitchProperties(props) {
     const [showAll, setShowAll] = useState(false);
+    const [current, setCurrent] = useState(props.value);
     const currSwitch = props.switches[props.switchId];
 
-    var position = document.getElementById('switch-' + props.switchId).getClientRects()[0];
+    var position = document.getElementById("switch-"+props.switchId+"-property-"+props.property).getClientRects()[0];
     var properties = currSwitch.properties;
+
+    useEffect(() => {
+        if(current !== props.value) setCurrent(props.value);
+    }, [props.value]);
+
+    function handleInputChange(e) {
+        console.log(e.target.value);
+        setCurrent(e.target.value);
+    }
+
+    function handleKeyDown(e) {
+        if (e.key === "Enter") {
+            handleChange(e);
+        }
+
+    }
 
     function handleChange(e) {
         var propertyName = e.target.getAttribute("data-property");
@@ -55,17 +72,11 @@ function SwitchProperties(props) {
                 case "engine":
                     inputHTML = (
                         <select className="dropdown" value={properties[name]} data-property={name} onChange={handleChange}>
-                            <option value="text-davinci-002">text-davinci-002</option>
-                            <option value="text-curie-001">text-curie-001</option>
-                            <option value="text-babbage-001">text-babbage-001</option>
-                            <option value="text-ada-001">text-ada-001</option>
-                            <option value="text-davinci-001">text-davinci-001</option>
-                            <option value="davinci-instruct-beta">davinci-instruct-beta</option>
-                            <option value="davinci">davinci</option>
-                            <option value="curie-instruct-beta">curie-instruct-beta</option>
-                            <option value="curie">curie</option>
-                            <option value="babbage">babbage</option>
-                            <option value="ada">ada</option>
+                            <option value="text-davinci-002">Davinci-2 (D2)</option>
+                            <option value="text-davinci-001">Davinci (D)</option>
+                            <option value="text-curie-001">Curie (C)</option>
+                            <option value="text-babbage-001">Babbage</option>
+                            <option value="text-ada-001">Ada</option>
                         </select>
                     )
                     break;
@@ -88,11 +99,16 @@ function SwitchProperties(props) {
                     break;
             }
             result.push(
-                <PropertyContainer key={name} style={{borderColor: currSwitch.color}}>
+                <PropertyContainer key={name} style={{borderColor: "#0066FF"}}>
                     <PropertyHeader>
                         <div>{propertyToText(name)}</div>
                         {name !== "engine" ?
-                            <input className="textinput" type="text" value={properties[name]} onChange={handleChange} data-property={name}/>
+                            <input 
+                                className="textinput" type="text" 
+                                value={current} data-property={name}
+                                onKeyDown={handleKeyDown} onBlur={handleChange}
+                                onChange={handleInputChange}
+                            />
                             : ""}
                     </PropertyHeader>
                     {inputHTML}
@@ -102,25 +118,14 @@ function SwitchProperties(props) {
         return result;
     }
 
-    var propsHTML = propertiesToHTML(Object.keys(properties), properties);
+    var propsHTML = propertiesToHTML([props.property], properties);
 
-    var top = position.y - propsHTML.length*(SWITCH_PROPERTY_HEIGHT+4) -  4;
+    var top = position.y //- propsHTML.length*(SWITCH_PROPERTY_HEIGHT+4) -  4;
     var left = position.x;
 
     return (
         <div style={{position: "absolute", top: top + "px", left: left + "px"}} onClick={(e) => e.stopPropagation()}>
             {propsHTML}
-            {propsHTML.length !== 6 ?
-                <ShowAllButton 
-                    style={{
-                        borderBottomColor: currSwitch.color, 
-                        marginLeft: SWITCH_PROPERTY_WIDTH / 2 - 20 + "px",
-                        marginTop: -1 * propsHTML.length*(SWITCH_PROPERTY_HEIGHT+4) - 20 - 4+ "px"
-                    }} 
-                    onClick={(e) => setShowAll(!showAll)}
-                />
-                : ""
-            }
         </div>
     )
 }

@@ -191,7 +191,7 @@ function AppCopy() {
             } else if(selected.type === 'switch') {
                 copySwitch(selected.data);
             }
-        } else if(e.key === 'Backspace' && selected.type !== null) {
+        } else if(e.key === 'Backspace' && selected.type !== null && selected.type !== "property") {
             e.preventDefault();
             if(selected.type === 'slots') {
                 removeSlot(selected.data, slots.path[selected.data]);
@@ -316,6 +316,17 @@ function AppCopy() {
     }
 
     function onPropertyChange(switchId, property, value) {
+        var defaultValues = {
+            engine: 'text-davinci-001',
+            temperature: 0.7,
+            presencePen: 0,
+            bestOf: 1
+        }
+        if(value == "") {
+            value = defaultValues[property];
+            switchesDispatch({ type: 'change', switchId, property, value });
+            return;
+        }
         switch (property) {
             case "temperature":
             case "topP":
@@ -431,7 +442,8 @@ function AppCopy() {
                 />
                 {selected && selected.type == "property" ?
                     <SwitchProperties
-                        switches={switches} switchId={selected.data}
+                        switches={switches} switchId={selected.data.switchId}
+                        property={selected.data.property} value={switches[selected.data.switchId].properties[selected.data.property]}
                         onPropertyChange={onPropertyChange}
                     /> : ""
                 }

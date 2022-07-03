@@ -232,7 +232,14 @@ function Switches(props) {
 
     function createPropertySvg(switchId, currSwitch, xPosition, yPosition) {
         var properties = ['engine', 'temperature', 'presencePen', 'bestOf'];
+        var defaultValues = {
+            engine: 'text-davinci-001',
+            temperature: 0.7,
+            presencePen: 0,
+            bestOf: 1
+        }
         var engineToLabel = {
+            "text-davinci-002": "D2",
             "text-davinci-001": "D",
             "text-curie-001": "C",
             "text-babbage-001": "B",
@@ -246,15 +253,17 @@ function Switches(props) {
             var property = properties[i];
             var propertyLab = propertyLabels[i];
             var value = currSwitch.properties[property];
+            var isChanged = value !== defaultValues[property];
             if(property == "engine") {
                 value = engineToLabel[value];
             }
             var propSize = SWITCH_SIZE / 2 - 12;
             propertiesSvg.push(
                 <g
-                    key={switchId + "-text-" + property} data-id={switchId} data-property={property}
+                    id={"switch-" + switchId + "-property-" + property}
+                    key={switchId + "-property-" + property}
                     transform={`translate(${xPosition + xIdx*(propSize + 8) + 8}, ${yPosition + yIdx*(propSize + 8) + 8})`}
-                    opacity="0.5" onClick={handlePropertyClick}
+                    opacity={isChanged ? "1.0" : "0.5"}
                 >
                     <rect 
                         x="0" y="0" width={propSize} height={propSize} 
@@ -275,6 +284,12 @@ function Switches(props) {
                         textAnchor="middle" alignmentBaseline="middle"
                         fontSize="18px" fontFamily="Roboto" fill="#333"
                     >{value}</text>
+                    <rect
+                        x="0" y="0" width={propSize} height={propSize}
+                        data-id={switchId} data-property={property}
+                        fill="#00000000" style={{ cursor: "pointer" }}
+                        onClick={handlePropertyClick}
+                    />
                 </g>
             )
         }
