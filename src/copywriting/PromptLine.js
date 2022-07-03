@@ -86,6 +86,7 @@ const TextAreaCont = styled.div`
     padding: 8px 16px;
     border-radius: 4px;
     border: solid ${(props) => props.isHover ? "2px #0066FF66" : props.isSelected ? "4px #00C2FF" : props.isEmptyItem ? "2px #ddd" : "2px #0066FF"};
+    border-left-width: ${props => props.isEmptyItem ? "2px" : "16px"};
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     background-color: "#fff";
     color: ${(props) => props.isHover ? "#0066FF66" : props.isEmptyItem ? "#999" : "#333" };

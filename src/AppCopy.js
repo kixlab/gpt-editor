@@ -338,7 +338,7 @@ function AppCopy() {
     function createSwitch() {
         var newSwitchId = "s" + generateId();
         var properties = {
-            engine: "text-davinci-002",
+            engine: "text-davinci-001",
             temperature: 0.7,
             topP: 1,
             frequencyPen: 0,
@@ -429,16 +429,11 @@ function AppCopy() {
                     attachPath={attachPath} onPropertyChange={onPropertyChange}
                     createSwitch={createSwitch}
                 />
-                {selected && selected.isSideOpen ?
-                    (selected.isSideOpen === "properties" ? 
-                        <SwitchProperties
-                            switches={switches} switchId={selected.data}
-                            onPropertyChange={onPropertyChange}
-                        /> :
-                        <SwitchHistory
-                            switches={switches} switchId={selected.data}
-                        />
-                    ) : ""
+                {selected && selected.type == "property" ?
+                    <SwitchProperties
+                        switches={switches} switchId={selected.data}
+                        onPropertyChange={onPropertyChange}
+                    /> : ""
                 }
             </LeftColumn>
             <RightColumn>

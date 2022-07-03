@@ -3,8 +3,9 @@ import styled from "styled-components";
 
 import { HistoryButton, SettingButton } from './SVG';
 
-const SWITCH_X_SPACE = 16;
-const SWITCH_SIZE = 64;
+const SWITCH_X_SPACE = 12;
+const SWITCH_Y_OFFSET = 32;
+const SWITCH_SIZE = 128;
 const SWITCH_PROPERTY_WIDTH = 160;
 
 function Switches(props) {
@@ -50,6 +51,7 @@ function Switches(props) {
                 break;
             case 2:
                 if(clickTimer.current == null) return;
+                console.log(e);
                 clearTimeout(clickTimer.current);
                 clickTimer.current = null;
                 if(props.selected.type === 'switch' && props.selected.data === data)
@@ -63,6 +65,13 @@ function Switches(props) {
             default:
                 break;
         }
+    }
+
+    function handlePropertyClick(e) {
+        e.stopPropagation();
+        let switchId = e.target.getAttribute("data-id");
+        let property = e.target.getAttribute("data-property");
+        props.setSelected({type: "property", data: {switchId: switchId, property: property}});
     }
 
     function handleMouseDown(e) {
@@ -123,77 +132,60 @@ function Switches(props) {
         var startingPoint = (containerWidth - numSwitches * SWITCH_SIZE - (numSwitches - 1) * SWITCH_X_SPACE) / 2;
 
         var xPosition = startingPoint + switchIdx * (SWITCH_SIZE + SWITCH_X_SPACE);
-        var yPosition = 128;
+        var yPosition = SWITCH_Y_OFFSET;
 
-        if(switchId !== -1) {
-            var sideButtons = [
-                <SideBtn
-                    key={1} data-id={switchId} color={currSwitch.color}
-                    onClick={(e) => handleClickSideBtn(e, 'properties')}
-                    transform={`translate(${xPosition}, ${yPosition - 32 - 4}) scale(1.28)`}
-                >
-                    {SettingButton}
-                </SideBtn>,
-                <SideBtn
-                    key={2} data-id={switchId} color={currSwitch.color}
-                    onClick={(e) => handleClickSideBtn(e, 'history')}
-                    transform={`translate(${xPosition + 32 + 4}, ${yPosition - 32 - 4}) scale(1.28)`}
-                >
-                    {HistoryButton}
-                </SideBtn>
-            ]
+        var sideButtons = [
+            <SideBtn
+                key={1} data-id={switchId} color={currSwitch.color}
+                onClick={(e) => handleClickSideBtn(e, 'properties')}
+                transform={`translate(${xPosition}, ${yPosition - 32 - 4}) scale(1.28)`}
+            >
+                {SettingButton}
+            </SideBtn>,
+            <SideBtn
+                key={2} data-id={switchId} color={currSwitch.color}
+                onClick={(e) => handleClickSideBtn(e, 'history')}
+                transform={`translate(${xPosition + 32 + 4}, ${yPosition - 32 - 4}) scale(1.28)`}
+            >
+                {HistoryButton}
+            </SideBtn>
+        ]
 
-            var isSelected = props.selected && props.selected.type === "switch" && props.selected.data === switchId;
-            var selectionRing = (
-                <rect
-                    className="switch-selection" x={xPosition - 3} y={yPosition - 3}
-                    width={SWITCH_SIZE + 6} height={SWITCH_SIZE + 6} rx="4"
-                    fill="none" stroke="#00C2FF" strokeWidth="2px"
-                />
+        var isSelected = props.selected && props.selected.type === "switch" && props.selected.data === switchId;
+        var selectionRing = (
+            <rect
+                className="switch-selection" x={xPosition - 3} y={yPosition - 3 - 18}
+                width={SWITCH_SIZE + 6} height={SWITCH_SIZE + 6 + 18} rx="4"
+                fill="none" stroke="#00C2FF" strokeWidth="2px"
+            />
+        )
+
+        var connectorSvg = "";
+        var isPath = currSwitch.path && props.slots.path.join(" ") === currSwitch.path.join(" ");
+        var isHoverPath = currSwitch.path && props.hoverPath && props.hoverPath.join(" ") === currSwitch.path.join(" ");
+        if(isPath || isHoverPath) {
+            var centerCont = containerWidth / 2;
+            var centerSwitch = xPosition + SWITCH_SIZE/2;
+            connectorSvg = (
+                <g>
+                    <line x1={centerCont} y1="64" x2={centerSwitch} y2="64" stroke={isPath ? "#0066FF" : "#0066FF66" } strokeWidth="4px"/>
+                    <line x1={centerSwitch} y1="62" x2={centerSwitch} y2="128" stroke={isPath ? "#0066FF" : "#0066FF66"} strokeWidth="4px"/>
+                </g>
             )
-
-            var connectorSvg = "";
-            var isPath = currSwitch.path && props.slots.path.join(" ") === currSwitch.path.join(" ");
-            var isHoverPath = currSwitch.path && props.hoverPath && props.hoverPath.join(" ") === currSwitch.path.join(" ");
-            if(isPath || isHoverPath) {
-                var centerCont = containerWidth / 2;
-                var centerSwitch = xPosition + SWITCH_SIZE/2;
-                connectorSvg = (
-                    <g>
-                        <line x1={centerCont} y1="64" x2={centerSwitch} y2="64" stroke={isPath ? "#0066FF" : "#0066FF66" } strokeWidth="4px"/>
-                        <line x1={centerSwitch} y1="62" x2={centerSwitch} y2="128" stroke={isPath ? "#0066FF" : "#0066FF66"} strokeWidth="4px"/>
-                    </g>
-                )
-            }
         }
 
-        var textOrLoadingSvg = currSwitch && currSwitch.isLoading ?
-            (<g key={switchId + "-loading"}
-                transform={`translate(${xPosition + SWITCH_SIZE / 2 - 17.5}, ${yPosition + SWITCH_SIZE / 2 - 17.5}) scale(0.7)`}>
-                <path
-                    fill="#fff"
-                    d="M25,5A20.14,20.14,0,0,1,45,22.88a2.51,2.51,0,0,0,2.49,2.26h0A2.52,2.52,0,0,0,50,22.33a25.14,25.14,0,0,0-50,0,2.52,2.52,0,0,0,2.5,2.81h0A2.51,2.51,0,0,0,5,22.88,20.14,20.14,0,0,1,25,5Z">
-                    <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.5s" repeatCount="indefinite" />
-                </path>
-            </g>) : 
-            ( currSwitch !== undefined ?
-                (<text
-                    key={switchId + "-text"}
-                    x={xPosition + SWITCH_SIZE / 2} y={yPosition + SWITCH_SIZE / 2}
-                    textAnchor="middle" alignmentBaseline="middle"
-                    fontSize="18px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
-                >
-                    {currSwitch.model}
-                </text>) :
-                (<text
-                    key={switchId + "-text"}
-                    x={xPosition + SWITCH_SIZE / 2} y={yPosition + SWITCH_SIZE / 2}
-                    textAnchor="middle" alignmentBaseline="middle"
-                    fontSize="24px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
-                >
-                    +
-                </text>)
-            )
+        var generatorLabel = (
+            <text
+                key={switchId + "-text"}
+                x={xPosition + SWITCH_SIZE / 2} y={yPosition - 4}
+                textAnchor="middle" alignmentBaseline="middle"
+                fontSize="18px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
+            >
+                {currSwitch.model}
+            </text>
+        )
+
+        var propertiesSvg = createPropertySvg(switchId, currSwitch, xPosition, yPosition);
 
         return (
             <g key={switchId+"group"}>
@@ -206,22 +198,87 @@ function Switches(props) {
                     <rect
                         id={"switch-" + switchId}
                         className={currSwitch === undefined ? "switch-inactive" : "switch"} 
-                        x={xPosition} y={yPosition}
-                        width={SWITCH_SIZE} height={SWITCH_SIZE} rx="4"
-                        fill={currSwitch === undefined ? "#0066FF66" : currSwitch.color}
+                        x={xPosition} y={yPosition - 18}
+                        width={SWITCH_SIZE} height={SWITCH_SIZE + 18} rx="4"
+                        fill={currSwitch === undefined ? "#77a3ff" : "#4D94FF"}
                     />
                     {currSwitch === undefined ? "" : (isSelected ? selectionRing : "")}
-                    {textOrLoadingSvg}
+                    {currSwitch.isLoading ?
+                        (<g key={switchId + "-loading"}
+                            transform={`translate(${xPosition + SWITCH_SIZE / 2 - 17.5}, ${yPosition + SWITCH_SIZE / 2 - 17.5}) scale(0.7)`}>
+                            <path
+                                fill="#fff"
+                                d="M25,5A20.14,20.14,0,0,1,45,22.88a2.51,2.51,0,0,0,2.49,2.26h0A2.52,2.52,0,0,0,50,22.33a25.14,25.14,0,0,0-50,0,2.52,2.52,0,0,0,2.5,2.81h0A2.51,2.51,0,0,0,5,22.88,20.14,20.14,0,0,1,25,5Z">
+                                <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.5s" repeatCount="indefinite" />
+                            </path>
+                        </g>) : null
+                    }
+                    {generatorLabel}
                     <rect
                         data-type="switch" data-id={switchId}
-                        x={xPosition - 4} y={yPosition - 4}
-                        width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8}
+                        x={xPosition - 4} y={yPosition - 18 - 4}
+                        width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 18 + 8}
                         fill="#00000000" style={{ cursor: "pointer" }}
                     />
-                    {currSwitch === undefined ? "" : (isSelected ? sideButtons : "")}
+                    {propertiesSvg}
+                    {
+                        ""
+                        //currSwitch === undefined ? "" : (isSelected ? sideButtons : "")
+                    }
                 </g>
             </g>
         )
+    }
+
+    function createPropertySvg(switchId, currSwitch, xPosition, yPosition) {
+        var properties = ['engine', 'temperature', 'presencePen', 'bestOf'];
+        var engineToLabel = {
+            "text-davinci-001": "D",
+            "text-curie-001": "C",
+            "text-babbage-001": "B",
+            "text-ada-001": "A",
+        }
+        var propertyLabels = ["Engine", "Temp", "Presence", "Best Of"];
+        var propertiesSvg = [];
+        for(var i = 0; i < properties.length; i++) {
+            var xIdx = i % 2;
+            var yIdx = Math.floor(i / 2);
+            var property = properties[i];
+            var propertyLab = propertyLabels[i];
+            var value = currSwitch.properties[property];
+            if(property == "engine") {
+                value = engineToLabel[value];
+            }
+            var propSize = SWITCH_SIZE / 2 - 12;
+            propertiesSvg.push(
+                <g
+                    key={switchId + "-text-" + property} data-id={switchId} data-property={property}
+                    transform={`translate(${xPosition + xIdx*(propSize + 8) + 8}, ${yPosition + yIdx*(propSize + 8) + 8})`}
+                    opacity="0.5" onClick={handlePropertyClick}
+                >
+                    <rect 
+                        x="0" y="0" width={propSize} height={propSize} 
+                        fill="#FFFFFFaa" stroke="none" rx="4"
+                    />
+                    <text
+                        x={propSize/2} y={12}
+                        textAnchor="middle" alignmentBaseline="middle"
+                        fontSize="12px" fontFamily="Roboto" fill="#666"
+                    >{propertyLab}</text>
+                    <rect
+                        x="4" y={(propSize)/2 - 8} 
+                        width={propSize - 8} height={propSize/2 + 4}
+                        fill="#FFF" rx="4"
+                    />
+                    <text
+                        x={propSize/2} y={(propSize)/2 - 4 + propSize/2/2}
+                        textAnchor="middle" alignmentBaseline="middle"
+                        fontSize="18px" fontFamily="Roboto" fill="#333"
+                    >{value}</text>
+                </g>
+            )
+        }
+        return propertiesSvg;
     }
 
     function drawBulb() {
@@ -251,6 +308,41 @@ function Switches(props) {
             </g>
         )
     }
+    
+    var addSize = SWITCH_SIZE / 3;
+    var xPosition = (containerWidth - addSize) / 2;
+    var yPosition = SWITCH_Y_OFFSET + SWITCH_SIZE + 16;
+    var addButton =  (
+        <g key={-1+"group"}>
+            <g
+                key={-1 + "box"}
+                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+                onClick={handleClick}
+            >
+                <rect
+                    id={"switch-" + -1}
+                    className={"switch-inactive"} 
+                    x={xPosition} y={yPosition}
+                    width={addSize} height={addSize} rx="8"
+                    fill={"#77a3ff"}
+                />
+                <text
+                    key={-1 + "-text"}
+                    x={xPosition + addSize / 2} y={yPosition + addSize / 2}
+                    textAnchor="middle" alignmentBaseline="middle"
+                    fontSize="24px" fontFamily="Roboto" fontWeight="bold" fill="#fff"
+                >
+                    +
+                </text>
+                <rect
+                    data-type="switch" data-id={-1}
+                    x={xPosition - 4} y={yPosition - 4}
+                    width={addSize + 8} height={addSize + 8}
+                    fill="#00000000" style={{ cursor: "pointer" }}
+                />
+            </g>
+        </g>
+    )
 
     var switchesIdList = Object.keys(props.switches).filter((switchId) => switchId !== 'colorIndex');
 
@@ -262,10 +354,10 @@ function Switches(props) {
             {draggingSvg}
             {switchesIdList.map(
                 (switchId, switchIdx) => 
-                    drawOneSwitch(switchId, switchIdx, switchesIdList.length + 1)
+                    drawOneSwitch(switchId, switchIdx, switchesIdList.length)
             )}
-            {drawOneSwitch(-1, switchesIdList.length, switchesIdList.length + 1)}
-            {drawBulb()}
+            {addButton}
+            {null | drawBulb()}
         </SVGContainer>
     )
 }
@@ -294,7 +386,7 @@ const filters = (<>
 </>);
 
 const SVGContainer = styled.svg`
-    height: 200px;
+    height: 240px;
     width: 100%;
 `;
 
