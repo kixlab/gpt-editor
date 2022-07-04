@@ -197,8 +197,7 @@ const ClearBtn = styled.g`
 
 
 const BigContent = styled.div`
-    margin: 0 0 0 16px;
-    padding-right: 16px;
+    padding-right: 8px;
     overflow-y: scroll;
     height: calc(100% - 32px - 16px);
     &::-webkit-scrollbar {

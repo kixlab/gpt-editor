@@ -145,6 +145,16 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
         sentences = get_sentences(request, request.json['length'])
         existing = request.json['existing']
 
+        properties = {
+            'engine': request.json['engine'],
+            'temperature': request.json['temperature'],
+            'topP': request.json['topP'],
+            'frequencyPen': request.json['frequencyPen'],
+            'presencePen': request.json['presencePen'],
+            'bestOf': request.json['bestOf']
+        }
+        input_text = request.json['text']
+
         sentiments = get_classification(sentences, sentiment.model, sentiment.tokenizer)
         emotions = get_classification(sentences, emotion.model, emotion.tokenizer)
 
@@ -160,7 +170,9 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'coordinates': {'x': coord[i][0], 'y': coord[i][1]},
                 "sentiment": existing[i]['sentiment'],
                 "emotion": existing[i]['emotion'],
-                "isPinned": existing[i]['isPinned'] if 'isPinned' in existing[i] else False
+                "isPinned": existing[i]['isPinned'] if 'isPinned' in existing[i] else False,
+                'properties': existing[i]['properties'],
+                'inputText': existing[i]['inputText']
             })
         for i in range(len(sentences)):
             result.append({
@@ -169,7 +181,9 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
                 "sentiment": np.around(sentiments[i] * 100).tolist(),
                 "emotion": np.around(emotions[i] * 100).tolist(),
-                'isNew': True
+                'isNew': True,
+                'properties': properties,
+                'inputText': input_text
             })
         return jsonify(result)
 

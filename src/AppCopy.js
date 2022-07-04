@@ -302,6 +302,7 @@ function AppCopy() {
             newGenerations = newGenerations.map(generation => {
                 return {...generation, text: generation.text.trim()}
             })
+            console.log(newGenerations);
             lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
             switchesDispatch({ 
                 type: 'track-generations', 
