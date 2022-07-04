@@ -34,6 +34,7 @@ function GenerationList(props) {
         var type = curr.getAttribute("data-type");
         var id = curr.getAttribute("data-id");
         if(type === "input") {
+            id = parseInt(id);
             if(inputCollapsed.includes(id)) {
                 setInputCollapsed(inputCollapsed.filter(ele => ele !== id));
             } else {
@@ -97,8 +98,14 @@ function GenerationList(props) {
         var group = groupedGenerations[inputText];
         var subGroups = Object.keys(group);
 
-        console.log(inputCollapsed);
+        // show button here
+        generations.push(
+            <div key={"input-button-" + i}>
+                <HistoryButton></HistoryButton>
+            </div>
+        )
 
+        console.log(inputCollapsed)
         if(inputCollapsed.includes(i)) {
             generations.push(
                 <div key={"collapsed-" + i}>
@@ -112,14 +119,30 @@ function GenerationList(props) {
             )
             continue;
         }
+
         for(var j = 0; j < subGroups.length; j++) {
             var propertiesStr = subGroups[j];
             var indices = group[propertiesStr];
 
             var propId = i + "-" + j;
 
+            var inputIsTop = j == 0;
+            var inputIsBot = false;
+            generations.push(
+                <div key={"property-button-" + propId} style={{display: "flex", flexDirection: "row", gap: "8px", alignItems: "center"}}>
+                    <Bar 
+                        isTop={inputIsTop} isBot={inputIsBot} 
+                        data-type="input" data-id={i}
+                        isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                        onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                        onClick={handleBarClick}
+                    ></Bar>
+                    <HistoryButton></HistoryButton>
+                </div>
+            )
+
             if(propertyCollapsed.includes(propId)) {
-                var inputIsTop = j == 0;
+                var inputIsTop = false;
                 var inputIsBot = j == subGroups.length - 1;
                 generations.push(
                     <div key={"collapsed-" + propId} style={{display: "flex", flexDirection: "row", gap: "8px", alignItems: "center"}}>
@@ -147,7 +170,7 @@ function GenerationList(props) {
 
                 var propsIsTop = k == 0;
                 var propsIsBot = k == indices.length - 1;
-                var inputIsTop = propsIsTop && j == 0;
+                var inputIsTop = false;
                 var inputIsBot = propsIsBot && j == subGroups.length - 1;
 
                 generations.push(
@@ -224,6 +247,14 @@ const CollapsedBar = styled.div`
     border-radius: 3px;
     cursor: pointer;
     margin: 8px 0px;
+`;
+
+const HistoryButton = styled.div`
+    width: 24px;
+    height: 24px; 
+    border-radius: 4px;
+    border: solid 2px #ccc; 
+    margin: 8px 0;
 `;
 
 export default GenerationList;
