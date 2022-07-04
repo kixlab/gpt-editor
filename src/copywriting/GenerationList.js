@@ -6,6 +6,10 @@ import GenerationTextContainer from "./GenerationTextContainer";
 import { PinButton } from './SVG'
 
 function GenerationList(props) {
+    const [hovered, setHovered] = useState(null);
+    const [inputCollapsed, setInputCollapsed] = useState([]);
+    const [propertyCollapsed, setPropertyCollapsed] = useState([]);
+
     const generations = [];
 
     function handlePin(e) {
@@ -15,6 +19,33 @@ function GenerationList(props) {
         }
         var idx = curr.getAttribute("data-idx");
         props.pinGeneration(idx);
+    }
+
+    function handleBarMouseEnter(e) {
+        var curr = e.target;
+        setHovered({
+            type: curr.getAttribute("data-type"),
+            id: curr.getAttribute("data-id"),
+        })
+    }
+
+    function handleBarClick(e) {
+        var curr = e.target;
+        var type = curr.getAttribute("data-type");
+        var id = curr.getAttribute("data-id");
+        if(type === "input") {
+            if(inputCollapsed.includes(id)) {
+                setInputCollapsed(inputCollapsed.filter(ele => ele !== id));
+            } else {
+                setInputCollapsed(inputCollapsed.concat(id));
+            }
+        } else {
+            if(propertyCollapsed.includes(id)) {
+                setPropertyCollapsed(propertyCollapsed.filter(ele => ele !== id));
+            } else {
+                setPropertyCollapsed(propertyCollapsed.concat(id));
+            }
+        }
     }
 
     function propertiesToStr(properties) {
@@ -60,18 +91,81 @@ function GenerationList(props) {
 
     var groupedGenerations = groupGenerations(props.lens.generations);
 
-    for(var inputText in groupedGenerations) {
+    var groups = Object.keys(groupedGenerations);
+    for(var i = 0; i < groups.length; i++) {
+        var inputText = groups[i];
         var group = groupedGenerations[inputText];
-        for(var propertiesStr in group) {
+        var subGroups = Object.keys(group);
+
+        console.log(inputCollapsed);
+
+        if(inputCollapsed.includes(i)) {
+            generations.push(
+                <div key={"collapsed-" + i}>
+                    <CollapsedBar 
+                        data-type="input" data-id={i}
+                        isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                        onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                        onClick={handleBarClick}
+                    ></CollapsedBar>
+                </div>
+            )
+            continue;
+        }
+        for(var j = 0; j < subGroups.length; j++) {
+            var propertiesStr = subGroups[j];
             var indices = group[propertiesStr];
-            var properties = {};
-            for(let i = 0; i < indices.length; i++) {
-                var idx = indices[i];
+
+            var propId = i + "-" + j;
+
+            if(propertyCollapsed.includes(propId)) {
+                var inputIsTop = j == 0;
+                var inputIsBot = j == subGroups.length - 1;
+                generations.push(
+                    <div key={"collapsed-" + propId} style={{display: "flex", flexDirection: "row", gap: "8px", alignItems: "center"}}>
+                        <Bar 
+                            isTop={inputIsTop} isBot={inputIsBot} 
+                            data-type="input" data-id={i}
+                            isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                            onClick={handleBarClick}
+                        ></Bar>
+                        <CollapsedBar 
+                            data-type="property" data-id={propId}
+                            isHovered={hovered !== null && hovered.type === "property" && hovered.id == propId}
+                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                            onClick={handleBarClick}
+                        ></CollapsedBar>
+                    </div>
+                )
+                continue;
+            }
+
+            for(let k = 0; k < indices.length; k++) {
+                var idx = indices[k];
                 var entry = props.lens.generations[idx];
-                var color = props.switches[entry.switchId] ? props.switches[entry.switchId].color : "#ccc";
+
+                var propsIsTop = k == 0;
+                var propsIsBot = k == indices.length - 1;
+                var inputIsTop = propsIsTop && j == 0;
+                var inputIsBot = propsIsBot && j == subGroups.length - 1;
+
                 generations.push(
                     <div key={idx} style={{display: "flex", flexDirection: "row", gap: "8px", alignItems: "center"}}>
-                        <Bar barColor={color}></Bar>
+                        <Bar 
+                            isTop={inputIsTop} isBot={inputIsBot} 
+                            data-type="input" data-id={i}
+                            isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                            onClick={handleBarClick}
+                        ></Bar>
+                        <Bar 
+                            isTop={propsIsTop} isBot={propsIsBot} 
+                            data-type="property" data-id={propId}
+                            isHovered={hovered !== null && hovered.type === "property" && hovered.id == propId}
+                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                            onClick={handleBarClick}
+                        ></Bar>
                         <GenerationTextContainer 
                             key={idx} idx={idx} text={entry.text}
                             hoverGen={props.hoverGen} setHoverGen={props.setHoverGen}
@@ -101,14 +195,16 @@ function GenerationList(props) {
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 12px;
 `;
 
 const Bar = styled.div`
+    width: 8px;
     align-self: stretch;
-    width: 6px;
-    background-color: ${props => props.barColor};
-    border-radius: 3px;
+    background-color: ${props => props.isHovered ? "#99C2FF" : "#DDD"};
+    border-radius: ${props => props.isTop ? "3px 3px": "0px 0px"} ${props => props.isBot ? "3px 3px" : "0px 0px"};
+    margin-top: ${props => props.isTop ? "8px" : "0px"};
+    margin-bottom: ${props => props.isBot ? "8px": "0px"};
+    cursor: pointer;
 `;
 
 const PinBtn = styled.g`
@@ -119,6 +215,15 @@ const PinBtn = styled.g`
         stroke: ${props => props.isPinned ? "#0066FF" : "#0066FF66"};
         fill: ${props => props.isPinned ? "#0066FF" : "#0066FF66"};
     }
+`;
+
+const CollapsedBar = styled.div`
+    height: 8px;
+    width: 32px;
+    background-color: ${props => props.isHovered ? "#99C2FF" : "#DDD"};
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 8px 0px;
 `;
 
 export default GenerationList;
