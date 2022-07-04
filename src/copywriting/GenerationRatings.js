@@ -28,15 +28,22 @@ function GenerationRatings(props) {
         return result;
     }
 
-    for(var i = 0; i < props.lens.generations.length; i++) {
-        var entry = props.lens.generations[i];
-        ratingsHTML.push(
-            <Rating
-                key={i} genIdx={i} hoverGen={props.hoverGen} setHoverGen={props.setHoverGen}
-                percentages={props.type === 'sentiment' ? entry.sentiment : entry.emotion}
-                colors={props.type === 'sentiment' ? SENTIMENT_COLORS : EMOTION_COLORS}
-            />
-        )
+    for(var inputText in props.groupedGenerations) {
+        var group = props.groupedGenerations[inputText];
+        for(var propertiesStr in group) {
+            var subgroup = group[propertiesStr];
+            for(var i = 0; i < subgroup.length; i++) {
+                var idx = subgroup[i];
+                var entry = props.lens.generations[idx];
+                ratingsHTML.push(
+                    <Rating
+                        key={idx} genIdx={idx} hoverGen={props.hoverGen} setHoverGen={props.setHoverGen}
+                        percentages={props.type === 'sentiment' ? entry.sentiment : entry.emotion}
+                        colors={props.type === 'sentiment' ? SENTIMENT_COLORS : EMOTION_COLORS}
+                    />
+                )
+            }
+        }
     }
 
     return (

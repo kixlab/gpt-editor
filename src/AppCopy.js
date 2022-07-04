@@ -10,6 +10,7 @@ import SwitchProperties from './copywriting/SwitchProperties';
 import TextEditor from './copywriting/TextEditor';
 import Lenses from './copywriting/Lenses';
 import SwitchHistory from './copywriting/SwitchHistory';
+import Tooltip from './copywriting/Tooltip';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -180,6 +181,7 @@ function AppCopy() {
     const [selected, setSelected] = useState({type: null})
     const [hoverPath, setHoverPath] = useState(null);
     const [text, setText] = useState("");
+    const [tooltip, setTooltip] = useState(null);
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -455,9 +457,10 @@ function AppCopy() {
                     lenses={lenses} lensId={0} switches={switches}
                     changeLens={changeLens} changeLensType={changeLensType}
                     copyGeneration={copyGeneration} clearLens={clearLens}
-                    pinGeneration={pinGeneration}
+                    pinGeneration={pinGeneration} setTooltip={setTooltip}
                 />
             </RightColumn>
+            {tooltip ? <Tooltip tooltip={tooltip}/> : ""}
         </div>
     );
 }

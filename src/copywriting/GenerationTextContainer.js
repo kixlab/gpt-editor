@@ -45,8 +45,8 @@ const TextContainer = styled.div`
     border-color: ${props => props.isHover ? "#0066FF" : "#ccc"};
     border-radius: 8px;
     padding: 4px 8px;
-    margin: 8px 0;
-    width: calc(100% - 8px - 6px);
+    margin: 4px 0;
+    flex: 1;
     cursor: pointer;
 `;
 

@@ -75,8 +75,8 @@ function SwitchProperties(props) {
                             <option value="text-davinci-002">Davinci-2 (D2)</option>
                             <option value="text-davinci-001">Davinci (D)</option>
                             <option value="text-curie-001">Curie (C)</option>
-                            <option value="text-babbage-001">Babbage</option>
-                            <option value="text-ada-001">Ada</option>
+                            <option value="text-babbage-001">Babbage (B)</option>
+                            <option value="text-ada-001">Ada (A)</option>
                         </select>
                     )
                     break;

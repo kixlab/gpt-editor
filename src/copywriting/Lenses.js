@@ -23,6 +23,48 @@ function Lenses(props) {
         props.changeLensType(props.lensId, index, type);
     }
 
+
+    function propertiesToStr(properties) {
+        var defProperties = ["engine", "temperature", "presencePen", "bestOf"];
+        var str = "";
+        defProperties.forEach((property) => {
+            str += property + ": " + properties[property] + "\n";
+        })
+        return str;
+    }
+
+    function groupGenerations(generations) {
+        var groups = {};
+        var inputGroups = {};
+        for(var i = 0; i < generations.length; i++) {
+            var gen = generations[i];
+            if(gen.inputText in inputGroups) {
+                inputGroups[gen.inputText].push(i);
+            } else {
+                inputGroups[gen.inputText] = [i];
+                groups[gen.inputText] = {};
+            }
+        }
+        for(var inputText in inputGroups) {
+            var indices = inputGroups[inputText];
+            var prevProperties = "";
+            for(var i = 0; i < indices.length; i++) {
+                var idx = indices[i];
+                var gen = generations[idx];
+                var propertiesStr = propertiesToStr(gen.properties);
+                if(prevProperties == propertiesStr) {
+                    groups[inputText][propertiesStr].push(idx);
+                } else {
+                    groups[inputText][propertiesStr] = [idx];
+                }
+                prevProperties = propertiesStr;
+            }
+        }
+        return groups;
+    }
+
+    var groupedGenerations = groupGenerations(currLens.generations);
+
     return (
         <LensContainer>
             <BigLens>
@@ -73,6 +115,7 @@ function Lenses(props) {
                             <GenerationList 
                                 lens={currLens} switches={props.switches} pinGeneration={props.pinGeneration}
                                 copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
+                                groupedGenerations={groupedGenerations} setTooltip={props.setTooltip}
                             /> :
                             <GenerationSpace 
                                 lens={currLens} switches={props.switches} 
@@ -105,6 +148,7 @@ function Lenses(props) {
                 <GenerationRatings 
                     lens={currLens} type={currLens.types[1]}
                     hoverGen={hoverGen} setHoverGen={setHoverGen}
+                    groupedGenerations={groupedGenerations}
                 />
             </SmallLens>
         </LensContainer>
@@ -150,7 +194,7 @@ const ListBtn = styled.g`
     stroke: ${props => props.isList ? "#0066FF" : "#ccc"};
     fill: ${props => props.isList ? "#0066FF" : "#ccc"};
     &:hover {
-        stroke: ${props => props.isList ? "#0066FF" : "#0066FF66"};
+        stroke: ${props => props.isList ? "#0066FF" : "#619aff"};
         fill: ${props => props.isList ? "#0066FF" : "#ccc"};
     }
 `;
@@ -160,8 +204,8 @@ const SpaceBtn = styled.g`
     stroke: ${props => props.isSpace ? "#0066FF" : "#ccc"};
     fill: ${props => props.isSpace ? "#0066FF" : "#ccc"};
     &:hover {
-        stroke: ${props => props.isSpace ? "#0066FF" : "#0066FF66"};
-        fill: ${props => props.isSpace ? "#0066FF" : "#0066FF66"};
+        stroke: ${props => props.isSpace ? "#0066FF" : "#619aff"};
+        fill: ${props => props.isSpace ? "#0066FF" : "#619aff"};
     }
 `;
 
@@ -170,8 +214,8 @@ const EmotionBtn = styled.g`
     stroke: ${props => props.isEmotion ? "#0066FF" : "#ccc"};
     fill: ${props => props.isEmotion ? "#0066FF" : "#ccc"};
     &:hover {
-        stroke: ${props => props.isEmotion ? "#0066FF" : "#0066FF66"};
-        fill: ${props => props.isEmotion ? "#0066FF" : "#0066FF66"};
+        stroke: ${props => props.isEmotion ? "#0066FF" : "#619aff"};
+        fill: ${props => props.isEmotion ? "#0066FF" : "#619aff"};
     }
 `;
 
@@ -180,8 +224,8 @@ const SentimentBtn = styled.g`
     stroke: ${props => props.isSentiment ? "#0066FF" : "#ccc"};
     fill: ${props => props.isSentiment ? "#0066FF" : "#ccc"};
     &:hover {
-        stroke: ${props => props.isSentiment ? "#0066FF" : "#0066FF66"};
-        fill: ${props => props.isSentiment ? "#0066FF" : "#0066FF66"};
+        stroke: ${props => props.isSentiment ? "#0066FF" : "#619aff"};
+        fill: ${props => props.isSentiment ? "#0066FF" : "#619aff"};
     }
 `;
 
@@ -190,8 +234,8 @@ const ClearBtn = styled.g`
     stroke: #ccc;
     fill: #ccc;
     &:hover {
-        stroke: #0066FF;
-        fill: #0066FF;
+        stroke: #619aff;
+        fill: #619aff;
     }
 `;
 

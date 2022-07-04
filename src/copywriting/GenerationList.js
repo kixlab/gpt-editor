@@ -5,6 +5,10 @@ import GenerationTextContainer from "./GenerationTextContainer";
 
 import { PinButton } from './SVG'
 
+import { ReactComponent as InputIcon } from '../img/InputIcon.svg';
+import { ReactComponent as PropertyIcon } from '../img/PropertyIcon.svg';
+import { ReactComponent as EditIcon } from '../img/EditIcon.svg';
+
 function GenerationList(props) {
     const [hovered, setHovered] = useState(null);
     const [inputCollapsed, setInputCollapsed] = useState([]);
@@ -49,48 +53,41 @@ function GenerationList(props) {
         }
     }
 
-    function propertiesToStr(properties) {
-        var defProperties = ["engine", "temperature", "presencePen", "bestOf"];
-        var str = "";
-        for(var key in properties) {
-            if(defProperties.includes(key)) {
-                str += key + ": " + properties[key] + "\n";
+    function handleTooltip(e) {
+        var curr = e.target;
+        while(curr.tagName !== "DIV") {
+            curr = curr.parentNode;
+        }
+        var type = curr.getAttribute("data-type");
+        var id = curr.getAttribute("data-id");
+        var groups = Object.keys(props.groupedGenerations);
+        if(type == "input") {
+            id = parseInt(id);
+            var data = groups[id];
+        } else if(type == "property") {
+            var ids = id.split("-");
+            var inputIdx = parseInt(ids[0]);
+            var propIdx = parseInt(ids[1]);
+            var subgroups = Object.keys(props.groupedGenerations[groups[inputIdx]]);
+            var data = subgroups[propIdx];
+        } else {
+            var ids = id.split("-");
+            var inputIdx = parseInt(ids[0]);
+            var propIdx = parseInt(ids[1]);
+            var subgroups = Object.keys(props.groupedGenerations[groups[inputIdx]]);
+            var data = {
+                prev: subgroups[propIdx - 1],
+                curr: subgroups[propIdx]
             }
         }
-        return str;
+        props.setTooltip({
+            type: type,
+            id: id,
+            data: data
+        });
     }
 
-    function groupGenerations(generations) {
-        var groups = {};
-        var inputGroups = {};
-        for(var i = 0; i < generations.length; i++) {
-            var gen = generations[i];
-            if(gen.inputText in inputGroups) {
-                inputGroups[gen.inputText].push(i);
-            } else {
-                inputGroups[gen.inputText] = [i];
-                groups[gen.inputText] = {};
-            }
-        }
-        for(var inputText in inputGroups) {
-            var indices = inputGroups[inputText];
-            var prevProperties = "";
-            for(var i = 0; i < indices.length; i++) {
-                var idx = indices[i];
-                var gen = generations[idx];
-                var propertiesStr = propertiesToStr(gen.properties);
-                if(prevProperties == propertiesStr) {
-                    groups[inputText][propertiesStr].push(idx);
-                } else {
-                    groups[inputText][propertiesStr] = [idx];
-                }
-                prevProperties = propertiesStr;
-            }
-        }
-        return groups;
-    }
-
-    var groupedGenerations = groupGenerations(props.lens.generations);
+    var groupedGenerations = props.groupedGenerations;
 
     var groups = Object.keys(groupedGenerations);
     for(var i = 0; i < groups.length; i++) {
@@ -101,11 +98,15 @@ function GenerationList(props) {
         // show button here
         generations.push(
             <div key={"input-button-" + i}>
-                <HistoryButton></HistoryButton>
+                <HistoryButton 
+                    id={"history-" + i} data-type="input" data-id={i} 
+                    onMouseEnter={handleTooltip} onMouseLeave={() => props.setTooltip(null)}
+                >
+                    <InputIcon height="24px" width="24px"/>
+                </HistoryButton>
             </div>
         )
-
-        console.log(inputCollapsed)
+        
         if(inputCollapsed.includes(i)) {
             generations.push(
                 <div key={"collapsed-" + i}>
@@ -137,7 +138,16 @@ function GenerationList(props) {
                         onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
                         onClick={handleBarClick}
                     ></Bar>
-                    <HistoryButton></HistoryButton>
+                    <HistoryButton 
+                        id={"history-" + propId} data-type={inputIsTop ? "property" : "property-change"} 
+                        data-id={propId} 
+                        onMouseEnter={handleTooltip} onMouseLeave={() => props.setTooltip(null)}
+                    >
+                        {inputIsTop ? 
+                            <PropertyIcon height="24px" width="24px"/> : 
+                            <EditIcon height="24px" width="24px"/>
+                        }
+                    </HistoryButton>
                 </div>
             )
 
@@ -223,10 +233,10 @@ const Container = styled.div`
 const Bar = styled.div`
     width: 8px;
     align-self: stretch;
-    background-color: ${props => props.isHovered ? "#99C2FF" : "#DDD"};
-    border-radius: ${props => props.isTop ? "3px 3px": "0px 0px"} ${props => props.isBot ? "3px 3px" : "0px 0px"};
-    margin-top: ${props => props.isTop ? "8px" : "0px"};
-    margin-bottom: ${props => props.isBot ? "8px": "0px"};
+    background-color: ${props => props.isHovered ? "#619aff" : "#DDD"};
+    border-radius: ${props => props.isTop ? "4px 4px": "0px 0px"} ${props => props.isBot ? "4px 4px" : "0px 0px"};
+    margin-top: ${props => props.isTop ? "4px" : "0px"};
+    margin-bottom: ${props => props.isBot ? "4px": "0px"};
     cursor: pointer;
 `;
 
@@ -235,26 +245,37 @@ const PinBtn = styled.g`
     stroke: ${props => props.isPinned ? "#0066FF" : "#ccc"};
     fill: ${props => props.isPinned ? "#0066FF" : "#ccc"};
     &:hover {
-        stroke: ${props => props.isPinned ? "#0066FF" : "#0066FF66"};
-        fill: ${props => props.isPinned ? "#0066FF" : "#0066FF66"};
+        stroke: ${props => props.isPinned ? "#0066FF" : "#619aff"};
+        fill: ${props => props.isPinned ? "#0066FF" : "#619aff"};
     }
 `;
 
 const CollapsedBar = styled.div`
     height: 8px;
     width: 32px;
-    background-color: ${props => props.isHovered ? "#99C2FF" : "#DDD"};
-    border-radius: 3px;
+    background-color: ${props => props.isHovered ? "#619aff" : "#DDD"};
+    border-radius: 4px;
     cursor: pointer;
-    margin: 8px 0px;
+    margin: 4px 0px;
 `;
 
 const HistoryButton = styled.div`
-    width: 24px;
-    height: 24px; 
+    width: 28px;
+    height: 28px; 
     border-radius: 4px;
     border: solid 2px #ccc; 
-    margin: 8px 0;
+    margin: 4px 0;
+    display: flex;
+    cursor: pointer;
+    &:hover {
+        border: solid 2px #619aff;
+        & > svg > rect, path {
+            fill: #619aff;
+        }
+        & > svg > circle {
+            stroke: #619aff;
+        }
+    }
 `;
 
 export default GenerationList;

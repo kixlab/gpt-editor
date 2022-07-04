@@ -70,6 +70,7 @@ function Switches(props) {
     function handlePropertyClick(e) {
         e.stopPropagation();
         let switchId = e.target.getAttribute("data-id");
+        if(props.switches[switchId].isLoading) return;
         let property = e.target.getAttribute("data-property");
         props.setSelected({type: "property", data: {switchId: switchId, property: property}});
     }
