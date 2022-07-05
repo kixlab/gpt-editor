@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
 
-import { NewListButton, NewSpaceButton, SentimentButton, EmotionButton, ClearButton } from './SVG';
+import { NewListButton, NewSpaceButton, SentimentButton, EmotionButton, ClearButton, FilterButton } from './SVG';
 import GenerationList from './GenerationList';
 import GenerationSpace from './GenerationSpace';
 import GenerationRatings from './GenerationRatings';
@@ -82,29 +82,45 @@ function Lenses(props) {
                             onChange={handleChange}
                         />
                         <div>
-                            <svg height="32" width="32">
-                                <ClearBtn stroke="#ccc" fill="#ccc" transform="scale(1.27)" onClick={() => props.clearLens()}>
+                            <svg height="32" width="82">
+                                <ClearBtn 
+                                    stroke="#ccc" fill="#ccc" 
+                                    transform={`scale(${32/28})`} 
+                                    onClick={() => props.clearLens()}
+                                >
                                     {ClearButton}
                                 </ClearBtn>
+                                <ToggleBtn 
+                                    id="filter-button"
+                                    transform={`translate(50, 0) scale(${32/28})`} 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        props.toggleFilter();
+                                    }}
+                                    isToggled={props.filter.isShown}
+                                >
+                                    {FilterButton}
+                                </ToggleBtn>
                             </svg>
                         </div>
                     </LengthAdjust>
                     <Toggles>
                         <svg height="32" width="82">
-                            <ListBtn 
+                            <ToggleBtn 
+                                transform={`scale(${32/28})`}
                                 onClick={() => handleChangeType(0, "list")}
-                                isList={currLens.types[0] === 'list'}
+                                isToggled={currLens.types[0] === 'list'}
                             >
                                 {NewListButton}
-                            </ListBtn>
+                            </ToggleBtn>
                             <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
-                            <SpaceBtn
-                                transform={`translate(50, 0)`} 
+                            <ToggleBtn
+                                transform={`translate(50, 0) scale(${32/28})`} 
                                 onClick={() => handleChangeType(0, "space")}
-                                isSpace={currLens.types[0] === 'space'}
+                                isToggled={currLens.types[0] === 'space'}
                             >
                                 {NewSpaceButton}
-                            </SpaceBtn>
+                            </ToggleBtn>
                         </svg>
                     </Toggles>
                 </BigHeader>
@@ -129,20 +145,21 @@ function Lenses(props) {
             <SmallLens>
                 <Toggles>
                     <svg height="32" width="82">
-                        <SentimentBtn 
+                        <ToggleBtn 
+                            transform={`scale(${32/28})`}
                             onClick={() => handleChangeType(1, "sentiment")}
-                            isSentiment={currLens.types[1] === 'sentiment'}
+                            isToggled={currLens.types[1] === 'sentiment'}
                         >
                             {SentimentButton}
-                        </SentimentBtn>
+                        </ToggleBtn>
                         <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
-                        <EmotionBtn
-                            transform={`translate(50, 0)`} 
+                        <ToggleBtn
+                            transform={`translate(50, 0) scale(${32/28})`}
                             onClick={() => handleChangeType(1, "emotion")}
-                            isEmotion={currLens.types[1] === 'emotion'}
+                            isToggled={currLens.types[1] === 'emotion'}
                         >
                             {EmotionButton}
-                        </EmotionBtn>
+                        </ToggleBtn>
                     </svg>
                 </Toggles>
                 <GenerationRatings 
@@ -189,46 +206,6 @@ const LengthAdjust = styled.div`
 const Toggles = styled.div`
 `;
 
-const ListBtn = styled.g`
-    cursor: pointer;
-    stroke: ${props => props.isList ? "#0066FF" : "#ccc"};
-    fill: ${props => props.isList ? "#0066FF" : "#ccc"};
-    &:hover {
-        stroke: ${props => props.isList ? "#0066FF" : "#619aff"};
-        fill: ${props => props.isList ? "#0066FF" : "#ccc"};
-    }
-`;
-
-const SpaceBtn = styled.g`
-    cursor: pointer;
-    stroke: ${props => props.isSpace ? "#0066FF" : "#ccc"};
-    fill: ${props => props.isSpace ? "#0066FF" : "#ccc"};
-    &:hover {
-        stroke: ${props => props.isSpace ? "#0066FF" : "#619aff"};
-        fill: ${props => props.isSpace ? "#0066FF" : "#619aff"};
-    }
-`;
-
-const EmotionBtn = styled.g`
-    cursor: pointer;
-    stroke: ${props => props.isEmotion ? "#0066FF" : "#ccc"};
-    fill: ${props => props.isEmotion ? "#0066FF" : "#ccc"};
-    &:hover {
-        stroke: ${props => props.isEmotion ? "#0066FF" : "#619aff"};
-        fill: ${props => props.isEmotion ? "#0066FF" : "#619aff"};
-    }
-`;
-
-const SentimentBtn = styled.g`
-    cursor: pointer;
-    stroke: ${props => props.isSentiment ? "#0066FF" : "#ccc"};
-    fill: ${props => props.isSentiment ? "#0066FF" : "#ccc"};
-    &:hover {
-        stroke: ${props => props.isSentiment ? "#0066FF" : "#619aff"};
-        fill: ${props => props.isSentiment ? "#0066FF" : "#619aff"};
-    }
-`;
-
 const ClearBtn = styled.g`
     cursor: pointer;
     stroke: #ccc;
@@ -239,6 +216,15 @@ const ClearBtn = styled.g`
     }
 `;
 
+const ToggleBtn = styled.g`
+    cursor: pointer;
+    stroke: ${props => props.isToggled ? "#0066FF" : "#ccc"};
+    fill: ${props => props.isToggled ? "#0066FF" : "#ccc"};
+    &:hover {
+        stroke: ${props => props.isToggled ? "#0066FF" : "#619aff"};
+        fill: ${props => props.isToggled ? "#0066FF" : "#619aff"};
+    }
+`;
 
 const BigContent = styled.div`
     padding-right: 8px;
@@ -256,7 +242,7 @@ const BigContent = styled.div`
 const NumInput = styled.input`
     border: solid 1px #ccc;
     border-radius: 2px;
-    width: 40px;
+    width: 32px;
     text-align: center;
     &::-webkit-outer-spin-button {
         -webkit-appearance: none;

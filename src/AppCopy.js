@@ -11,6 +11,7 @@ import TextEditor from './copywriting/TextEditor';
 import Lenses from './copywriting/Lenses';
 import SwitchHistory from './copywriting/SwitchHistory';
 import Tooltip from './copywriting/Tooltip';
+import Filter from './copywriting/Filter';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -181,6 +182,7 @@ function AppCopy() {
     const [hoverPath, setHoverPath] = useState(null);
     const [text, setText] = useState("");
     const [tooltip, setTooltip] = useState(null);
+    const [filter, setFilter] = useState({isShown: false, data: null});
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -397,6 +399,7 @@ function AppCopy() {
 
     function handleCanvasClick(e) {
         setSelected({type: null});
+        setFilter({isShown: false, data: filter.data});
     }
     
     function changeText(newText) {
@@ -423,6 +426,14 @@ function AppCopy() {
     function pinGeneration(idx) {
         var isPinned = lenses[0].generations[idx].isPinned;
         lensesDispatch({type: "pin-generation", lensId: 0, idx, isPinned: !isPinned});
+    }
+
+    function toggleFilter() {
+        setFilter({isShown: !filter.isShown, data: filter.data});
+    }
+
+    function setFilterData(data) {
+        setFilter({isShown: filter.isShown, data: data.data});
     }
 
     return (
@@ -458,9 +469,11 @@ function AppCopy() {
                     changeLens={changeLens} changeLensType={changeLensType}
                     copyGeneration={copyGeneration} clearLens={clearLens}
                     pinGeneration={pinGeneration} setTooltip={setTooltip}
+                    toggleFilter={toggleFilter} filter={filter}
                 />
             </RightColumn>
-            {tooltip ? <Tooltip tooltip={tooltip}/> : ""}
+            {tooltip && <Tooltip tooltip={tooltip}/>}
+            {filter.isShown && <Filter filter={filter} setFilterData={setFilterData}/>}
         </div>
     );
 }
