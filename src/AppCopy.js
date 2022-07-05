@@ -160,9 +160,8 @@ function AppCopy() {
                 }
                 return newLenses;
             case 'pin-generation':
-                var { lensId, idx } = action;
-                var isPinned = newLenses[lensId].generations[idx].isPinned;
-                newLenses[lensId].generations[idx].isPinned = !isPinned;
+                var { lensId, idx, isPinned } = action;
+                newLenses[lensId].generations[idx].isPinned = isPinned;
                 return newLenses;
             default:
                 throw new Error();
@@ -422,7 +421,8 @@ function AppCopy() {
     }
 
     function pinGeneration(idx) {
-        lensesDispatch({type: "pin-generation", lensId: 0, idx});
+        var isPinned = lenses[0].generations[idx].isPinned;
+        lensesDispatch({type: "pin-generation", lensId: 0, idx, isPinned: !isPinned});
     }
 
     return (
