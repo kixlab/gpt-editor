@@ -182,7 +182,18 @@ function AppCopy() {
     const [hoverPath, setHoverPath] = useState(null);
     const [text, setText] = useState("");
     const [tooltip, setTooltip] = useState(null);
-    const [filter, setFilter] = useState({isShown: false, data: null});
+    const [filter, setFilter] = useState(
+        {
+            isShown: false, 
+            data: {
+                input: "",
+                engine: "all",
+                temperature: [0.0, 1.0],
+                presencePen: [0.0, 2.0],
+                bestOf: [1, 20]
+            }
+        }
+    );
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -432,8 +443,13 @@ function AppCopy() {
         setFilter({isShown: !filter.isShown, data: filter.data});
     }
 
-    function setFilterData(data) {
-        setFilter({isShown: filter.isShown, data: data.data});
+    function setFilterData(property, index, value) {
+        var newData = {...filter.data};
+        if(index == null)
+            newData[property] = value;
+        else
+            newData[property][index] = value;
+        setFilter({isShown: filter.isShown, data: newData});
     }
 
     return (
