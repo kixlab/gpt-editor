@@ -132,10 +132,12 @@ function Lenses(props) {
                                 lens={currLens} switches={props.switches} pinGeneration={props.pinGeneration}
                                 copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
                                 groupedGenerations={groupedGenerations} setTooltip={props.setTooltip}
+                                filter={props.filter}
                             /> :
                             <GenerationSpace 
                                 lens={currLens} switches={props.switches} 
                                 copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
+                                filter={props.filter}
                             />
                         )
                     } 
@@ -166,6 +168,7 @@ function Lenses(props) {
                     lens={currLens} type={currLens.types[1]}
                     hoverGen={hoverGen} setHoverGen={setHoverGen}
                     groupedGenerations={groupedGenerations}
+                    filter={props.filter}
                 />
             </SmallLens>
         </LensContainer>

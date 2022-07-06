@@ -182,18 +182,16 @@ function AppCopy() {
     const [hoverPath, setHoverPath] = useState(null);
     const [text, setText] = useState("");
     const [tooltip, setTooltip] = useState(null);
-    const [filter, setFilter] = useState(
-        {
-            isShown: false, 
-            data: {
-                input: "",
-                engine: "all",
-                temperature: [0.0, 1.0],
-                presencePen: [0.0, 2.0],
-                bestOf: [1, 20]
-            }
+    const [filter, setFilter] = useState({
+        isShown: false, 
+        data: {
+            input: "",
+            engine: "all",
+            temperature: [0.0, 1.0],
+            presencePen: [0.0, 2.0],
+            bestOf: [1, 20]
         }
-    );
+    });
 
     function handleKeyDown(e) {
         if (e.key === "Meta") {
@@ -452,6 +450,19 @@ function AppCopy() {
         setFilter({isShown: filter.isShown, data: newData});
     }
 
+    function resetFilter() {
+        setFilter({
+            isShown: filter.isShown,
+            data: {
+                input: "",
+                engine: "all",
+                temperature: [0.0, 1.0],
+                presencePen: [0.0, 2.0],
+                bestOf: [1, 20]
+            }
+        });
+    }
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <LeftColumn>
@@ -489,7 +500,7 @@ function AppCopy() {
                 />
             </RightColumn>
             {tooltip && <Tooltip tooltip={tooltip}/>}
-            {filter.isShown && <Filter filter={filter} setFilterData={setFilterData}/>}
+            {filter.isShown && <Filter filter={filter} setFilterData={setFilterData} resetFilter={resetFilter}/>}
         </div>
     );
 }

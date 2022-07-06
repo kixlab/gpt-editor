@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { isCompositeComponent } from 'react-dom/test-utils';
 import styled from "styled-components";
+import { ResetButton } from './SVG';
 
 const propNameMap = {
     'engine': 'Engine',
@@ -115,9 +116,18 @@ function Filter(props) {
 
     return (
         <FilterCont style={{top: top + "px", left: left + "px"}} onClick={(e) => e.stopPropagation()}>
-            <b>Filter</b>
-            <br/>
-            <div style={{paddingTop: "8px"}}>
+            <FilterHeader>
+                <div><b>Filter</b></div>
+                <svg height="28" width="28">
+                    <ResetBtn 
+                        stroke="#ccc" fill="#ccc" 
+                        onClick={() => props.resetFilter()}
+                    >
+                        {ResetButton}
+                    </ResetBtn>
+                </svg>
+            </FilterHeader>
+            <div>
                 <InputContainer>
                     <div style={{marginRight: "4px"}}>Input</div>
                     <div style={{flex: "1"}}>
@@ -163,6 +173,15 @@ const FilterCont = styled.div`
     font-size: 16px;
 `;
 
+const FilterHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    height: 28px;
+    font-size: 18px;
+`;
+
 const InputContainer = styled.div`
     display: flex;
     flex-direction: row; 
@@ -191,6 +210,16 @@ const InputRange = styled.input`
     border-radius: 4px;
     border: solid 1px #ccc;
     text-align: center;
+`;
+
+const ResetBtn = styled.g`
+    cursor: pointer;
+    stroke: #ccc;
+    fill: #ccc;
+    &:hover {
+        stroke: #619aff;
+        fill: #619aff;
+    }
 `;
 
 export default Filter;

@@ -174,6 +174,22 @@ function GenerationList(props) {
         }
     }
 
+    function isFilteredByProperty(propertyStr, filterData) {
+        var properties = propertyStr.trim().split("\n");
+        for(var i = 0; i < properties.length; i++) {
+            var property = properties[i].split(": ");
+            var propName = property[0];
+            var propValue = property[1];
+            if(propName != "engine") {
+                propValue = parseFloat(propValue);
+                if(propValue < filterData[propName][0] || propValue > filterData[propName][1]) return true;
+            } else {
+                if(filterData.engine !== "all" && filterData.engine !== propValue) return true;
+            }
+        }
+        return false;
+    }
+
     var groupedGenerations = props.groupedGenerations;
 
     var groups = Object.keys(groupedGenerations);
@@ -181,6 +197,8 @@ function GenerationList(props) {
         var inputText = groups[i];
         var group = groupedGenerations[inputText];
         var subGroups = Object.keys(group);
+
+        var isInputFilter = !inputText.includes(props.filter.data.input);
 
         // show button here
         generations.push(
@@ -197,7 +215,14 @@ function GenerationList(props) {
             </Entry>
         )
         
-        if(inputCollapsed.includes(i)) {
+        if(isInputFilter) {
+            generations.push(
+                <Entry key={"filtered-" + i}>
+                    <FilteredCircle></FilteredCircle>
+                </Entry>
+            )
+            continue;
+        } else if(inputCollapsed.includes(i)) {
             generations.push(
                 <Entry key={"collapsed-" + i}>
                     <CollapsedBar 
@@ -214,6 +239,8 @@ function GenerationList(props) {
         for(var j = 0; j < subGroups.length; j++) {
             var propertiesStr = subGroups[j];
             var indices = group[propertiesStr];
+
+            var isPropertyFilter = isFilteredByProperty(propertiesStr, props.filter.data);
 
             var propId = i + "-" + j;
 
@@ -247,9 +274,23 @@ function GenerationList(props) {
                 </Entry>
             )
 
-            if(propertyCollapsed.includes(propId)) {
-                var inputIsTop = false;
-                var inputIsBot = j == subGroups.length - 1;
+            var inputIsTop = false;
+            var inputIsBot = j == subGroups.length - 1;
+            if(isPropertyFilter) {
+                generations.push(
+                    <Entry key={"filtered-" + propId}>
+                        <Bar 
+                            isTop={inputIsTop} isBot={inputIsBot} 
+                            data-type="input" data-id={i}
+                            isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                            onClick={handleBarClick}
+                        ></Bar>
+                        <FilteredCircle></FilteredCircle>
+                    </Entry>
+                )
+                continue;
+            }else if(propertyCollapsed.includes(propId)) {
                 generations.push(
                     <Entry key={"collapsed-" + propId}>
                         <Bar 
@@ -276,8 +317,8 @@ function GenerationList(props) {
 
                 var propsIsTop = k == 0;
                 var propsIsBot = k == indices.length - 1;
-                var inputIsTop = false;
-                var inputIsBot = propsIsBot && j == subGroups.length - 1;
+                inputIsTop = false;
+                inputIsBot = propsIsBot && j == subGroups.length - 1;
 
                 generations.push(
                     <Entry key={idx}>
@@ -407,6 +448,14 @@ const HistoryPropertyContainer = styled.div`
             padding-right: 8px;
         }
     }
+`;
+
+const FilteredCircle = styled.div`
+    width: 32px;
+    height: 8px;
+    border-radius: 4px;
+    border: solid 2px #ddd;
+    margin: 4px 0;
 `;
 
 export default GenerationList;
