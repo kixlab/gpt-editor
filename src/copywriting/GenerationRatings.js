@@ -28,10 +28,30 @@ function GenerationRatings(props) {
         return result;
     }
 
+    function isFilteredByProperty(propertyStr, filterData) {
+        var properties = propertyStr.trim().split("\n");
+        for(var i = 0; i < properties.length; i++) {
+            var property = properties[i].split(": ");
+            var propName = property[0];
+            var propValue = property[1];
+            if(propName != "engine") {
+                propValue = parseFloat(propValue);
+                if(propValue < filterData[propName][0] || propValue > filterData[propName][1]) return true;
+            } else {
+                if(filterData.engine !== "all" && filterData.engine !== propValue) return true;
+            }
+        }
+        return false;
+    }
+
     for(var inputText in props.groupedGenerations) {
         var group = props.groupedGenerations[inputText];
+        var isInputFilter = !inputText.includes(props.filter.data.input);
+        if(isInputFilter) continue;
         for(var propertiesStr in group) {
             var subgroup = group[propertiesStr];
+            var isPropertyFilter = isFilteredByProperty(propertiesStr, props.filter.data);
+            if(isPropertyFilter) continue;
             for(var i = 0; i < subgroup.length; i++) {
                 var idx = subgroup[i];
                 var entry = props.lens.generations[idx];
@@ -42,6 +62,13 @@ function GenerationRatings(props) {
                         colors={props.type === 'sentiment' ? SENTIMENT_COLORS : EMOTION_COLORS}
                     />
                 )
+                if(props.hoverGen == idx) {
+                    ratingsHTML.push(
+                        <HoverText style={{top: 48 + (120+72)*props.hoverGen + 84 + "px"}}>
+                            {drawRatingLabels()}
+                        </HoverText>
+                    )
+                }
             }
         }
     }
@@ -49,12 +76,6 @@ function GenerationRatings(props) {
     return (
         <RatingsContainer>
             {ratingsHTML}
-            {props.hoverGen !== null ?
-                <HoverText style={{top: 48 + (120+72)*props.hoverGen + 84 + "px"}}>
-                    {drawRatingLabels()}
-                </HoverText> :
-                ""
-            }
         </RatingsContainer>
     );
 }

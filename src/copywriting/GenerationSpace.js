@@ -53,20 +53,46 @@ function GenerationSpace(props) {
         yRange[1] = Math.max(yRange[1], coordinates.y);
     }
 
-    const pointsSvg = [];
-    for (var i = 0; i < props.lens.generations.length; i++) {
-        var generation = props.lens.generations[i];
-        var [x, y] = translateCoordinates(generation.coordinates, xRange, yRange);
-        pointsSvg.push(
-            <circle
-                key={i} cx={x} cy={y} r={props.hoverGen === i ? "12" : "6"} style={{cursor: "pointer"}}
-                fill={props.switches[generation.switchId].color} 
-                stroke={props.hoverGen === i ? "#0066FF" : "#fff"} strokeWidth={props.hoverGen === i ? "3" : "1"}
-                data-text={generation.text} data-x={x} data-y={y}
-                data-idx={i} onClick={handleItemClick}
-                onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
-            />
-        )
+    function isFilteredByProperty(propertyStr, filterData) {
+        var properties = propertyStr.trim().split("\n");
+        for(var i = 0; i < properties.length; i++) {
+            var property = properties[i].split(": ");
+            var propName = property[0];
+            var propValue = property[1];
+            if(propName != "engine") {
+                propValue = parseFloat(propValue);
+                if(propValue < filterData[propName][0] || propValue > filterData[propName][1]) return true;
+            } else {
+                if(filterData.engine !== "all" && filterData.engine !== propValue) return true;
+            }
+        }
+        return false;
+    }
+
+    var pointsSvg = [];
+    for(var inputText in props.groupedGenerations) {
+        var group = props.groupedGenerations[inputText];
+        var isInputFilter = !inputText.includes(props.filter.data.input);
+        for(var propertiesStr in group) {
+            var subgroup = group[propertiesStr];
+            var isPropertyFilter = isFilteredByProperty(propertiesStr, props.filter.data);
+            for(var i = 0; i < subgroup.length; i++) {
+                var idx = subgroup[i];
+                var generation = props.lens.generations[idx];
+                var [x, y] = translateCoordinates(generation.coordinates, xRange, yRange);
+                var isFiltered = isInputFilter || isPropertyFilter;
+                pointsSvg.push(
+                    <circle
+                        key={idx} cx={x} cy={y} r={props.hoverGen === idx ? "12" : "6"} style={{cursor: "pointer"}}
+                        fill={isFiltered ? "#0066ff33" : "#0066ff"}
+                        stroke={props.hoverGen === idx ? "#0066FF" : "#fff"} strokeWidth={props.hoverGen === idx ? "3" : "1"}
+                        data-text={generation.text} data-x={x} data-y={y}
+                        data-idx={idx} onClick={handleItemClick}
+                        onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+                    />
+                )
+            }
+        }
     }
 
 
