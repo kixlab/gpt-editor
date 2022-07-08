@@ -54,7 +54,7 @@ function Switches(props) {
                 console.log(e);
                 clearTimeout(clickTimer.current);
                 clickTimer.current = null;
-                if(props.selected.type === 'switch' && props.selected.data === data)
+                if(!props.isTreatment || (props.selected.type === 'switch' && props.selected.data === data))
                     props.setSelected({type: null})
                 else {
                     props.setSelected({type: "switch", data: data});
@@ -372,7 +372,7 @@ function Switches(props) {
                 (switchId, switchIdx) => 
                     drawOneSwitch(switchId, switchIdx, switchesIdList.length)
             )}
-            {addButton}
+            {props.isTreatment && addButton}
             {null | drawBulb()}
         </SVGContainer>
     )

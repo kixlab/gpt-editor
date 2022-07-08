@@ -64,7 +64,7 @@ function GenerationRatings(props) {
                 )
                 if(props.hoverGen == idx) {
                     ratingsHTML.push(
-                        <HoverText style={{top: 48 + (120+72)*props.hoverGen + 84 + "px"}}>
+                        <HoverText key="hover" style={{top: 48 + (120+72)*props.hoverGen + 84 + "px"}}>
                             {drawRatingLabels()}
                         </HoverText>
                     )

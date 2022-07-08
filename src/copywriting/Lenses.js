@@ -67,7 +67,7 @@ function Lenses(props) {
 
     return (
         <LensContainer>
-            <BigLens>
+            <BigLens isTreatment={props.isTreatment}>
                 <BigHeader>
                     <LengthAdjust>
                         <div style={{fontWeight: "bold", marginRight: "4px"}}>
@@ -90,39 +90,43 @@ function Lenses(props) {
                                 >
                                     {ClearButton}
                                 </ClearBtn>
-                                <ToggleBtn 
-                                    id="filter-button"
-                                    transform={`translate(50, 0) scale(${32/28})`} 
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        props.toggleFilter();
-                                    }}
-                                    isToggled={props.filter.isShown}
-                                >
-                                    {FilterButton}
-                                </ToggleBtn>
+                                {props.isTreatment && 
+                                    <ToggleBtn 
+                                        id="filter-button"
+                                        transform={`translate(50, 0) scale(${32/28})`} 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            props.toggleFilter();
+                                        }}
+                                        isToggled={props.filter.isShown}
+                                    >
+                                        {FilterButton}
+                                    </ToggleBtn>
+                                }
                             </svg>
                         </div>
                     </LengthAdjust>
-                    <Toggles>
-                        <svg height="32" width="82">
-                            <ToggleBtn 
-                                transform={`scale(${32/28})`}
-                                onClick={() => handleChangeType(0, "list")}
-                                isToggled={currLens.types[0] === 'list'}
-                            >
-                                {NewListButton}
-                            </ToggleBtn>
-                            <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
-                            <ToggleBtn
-                                transform={`translate(50, 0) scale(${32/28})`} 
-                                onClick={() => handleChangeType(0, "space")}
-                                isToggled={currLens.types[0] === 'space'}
-                            >
-                                {NewSpaceButton}
-                            </ToggleBtn>
-                        </svg>
-                    </Toggles>
+                    {props.isTreatment &&
+                        <Toggles>
+                            <svg height="32" width="82">
+                                <ToggleBtn 
+                                    transform={`scale(${32/28})`}
+                                    onClick={() => handleChangeType(0, "list")}
+                                    isToggled={currLens.types[0] === 'list'}
+                                >
+                                    {NewListButton}
+                                </ToggleBtn>
+                                <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
+                                <ToggleBtn
+                                    transform={`translate(50, 0) scale(${32/28})`} 
+                                    onClick={() => handleChangeType(0, "space")}
+                                    isToggled={currLens.types[0] === 'space'}
+                                >
+                                    {NewSpaceButton}
+                                </ToggleBtn>
+                            </svg>
+                        </Toggles>
+                    }
                 </BigHeader>
                 <BigContent>
                     {currLens.generations.length === 0 ?
@@ -132,7 +136,7 @@ function Lenses(props) {
                                 lens={currLens} switches={props.switches} pinGeneration={props.pinGeneration}
                                 copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
                                 groupedGenerations={groupedGenerations} setTooltip={props.setTooltip}
-                                filter={props.filter}
+                                filter={props.filter} isTreatment={props.isTreatment}
                             /> :
                             <GenerationSpace 
                                 lens={currLens} switches={props.switches} 
@@ -144,34 +148,36 @@ function Lenses(props) {
                     } 
                 </BigContent>
             </BigLens>
-            <Line></Line>
-            <SmallLens>
-                <Toggles>
-                    <svg height="32" width="82">
-                        <ToggleBtn 
-                            transform={`scale(${32/28})`}
-                            onClick={() => handleChangeType(1, "sentiment")}
-                            isToggled={currLens.types[1] === 'sentiment'}
-                        >
-                            {SentimentButton}
-                        </ToggleBtn>
-                        <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
-                        <ToggleBtn
-                            transform={`translate(50, 0) scale(${32/28})`}
-                            onClick={() => handleChangeType(1, "emotion")}
-                            isToggled={currLens.types[1] === 'emotion'}
-                        >
-                            {EmotionButton}
-                        </ToggleBtn>
-                    </svg>
-                </Toggles>
-                <GenerationRatings 
-                    lens={currLens} type={currLens.types[1]}
-                    hoverGen={hoverGen} setHoverGen={setHoverGen}
-                    groupedGenerations={groupedGenerations}
-                    filter={props.filter}
-                />
-            </SmallLens>
+            {props.isTreatment && <Line></Line>}
+            {props.isTreatment && 
+                <SmallLens>
+                    <Toggles>
+                        <svg height="32" width="82">
+                            <ToggleBtn 
+                                transform={`scale(${32/28})`}
+                                onClick={() => handleChangeType(1, "sentiment")}
+                                isToggled={currLens.types[1] === 'sentiment'}
+                            >
+                                {SentimentButton}
+                            </ToggleBtn>
+                            <line x1="40" y1="0" x2="40" y2="28" stroke="#ccc" strokeWidth="2"/>
+                            <ToggleBtn
+                                transform={`translate(50, 0) scale(${32/28})`}
+                                onClick={() => handleChangeType(1, "emotion")}
+                                isToggled={currLens.types[1] === 'emotion'}
+                            >
+                                {EmotionButton}
+                            </ToggleBtn>
+                        </svg>
+                    </Toggles>
+                    <GenerationRatings 
+                        lens={currLens} type={currLens.types[1]}
+                        hoverGen={hoverGen} setHoverGen={setHoverGen}
+                        groupedGenerations={groupedGenerations}
+                        filter={props.filter}
+                    />
+                </SmallLens>
+            }
         </LensContainer>
     )
 }
@@ -185,7 +191,7 @@ const LensContainer = styled.div`
 `;
 
 const BigLens = styled.div`
-    width: calc(100% - 120px - 16px);
+    width: ${props => props.isTreatment ? 'calc(100% - 120px - 16px)' : 'calc(100%)'};
     height: 100%;
     background-color: #fff;
     border: solid 2px #0066FF;

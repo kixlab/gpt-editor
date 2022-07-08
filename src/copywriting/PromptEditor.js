@@ -16,6 +16,7 @@ function PromptEditor(props) {
                 value={props.slots.entries[depth][index]} slots={props.slots}
                 handleLineChange={handleLineChange} changePath={props.changePath}
                 selected={props.selected} setSelected={props.setSelected}
+                isTreatment={props.isTreatment}
             />
         ))
     } else {
@@ -26,6 +27,7 @@ function PromptEditor(props) {
                 handleLineChange={handleLineChange} changePath={props.changePath}
                 selected={props.selected} setSelected={props.setSelected}
                 hoverPath={props.hoverPath} isHover={true}
+                isTreatment={props.isTreatment}
             />
         ))
     }

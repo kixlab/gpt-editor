@@ -38,7 +38,7 @@ function PromptLine(props) {
     }
 
     function handleClickContainer(e) {
-        if(e.target.tagName === 'TEXTAREA' || props.value === null) return;
+        if(e.target.tagName === 'TEXTAREA' || props.value === null || !props.isTreatment) return;
         e.stopPropagation();
         props.setSelected(
             props.selected.type === 'slots' && props.selected.data === props.depth ? 
@@ -75,7 +75,7 @@ function PromptLine(props) {
                 }
             </TextAreaCont>
             <Tray>
-                {buttonsHTML}
+                {props.isTreatment && buttonsHTML}
             </Tray>
         </div>
     )

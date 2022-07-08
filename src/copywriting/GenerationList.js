@@ -207,39 +207,41 @@ function GenerationList(props) {
         var isInputFilter = !inputText.includes(props.filter.data.input);
 
         // show button here
-        generations.push(
-            <Entry key={"input-button-" + i}>
-                <HistoryButton 
-                    id={"history-" + i} data-type="input" data-id={i} 
-                    onMouseEnter={handleTooltip} onMouseLeave={() => props.setTooltip(null)}
-                    onClick={handleHistoryClick}
-                    isShown={inputHistoryShown.includes(i)}
-                >
-                    <InputIcon height="24px" width="24px"/>
-                </HistoryButton>
-                {inputHistoryShown.includes(i) && showHistory("input", inputText)}
-            </Entry>
-        )
+        if(props.isTreatment) {
+            generations.push(
+                <Entry key={"input-button-" + i}>
+                    <HistoryButton 
+                        id={"history-" + i} data-type="input" data-id={i} 
+                        onMouseEnter={handleTooltip} onMouseLeave={() => props.setTooltip(null)}
+                        onClick={handleHistoryClick}
+                        isShown={inputHistoryShown.includes(i)}
+                    >
+                        <InputIcon height="24px" width="24px"/>
+                    </HistoryButton>
+                    {inputHistoryShown.includes(i) && showHistory("input", inputText)}
+                </Entry>
+            )
         
-        if(isInputFilter) {
-            generations.push(
-                <Entry key={"filtered-" + i}>
-                    <FilteredCircle></FilteredCircle>
-                </Entry>
-            )
-            continue;
-        } else if(inputCollapsed.includes(i)) {
-            generations.push(
-                <Entry key={"collapsed-" + i}>
-                    <CollapsedBar 
-                        data-type="input" data-id={i}
-                        isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
-                        onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
-                        onClick={handleBarClick}
-                    ></CollapsedBar>
-                </Entry>
-            )
-            continue;
+            if(isInputFilter) {
+                generations.push(
+                    <Entry key={"filtered-" + i}>
+                        <FilteredCircle></FilteredCircle>
+                    </Entry>
+                )
+                continue;
+            } else if(inputCollapsed.includes(i)) {
+                generations.push(
+                    <Entry key={"collapsed-" + i}>
+                        <CollapsedBar 
+                            data-type="input" data-id={i}
+                            isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                            onClick={handleBarClick}
+                        ></CollapsedBar>
+                    </Entry>
+                )
+                continue;
+            }
         }
 
         for(var j = 0; j < subGroups.length; j++) {
@@ -252,39 +254,10 @@ function GenerationList(props) {
 
             var inputIsTop = j == 0;
             var inputIsBot = false;
-            generations.push(
-                <Entry key={"property-button-" + propId}>
-                    <Bar 
-                        isTop={inputIsTop} isBot={inputIsBot} 
-                        data-type="input" data-id={i}
-                        isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
-                        onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
-                        onClick={handleBarClick}
-                    ></Bar>
-                    <HistoryButton 
-                        id={"history-" + propId} data-type={inputIsTop ? "property" : "property-change"} 
-                        data-id={propId} onClick={handleHistoryClick}
-                        onMouseEnter={handleTooltip} onMouseLeave={() => props.setTooltip(null)}
-                        isShown={propertyHistoryShown.includes(propId)}
-                    >
-                        {inputIsTop ? 
-                            <PropertyIcon height="24px" width="24px"/> : 
-                            <EditIcon height="24px" width="24px"/>
-                        }
-                    </HistoryButton>
-                    {propertyHistoryShown.includes(propId) && 
-                        (inputIsTop ? 
-                            showHistory("property", propertiesStr) : 
-                            showHistory("property-change", {prev: subGroups[j-1], curr: propertiesStr}))
-                    }
-                </Entry>
-            )
 
-            var inputIsTop = false;
-            var inputIsBot = j == subGroups.length - 1;
-            if(isPropertyFilter) {
+            if(props.isTreatment) {
                 generations.push(
-                    <Entry key={"filtered-" + propId}>
+                    <Entry key={"property-button-" + propId}>
                         <Bar 
                             isTop={inputIsTop} isBot={inputIsBot} 
                             data-type="input" data-id={i}
@@ -292,29 +265,61 @@ function GenerationList(props) {
                             onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
                             onClick={handleBarClick}
                         ></Bar>
-                        <FilteredCircle></FilteredCircle>
+                        <HistoryButton 
+                            id={"history-" + propId} data-type={inputIsTop ? "property" : "property-change"} 
+                            data-id={propId} onClick={handleHistoryClick}
+                            onMouseEnter={handleTooltip} onMouseLeave={() => props.setTooltip(null)}
+                            isShown={propertyHistoryShown.includes(propId)}
+                        >
+                            {inputIsTop ? 
+                                <PropertyIcon height="24px" width="24px"/> : 
+                                <EditIcon height="24px" width="24px"/>
+                            }
+                        </HistoryButton>
+                        {propertyHistoryShown.includes(propId) && 
+                            (inputIsTop ? 
+                                showHistory("property", propertiesStr) : 
+                                showHistory("property-change", {prev: subGroups[j-1], curr: propertiesStr}))
+                        }
                     </Entry>
                 )
-                continue;
-            }else if(propertyCollapsed.includes(propId)) {
-                generations.push(
-                    <Entry key={"collapsed-" + propId}>
-                        <Bar 
-                            isTop={inputIsTop} isBot={inputIsBot} 
-                            data-type="input" data-id={i}
-                            isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
-                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
-                            onClick={handleBarClick}
-                        ></Bar>
-                        <CollapsedBar 
-                            data-type="property" data-id={propId}
-                            isHovered={hovered !== null && hovered.type === "property" && hovered.id == propId}
-                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
-                            onClick={handleBarClick}
-                        ></CollapsedBar>
-                    </Entry>
-                )
-                continue;
+
+                var inputIsTop = false;
+                var inputIsBot = j == subGroups.length - 1;
+                if(isPropertyFilter) {
+                    generations.push(
+                        <Entry key={"filtered-" + propId}>
+                            <Bar 
+                                isTop={inputIsTop} isBot={inputIsBot} 
+                                data-type="input" data-id={i}
+                                isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                                onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                                onClick={handleBarClick}
+                            ></Bar>
+                            <FilteredCircle></FilteredCircle>
+                        </Entry>
+                    )
+                    continue;
+                }else if(propertyCollapsed.includes(propId)) {
+                    generations.push(
+                        <Entry key={"collapsed-" + propId}>
+                            <Bar 
+                                isTop={inputIsTop} isBot={inputIsBot} 
+                                data-type="input" data-id={i}
+                                isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                                onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                                onClick={handleBarClick}
+                            ></Bar>
+                            <CollapsedBar 
+                                data-type="property" data-id={propId}
+                                isHovered={hovered !== null && hovered.type === "property" && hovered.id == propId}
+                                onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                                onClick={handleBarClick}
+                            ></CollapsedBar>
+                        </Entry>
+                    )
+                    continue;
+                }
             }
 
             for(let k = 0; k < indices.length; k++) {
@@ -326,22 +331,26 @@ function GenerationList(props) {
                 inputIsTop = false;
                 inputIsBot = propsIsBot && j == subGroups.length - 1;
 
+                var bars = [
+                    <Bar key={0}
+                        isTop={inputIsTop} isBot={inputIsBot} 
+                        data-type="input" data-id={i}
+                        isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
+                        onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                        onClick={handleBarClick}
+                    ></Bar>,
+                    <Bar key={1}
+                        isTop={propsIsTop} isBot={propsIsBot} 
+                        data-type="property" data-id={propId}
+                        isHovered={hovered !== null && hovered.type === "property" && hovered.id == propId}
+                        onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
+                        onClick={handleBarClick}
+                    ></Bar>
+                ]
+
                 generations.push(
                     <Entry key={idx}>
-                        <Bar 
-                            isTop={inputIsTop} isBot={inputIsBot} 
-                            data-type="input" data-id={i}
-                            isHovered={hovered !== null && hovered.type === "input" && hovered.id == i}
-                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
-                            onClick={handleBarClick}
-                        ></Bar>
-                        <Bar 
-                            isTop={propsIsTop} isBot={propsIsBot} 
-                            data-type="property" data-id={propId}
-                            isHovered={hovered !== null && hovered.type === "property" && hovered.id == propId}
-                            onMouseEnter={handleBarMouseEnter} onMouseLeave={() => setHovered(null)}
-                            onClick={handleBarClick}
-                        ></Bar>
+                        {props.isTreatment && bars}
                         <GenerationTextContainer 
                             key={idx} idx={idx} text={entry.text}
                             hoverGen={props.hoverGen} setHoverGen={props.setHoverGen}

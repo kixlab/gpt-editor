@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import styled from "styled-components";
 
-import React, { useState, useReducer, useCallback } from 'react';
+import React, { useState, useReducer, useCallback, useEffect } from 'react';
 import PromptEditor from './copywriting/PromptEditor';
 import Switches from './copywriting/Switches';
 import SwitchProperties from './copywriting/SwitchProperties';
@@ -21,7 +21,7 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 get: (searchParams, prop) => searchParams.get(prop),
 });
 // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
-let value = params.v; // "some_value"
+let isTreatment = parseInt(params.s) == 1; // "some_value"
 
 const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
 
@@ -468,6 +468,10 @@ function AppCopy() {
         });
     }
 
+    useEffect(() => {
+        createSwitch();
+    }, []);
+
     return (
         <div className="App" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} tabIndex="0" onClick={handleCanvasClick}>
             <LeftColumn>
@@ -477,6 +481,7 @@ function AppCopy() {
                     changePath={changePath} selected={selected} setSelected={setSelected}
                     addPromptLine={addPromptLine}
                     hoverPath={hoverPath}
+                    isTreatment={isTreatment}
                 />
                 <Switches
                     slots={slots} switches={switches}
@@ -485,6 +490,7 @@ function AppCopy() {
                     hoverPath={hoverPath} setHoverPath={setHoverPath}
                     attachPath={attachPath} onPropertyChange={onPropertyChange}
                     createSwitch={createSwitch}
+                    isTreatment={isTreatment}
                 />
                 {selected && selected.type == "property" ?
                     <SwitchProperties
@@ -502,6 +508,7 @@ function AppCopy() {
                     copyGeneration={copyGeneration} clearLens={clearLens}
                     pinGeneration={pinGeneration} setTooltip={setTooltip}
                     toggleFilter={toggleFilter} filter={filter}
+                    isTreatment={isTreatment}
                 />
             </RightColumn>
             {tooltip && <Tooltip tooltip={tooltip}/>}
