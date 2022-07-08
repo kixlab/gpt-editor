@@ -143,17 +143,18 @@ function GenerationList(props) {
             })
             return (
                 <HistoryPropertyContainer>
-                    <div>
+                    <HistoryPropertySubcontainer>
                         {properties[0]} {properties[1]}
-                    </div>
-                    <div>
+                    </HistoryPropertySubcontainer>
+                    <HistoryPropertySubcontainer>
                         {properties[2]} {properties[3]}
-                    </div>
+                    </HistoryPropertySubcontainer>
                 </HistoryPropertyContainer>
             )
         } else {
             var prevProperties = data.prev.split("\n");
             var currProperties = data.curr.split("\n");
+            var changes = [];
             for(var i = 0; i < prevProperties.length; i++) {
                 if(prevProperties[i] == currProperties[i]) continue;
                 var propSplit = prevProperties[i].split(": ");
@@ -165,12 +166,17 @@ function GenerationList(props) {
                     currPropValue = engineMap[currPropValue];
                 }
                 propName = propNameMap[propName];
-                return (
-                    <HistoryPropertyContainer style={{flex: "none"}}>
+                changes.push(
+                    <div key={i}>
                         {propName}:&nbsp;<b>{prevPropValue}</b>&nbsp;→&nbsp;<b>{currPropValue}</b>
-                    </HistoryPropertyContainer>
-                )
+                    </div>
+                ) 
             }
+            return (
+                <HistoryPropertyContainer style={{flex: "none"}}>
+                    {changes}
+                </HistoryPropertyContainer>
+            )
         }
     }
 
@@ -440,13 +446,16 @@ const HistoryPropertyContainer = styled.div`
     margin: 4px 0;
     display: flex;
     color: #666;
+    flex-direction: column;
+    gap: 4px;
+`;
+
+const HistoryPropertySubcontainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
     & > div {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        & > div {
-            padding-right: 8px;
-        }
+        padding-right: 8px;
     }
 `;
 

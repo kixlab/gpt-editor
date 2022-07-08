@@ -291,7 +291,7 @@ function AppCopy() {
         if (switches[switchId].isLoading) return;
 
         var otherLoading = Object.keys(switches).some(id => switches[id].isLoading);
-        if(otherLoading) return;
+        //if(otherLoading) return;
 
         var currSwitch = switches[switchId];
         switchesDispatch({ type: 'loading', switchId: switchId, isLoading: true });
@@ -306,20 +306,25 @@ function AppCopy() {
         data.n = 3;
         data.length = currLens.generationLength;
         data.switchId = switchId;
-        data.existing = currLens.generations;
         axios
         .post(`http://localhost:5000/api/generate-length`, data)
         .then((response) => {
             var newGenerations = response.data;
-            newGenerations = newGenerations.map(generation => {
-                return {...generation, text: generation.text.trim()}
-            })
-            console.log(newGenerations);
-            lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
+            var generations = currLens.generations.concat(newGenerations);
+            lensesDispatch({type: "set-generations", lensId: 0, generations: generations});
+
             switchesDispatch({ 
                 type: 'track-generations', 
                 switchId, textInput: data.text, 
                 generations: newGenerations.filter(g => g.switchId === switchId && g.isNew).map(g => g.text)
+            });
+
+            var nextData = { sentences: generations };
+            axios
+            .post(`http://localhost:5000/api/get-similarity`, nextData)
+            .then((response) => {
+                var generations = response.data;
+                lensesDispatch({type: "set-generations", lensId: 0, generations: generations});
             });
         });
     }

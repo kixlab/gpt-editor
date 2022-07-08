@@ -41,6 +41,7 @@ function Tooltip(props) {
     function propsChangeToHtml(data) {
         var prevProps = data['prev'].split("\n");
         var currProps = data['curr'].split("\n");
+        var changes = [];
         for(var i = 0; i < currProps.length - 1; i++) {
             if(prevProps[i] == currProps[i]) continue;
             var currProp = currProps[i];
@@ -53,19 +54,21 @@ function Tooltip(props) {
                 prevPropValue = engineMap[prevPropValue];
             }
             propName = propNameMap[propName];
-            return (<div key={i}>{propName}: <b>{prevPropValue}</b> → <b>{currPropValue}</b></div>);
+            changes.push(<div key={i}>{propName}: <b>{prevPropValue}</b> → <b>{currPropValue}</b></div>);
         }
+        return changes;
     }
 
     return (
         <TooltipCont style={{position: "absolute", top: top + "px", left: left + "px"}}>
-            <b>
-                {props.tooltip.type == "input" ? 
-                    "Input" : 
-                    (props.tooltip.type == "property" ? "Model Parameters" : "Parameter Change")}
-            </b>
-            <br/>
-            <div style={{color: "#666", paddingTop: "8px"}}>
+            <div>
+                <b>
+                    {props.tooltip.type == "input" ? 
+                        "Input" : 
+                        (props.tooltip.type == "property" ? "Model Parameters" : "Parameter Change")}
+                </b>
+            </div>
+            <div style={{color: "#666", paddingTop: "4px"}}>
                 {
                     props.tooltip.type == "input" ? 
                         props.tooltip.data : 

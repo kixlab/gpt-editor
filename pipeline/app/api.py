@@ -8,6 +8,7 @@ import json
 import random
 import numpy as np
 from scipy.special import softmax
+from nltk.tokenize import sent_tokenize
 
 openai.api_key = os.getenv("OPEN_API_KEY")
 
@@ -70,17 +71,27 @@ def get_sentences_from_mutiple(request):
     
     return sentences
 
-def process_simcse(model, tokenizer, sentences):
-    inputs = tokenizer(sentences, padding=True, truncation=True, return_tensors="pt")
+def process_simcse(model, tokenizer, texts):
+    sentences = list(map(lambda x: sent_tokenize(x), texts))
+    sentences_joined = sum(sentences, [])
+    inputs = tokenizer(sentences_joined, padding=True, truncation=True, return_tensors="pt")
 
     # Get the embeddings
     with torch.no_grad():
         embeddings = model(**inputs, output_hidden_states=True, return_dict=True).pooler_output
 
-    cossim = 1 - cdist(embeddings, embeddings, 'cosine')
-    
-    return embeddings, cossim 
+    # Get average embedding for each text
+    embeddings_avg = torch.zeros(len(texts), embeddings.shape[1])
+    start_idx = 0
+    for i in range(len(texts)):
+        end_idx = start_idx + len(sentences[i])
+        mean = torch.mean(embeddings[start_idx:end_idx], dim=0)
+        embeddings_avg[i] = mean
+        start_idx = end_idx
 
+    cossim = 1 - cdist(embeddings_avg, embeddings_avg, 'cosine')
+    
+    return embeddings_avg, cossim 
 
 def draw_graph(sentences, cossim):
     G = nx.Graph()
@@ -90,7 +101,10 @@ def draw_graph(sentences, cossim):
 
     for i in range(len(sentences)):
         for j in range(i+1, len(sentences)):
-            weight = 100 * round(cossim[i][j].item(), 2)
+            sim = cossim[i][j].item()
+            if sim < 0.5:
+                continue
+            weight = 2**(10*round(sim, 1) - 5)
             #G.add_edge(i, j, weight=weight, label=weight)
             G.add_weighted_edges_from([(i, j, weight)], label=weight)
 
@@ -142,8 +156,8 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
 
     @api.route('/api/generate-length', methods=['POST'])
     def generate_length():
-        sentences = get_sentences(request, request.json['length'])
-        existing = request.json['existing']
+        sentences = list(map(lambda txt: txt.strip(), get_sentences(request, request.json['length'])))
+        #existing = request.json['existing']
 
         properties = {
             'engine': request.json['engine'],
@@ -158,11 +172,12 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
         sentiments = get_classification(sentences, sentiment.model, sentiment.tokenizer)
         emotions = get_classification(sentences, emotion.model, emotion.tokenizer)
 
-        combined = list(map(lambda entry: entry['text'], existing))+sentences
-        embeddings, cossim = process_simcse(sst.model, sst.tokenizer, combined)
-        coord = draw_graph(combined, cossim)
+        #combined = list(map(lambda entry: entry['text'], existing))+sentences
+        #embeddings, cossim = process_simcse(sst.model, sst.tokenizer, combined)
+        #coord = draw_graph(combined, cossim)
 
         result = []
+        '''
         for i in range(len(existing)):
             result.append({
                 'switchId': existing[i]['switchId'],
@@ -174,11 +189,12 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'properties': existing[i]['properties'],
                 'inputText': existing[i]['inputText']
             })
+        '''
         for i in range(len(sentences)):
             result.append({
                 'switchId': request.json['switchId'], 
                 'text': sentences[i], 
-                'coordinates': {'x': coord[i + len(existing)][0], 'y': coord[i + len(existing)][1]},
+                'coordinates': {'x': 0, 'y': 0},
                 "sentiment": np.around(sentiments[i] * 100).tolist(),
                 "emotion": np.around(emotions[i] * 100).tolist(),
                 'isNew': True,
@@ -186,6 +202,17 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'inputText': input_text
             })
         return jsonify(result)
+
+    @api.route('/api/get-similarity', methods=['POST'])
+    def get_similarity():
+        sentences = request.json['sentences']
+        sentences_text = list(map(lambda entry: entry['text'], sentences))
+        embeddings, cossim = process_simcse(sst.model, sst.tokenizer, sentences_text)
+        coord = draw_graph(sentences_text, cossim)
+        for i in range(len(sentences)):
+            sentences[i]['coordinates'] = {'x': coord[i][0], 'y': coord[i][1]}
+        return jsonify(sentences)
+
 
     @api.route('/api/generate-multiple', methods=['POST'])
     def generate_multiple():
