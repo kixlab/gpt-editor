@@ -522,13 +522,13 @@ function AppCopy() {
 }
 
 const LeftColumn = styled.div`
-    width: calc(40% - 100px - 20px);
+    width: calc(45% - 100px - 20px);
     margin-left: 100px;
     margin-top: 60px;
 `;
 
 const RightColumn = styled.div`
-    width: calc(60% - 100px - 20px);
+    width: calc(55% - 100px - 20px);
     margin-left: 40px;
     margin-top: 60px;
 `;

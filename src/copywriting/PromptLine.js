@@ -40,7 +40,7 @@ function PromptLine(props) {
     }
 
     function handleClickContainer(e) {
-        if(e.target.tagName === "TEXTAREA" || !props.isTreatment) return;
+        if(!props.isTreatment) return;
         e.stopPropagation();
 
         switch (e.detail) {
@@ -54,7 +54,7 @@ function PromptLine(props) {
                 }, 150);
                 break;
             case 2:
-                if(clickTimer.current == null) return;
+                if(e.target.tagName === "TEXTAREA" || clickTimer.current == null) return;
                 clearTimeout(clickTimer.current);
                 if(!props.isTreatment || (props.selected.type === 'slots' && props.selected.data[0] === props.depth && props.selected.data[1] === props.index)) {
                     props.setSelected({type: null})
@@ -102,6 +102,7 @@ function PromptLine(props) {
 
 const TextAreaCont = styled.div`
     width: 100%;
+    height: 100%;
     padding: 4px 12px;
     border-radius: 4px;
     border: solid;
@@ -111,7 +112,6 @@ const TextAreaCont = styled.div`
     background-color: #fff;
     color: #333;
     font-size: 14px;
-    height: "auto";
     display: flex;
     cursor: pointer;
     align-items: center;

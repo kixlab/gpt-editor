@@ -128,7 +128,7 @@ function Lenses(props) {
                         </Toggles>
                     }
                 </BigHeader>
-                <BigContent>
+                <BigContent style={currLens.types[0] === 'list' ? {paddingRight: "8px"} : {}}>
                     {currLens.generations.length === 0 ?
                         <div style={{color: "#ccc"}}>Get new suggestions by connecting prompts to generators and clicking on the generators...</div> :
                         (currLens.types[0] === 'list' ?
@@ -185,7 +185,7 @@ function Lenses(props) {
 const LensContainer = styled.div`
     display: flex;
     flex-direction: row;
-    height: 55%;
+    height: 60%;
     width: 100%;
     position: relative;
 `;
@@ -237,7 +237,6 @@ const ToggleBtn = styled.g`
 `;
 
 const BigContent = styled.div`
-    padding-right: 8px;
     overflow-y: scroll;
     height: calc(100% - 32px - 16px);
     &::-webkit-scrollbar {

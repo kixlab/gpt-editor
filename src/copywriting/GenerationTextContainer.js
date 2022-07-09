@@ -78,6 +78,7 @@ const TextContainer = styled.div`
     flex: 1;
     cursor: pointer;
     position: relative;
+    font-size: 14px;
 `;
 
 const PinBtn = styled.div`

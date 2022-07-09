@@ -90,7 +90,7 @@ const Rating = (props) => {
 
     return (
         <div 
-            ref={ratingRef} style={{padding: "60px 0"}} 
+            ref={ratingRef} style={{padding: "40px 0"}} 
         >
             <svg 
                 width={RATING_SIZE} height={RATING_SIZE} style={{cursor: "pointer"}}

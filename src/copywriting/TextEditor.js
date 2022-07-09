@@ -30,11 +30,11 @@ function TextEditor(props) {
 
 const Editor = styled.textarea`
     width: 100%;
-    height: calc(45% - 60px - 30px);
+    height: calc(40% - 60px - 30px);
     margin-bottom: 30px;
-    padding: 32px;
+    padding: 20px 32px;
     color: #333;
-    font-size: 18px;
+    font-size: 16px;
     outline: none !important;
     border: none;
     resize: none;

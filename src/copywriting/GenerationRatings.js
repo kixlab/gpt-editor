@@ -6,7 +6,7 @@ import Rating from './Rating';
 const SENTIMENT_LABELS = ["Negative", "Neutral", "Positive"];
 const EMOTION_LABELS = ["Anger", "Joy", "Optimism", "Sadness"];
 
-const SENTIMENT_COLORS = ["#E76969", "#CCC", "#55C144"];
+const SENTIMENT_COLORS = ["#E76969", "#999", "#55C144"];
 const EMOTION_COLORS = ["#CD0707", "#EFB92E", "#A71ED8",  "#3992E3"];
 
 function GenerationRatings(props) {
@@ -64,7 +64,7 @@ function GenerationRatings(props) {
                 )
                 if(props.hoverGen == idx) {
                     ratingsHTML.push(
-                        <HoverText key="hover" style={{top: 48 + (120+72)*props.hoverGen + 84 + "px"}}>
+                        <HoverText key="hover" style={{top: 48 + (80+72)*props.hoverGen + 64 + "px"}}>
                             {drawRatingLabels()}
                         </HoverText>
                     )
