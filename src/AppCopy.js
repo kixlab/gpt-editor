@@ -31,7 +31,7 @@ function AppCopy() {
         switch (action.type) {
             case 'create':
                 var { newText, depth } = action;
-                newSlots.entries[depth].unshift(newText);
+                newSlots.entries[depth].splice(-1, 0, newText);
                 newSlots.path[depth] = 0;
                 return newSlots;
             case 'change':
@@ -199,14 +199,14 @@ function AppCopy() {
             console.log(switches);
         } else if(e.key === 'c' && isMeta) {
             if(selected.type === 'slots') {
-                copySlots(selected.data, slots.path[selected.data]);
+                copySlots(selected.data);
             } else if(selected.type === 'switch') {
                 copySwitch(selected.data);
             }
         } else if(e.key === 'Backspace' && selected.type !== null && selected.type !== "property") {
             e.preventDefault();
             if(selected.type === 'slots') {
-                removeSlot(selected.data, slots.path[selected.data]);
+                removeSlot(selected.data);
                 setSelected({type: null});
             } else if(selected.type === 'switch') {
                 lensesDispatch({type: "detatch-switch", lensId: 0, list: [selected.data]})
@@ -222,7 +222,7 @@ function AppCopy() {
         }
     }
 
-    function createSlots(text, depth) {
+    function createSlots(depth) {
         slotsDispatch({
             type: 'create',
             newText: "",
@@ -230,7 +230,9 @@ function AppCopy() {
         });
     }
     
-    function copySlots(depth, index) {
+    function copySlots(data) {
+        var depth = data[0];
+        var index = data[1];
         var newText = slots.entries[depth][index];
         setSelected({type: null})
         slotsDispatch({
@@ -253,7 +255,9 @@ function AppCopy() {
         slotsDispatch({ type: 'set-path', path})
     }
 
-    function removeSlot(depth, index) {
+    function removeSlot(data) {
+        var depth = data[0];
+        var index = data[1];
         setSelected({type: null});
         slotsDispatch({ type: "remove", depth, index });
         var switchIds = Object.keys(switches).filter(id => id !== 'colorIndex');
@@ -479,7 +483,7 @@ function AppCopy() {
                     slots={slots}
                     createSlots={createSlots} copySlots={copySlots} changeSlots={changeSlots}
                     changePath={changePath} selected={selected} setSelected={setSelected}
-                    addPromptLine={addPromptLine}
+                    addPromptLine={addPromptLine} createSlots={createSlots}
                     hoverPath={hoverPath}
                     isTreatment={isTreatment}
                 />
@@ -518,14 +522,14 @@ function AppCopy() {
 }
 
 const LeftColumn = styled.div`
-    width: calc(40% - 120px - 30px);
-    margin-left: 120px;
+    width: calc(40% - 100px - 20px);
+    margin-left: 100px;
     margin-top: 60px;
 `;
 
 const RightColumn = styled.div`
-    width: calc(60% - 120px - 30px);
-    margin-left: 60px;
+    width: calc(60% - 100px - 20px);
+    margin-left: 40px;
     margin-top: 60px;
 `;
 

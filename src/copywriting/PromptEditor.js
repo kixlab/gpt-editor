@@ -8,40 +8,45 @@ function PromptEditor(props) {
         props.changeSlots(value, depth, index);
     }
 
-    var linesHTML = "";
-    if(props.hoverPath === null || props.slots.path.join(" ") === props.hoverPath.join(" ")) {
-        linesHTML = props.slots.path.map((index, depth) => (
-            <PromptLine 
-                key={`${depth}-${index}`} depth={depth} index={index}
-                value={props.slots.entries[depth][index]} slots={props.slots}
-                handleLineChange={handleLineChange} changePath={props.changePath}
-                selected={props.selected} setSelected={props.setSelected}
-                isTreatment={props.isTreatment}
-            />
-        ))
-    } else {
-        linesHTML = props.hoverPath.map((index, depth) => (
-            <PromptLine 
-                key={`${depth}-${index}`} depth={depth} index={index}
-                value={props.slots.entries[depth][index]} slots={props.slots}
-                handleLineChange={handleLineChange} changePath={props.changePath}
-                selected={props.selected} setSelected={props.setSelected}
-                hoverPath={props.hoverPath} isHover={true}
-                isTreatment={props.isTreatment}
-            />
-        ))
+    var promptHTML = [];
+    for(var depth = 0; depth < props.slots.entries.length; depth++) {
+        var lineHTML = [];
+        for(var index = 0; index < props.slots.entries[depth].length - 1; index++) {
+            lineHTML.push(
+                <PromptLine 
+                    key={`${depth}-${index}`} depth={depth} index={index}
+                    value={props.slots.entries[depth][index]} slots={props.slots}
+                    handleLineChange={handleLineChange} changePath={props.changePath}
+                    selected={props.selected} setSelected={props.setSelected}
+                    inPath={props.slots.path[depth] === index}
+                    isTreatment={props.isTreatment}
+                />
+            )
+        }
+        promptHTML.push(
+            <LineContainer>
+                {lineHTML}
+                {props.isTreatment && <div style={{display: "flex", alignItems: "center"}}>
+                    <AddSlotButton 
+                        data-depth={depth} 
+                        onClick={(e) => props.createSlots(parseInt(e.target.getAttribute("data-depth")))}>
+                            +
+                    </AddSlotButton>
+                </div>}
+            </LineContainer>
+        );
     }
 
     return (
         <Container>
             <div style={{fontSize: "20px", marginBottom: "12px"}}>Prompt</div>
             <InnerContainer>
-                {linesHTML}
+                {promptHTML}
                 <AddButton onClick={(e) => {
                     e.stopPropagation();
                     props.addPromptLine();
                 }}>
-                    + Add New
+                    + Add Line
                 </AddButton>
             </InnerContainer>
         </Container>
@@ -49,8 +54,8 @@ function PromptEditor(props) {
 }
 
 const Container = styled.div`
-    padding: 32px;
-    padding-right: 24px;
+    padding: 24px;
+    paddin-right: 16px;
     background-color: #fff;
     width: 100%;
     border-radius: 20px;
@@ -61,7 +66,7 @@ const Container = styled.div`
 const InnerContainer = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
     height: calc(100% - 32px - 12px);
     overflow-y: scroll;
     padding-right: 8px;
@@ -83,6 +88,27 @@ const AddButton = styled.button`
     width: fit-content;
     border: none;
     border-radius: 8px;
+`;
+
+const LineContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    width: 100%;
+`;
+
+const AddSlotButton = styled.button`
+    display: flex;
+    background-color: rgba(0, 102, 255, 0.6);
+    color: white;
+    font-size: 24px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    height: 32px;
+    width: 32px;
+    line-height: 24px;
+    justify-content: center;
 `;
 
 export default PromptEditor;

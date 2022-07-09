@@ -4,6 +4,8 @@ import styled from "styled-components";
 import TextareaAutosize from '@mui/base/TextareaAutosize';
 
 function PromptLine(props) {
+    const clickTimer = useRef(null);
+
     const [currentValue, setCurrentValue] = useState(props.value);
 
     useEffect(() => {
@@ -38,13 +40,34 @@ function PromptLine(props) {
     }
 
     function handleClickContainer(e) {
-        if(e.target.tagName === 'TEXTAREA' || props.value === null || !props.isTreatment) return;
+        if(e.target.tagName === "TEXTAREA" || !props.isTreatment) return;
         e.stopPropagation();
-        props.setSelected(
-            props.selected.type === 'slots' && props.selected.data === props.depth ? 
-            {type: null} : 
-            {type: "slots", data: props.depth}
-        );
+
+        switch (e.detail) {
+            case 1:
+                clickTimer.current = setTimeout(() => {
+                    if(props.slots.path[props.depth] !== props.index) {
+                        props.changePath(props.depth, props.index);
+                    } else {
+                        props.changePath(props.depth, props.slots.path[props.depth].length - 1);
+                    }
+                }, 150);
+                break;
+            case 2:
+                if(clickTimer.current == null) return;
+                clearTimeout(clickTimer.current);
+                if(!props.isTreatment || (props.selected.type === 'slots' && props.selected.data[0] === props.depth && props.selected.data[1] === props.index)) {
+                    props.setSelected({type: null})
+                } else {
+                    props.setSelected(
+                        {type: "slots", data: [props.depth, props.index]}
+                    );
+                }
+                window.getSelection().removeAllRanges();
+                break;
+            default:
+                break;
+        }
     }
 
     const isEmptyItem = props.value === null;
@@ -58,42 +81,39 @@ function PromptLine(props) {
         color: props.isHover ? "#0066FF66" : "#333",
     };
 
+    if(!props.isTreatment && props.slots.path[props.depth] !== props.index) return "";
+
     return (
-        <div style={{width: "100%"}}>
+        <div style={isEmptyItem ? {flex: "0", height: "100%"} : {flex: "1"}}>
             <TextAreaCont 
                 onClick={handleClickContainer} 
-                isSelected={props.selected.type === 'slots' && props.selected.data === props.depth}
-                isEmptyItem={isEmptyItem} isHover={props.isHover}
+                isSelected={props.selected.type === 'slots' && props.selected.data[0] === props.depth && props.selected.data[1] === props.index}
+                inPath={props.inPath}
             >
-                {!isEmptyItem ? 
-                    <TextareaAutosize 
-                        ref={element => { if (element) element.style.setProperty('outline', 'none', 'important'); }}
-                        style={textAreaStyle} value={currentValue} onChange={handleChange}
-                        placeholder="Input prompt line..."
-                    /> :
-                    "Empty Line"
-                }
+                <TextareaAutosize 
+                    ref={element => { if (element) element.style.setProperty('outline', 'none', 'important'); }}
+                    style={textAreaStyle} value={currentValue} onChange={handleChange} 
+                    placeholder="Input prompt line..."
+                /> 
             </TextAreaCont>
-            <Tray>
-                {props.isTreatment && buttonsHTML}
-            </Tray>
         </div>
     )
 }
 
 const TextAreaCont = styled.div`
     width: 100%;
-    padding: 8px 16px;
+    padding: 4px 12px;
     border-radius: 4px;
-    border: solid ${(props) => props.isHover ? "2px #0066FF66" : props.isSelected ? "4px #00C2FF" : props.isEmptyItem ? "2px #ddd" : "2px #0066FF"};
-    border-left-width: ${props => props.isEmptyItem ? "2px" : "16px"};
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-    background-color: "#fff";
-    color: ${(props) => props.isHover ? "#0066FF66" : props.isEmptyItem ? "#999" : "#333" };
+    border: solid;
+    border-width: ${(props) => props.isSelected ? "4px" : "2px"};
+    border-color: ${(props) => props.isSelected ? "#00C2FF" : (props.inPath ? "#0066FF" : "#ddd") };
+    border-top-width: 12px;
+    background-color: #fff;
+    color: #333;
     font-size: 14px;
-    height: auto;
+    height: "auto";
     display: flex;
-    cursor: ${(props) => props.isEmptyItem ? "auto" : "pointer"};
+    cursor: pointer;
     align-items: center;
     justify-content: center;
 `;
