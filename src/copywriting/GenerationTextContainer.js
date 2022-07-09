@@ -48,7 +48,7 @@ function GenerationTextContainer(props) {
     return (
         <TextContainer
             ref={contRef}
-            isHover={isHovering}
+            isHover={isHovering} isNew={props.lens.generations[props.idx].isNew}
             onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
         >
             {props.text}
@@ -79,6 +79,7 @@ const TextContainer = styled.div`
     cursor: pointer;
     position: relative;
     font-size: 14px;
+    font-weight: ${props => props.isNew ? "bold" : "normal"};
 `;
 
 const PinBtn = styled.div`

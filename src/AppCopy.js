@@ -164,6 +164,10 @@ function AppCopy() {
                 var { lensId, idx, isPinned } = action;
                 newLenses[lensId].generations[idx].isPinned = isPinned;
                 return newLenses;
+            case 'unnew-generation':
+                var { lensId, idx } = action;
+                newLenses[lensId].generations[idx].isNew = false;
+                return newLenses;
             default:
                 throw new Error();
         }
@@ -314,8 +318,14 @@ function AppCopy() {
         .post(`http://localhost:5000/api/generate-length`, data)
         .then((response) => {
             var newGenerations = response.data;
+            newGenerations.forEach(g => {
+                g.isNew = true;
+                g.isPinned = "";
+            });
             var generations = currLens.generations.concat(newGenerations);
             lensesDispatch({type: "set-generations", lensId: 0, generations: generations});
+
+            console.log(generations);
 
             switchesDispatch({ 
                 type: 'track-generations', 
@@ -472,6 +482,10 @@ function AppCopy() {
         });
     }
 
+    function toggleNewGeneration(idx) {
+        lensesDispatch({type: "unnew-generation", lensId: 0, idx});
+    }
+
     useEffect(() => {
         createSwitch();
     }, []);
@@ -483,7 +497,7 @@ function AppCopy() {
                     slots={slots}
                     createSlots={createSlots} copySlots={copySlots} changeSlots={changeSlots}
                     changePath={changePath} selected={selected} setSelected={setSelected}
-                    addPromptLine={addPromptLine} createSlots={createSlots}
+                    addPromptLine={addPromptLine}
                     hoverPath={hoverPath}
                     isTreatment={isTreatment}
                 />
@@ -512,7 +526,7 @@ function AppCopy() {
                     copyGeneration={copyGeneration} clearLens={clearLens}
                     pinGeneration={pinGeneration} setTooltip={setTooltip}
                     toggleFilter={toggleFilter} filter={filter}
-                    isTreatment={isTreatment}
+                    isTreatment={isTreatment} toggleNewGeneration={toggleNewGeneration}
                 />
             </RightColumn>
             {tooltip && <Tooltip tooltip={tooltip}/>}

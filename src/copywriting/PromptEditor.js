@@ -24,7 +24,7 @@ function PromptEditor(props) {
             )
         }
         promptHTML.push(
-            <LineContainer>
+            <LineContainer key={depth}>
                 {lineHTML}
                 {props.isTreatment && <div style={{display: "flex", alignItems: "center"}}>
                     <AddSlotButton 

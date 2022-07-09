@@ -4,15 +4,15 @@ import styled from "styled-components";
 const propNameMap = {
     'engine': 'Engine',
     'temperature': 'Temperature',
-    'presencePen': 'Presence Penalty',
+    'presencePen': 'Presence Pen',
     'bestOf': 'Best Of',
 };
 const engineMap = {
-    "text-davinci-002": "Davinci-2 (D2)",
-    "text-davinci-001": "Davinci (D)",
-    "text-curie-001": "Curie (C)",
-    "text-babbage-001": "Babbage (B)",
-    "text-ada-001": "Ada (A)"
+    "text-davinci-002": "Davinci-2",
+    "text-davinci-001": "Davinci",
+    "text-curie-001": "Curie",
+    "text-babbage-001": "Babbage",
+    "text-ada-001": "Ada"
 }
 
 function GenerationSpace(props) {
@@ -129,9 +129,9 @@ function GenerationSpace(props) {
                 var isFiltered = isInputFilter || isPropertyFilter;
                 pointsSvg.push(
                     <circle
-                        key={idx} cx={x} cy={y} r={props.hoverGen === idx || clickedGen == idx ? "12" : "6"} style={{cursor: "pointer"}}
-                        fill={isFiltered ? "#0066ff33" : "#0066ff"}
-                        stroke={clickedGen === idx ? "#0066FF66" : "#fff"} strokeWidth={clickedGen === idx ? "8" : "1"}
+                        key={idx} cx={x} cy={y} r={props.hoverGen === idx || clickedGen == idx ? "10" : "5"} style={{cursor: "pointer"}}
+                        fill={clickedGen === idx || generation.isNew ? "#0066ff" : "#fff"} opacity={isFiltered ? 0.3 : 1}
+                        stroke={"#0066ff"} strokeWidth={clickedGen === idx ? "4" : "2"}
                         data-text={generation.text} data-x={x} data-y={y}
                         data-idx={idx} onClick={handleGenClick}
                         onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
@@ -249,7 +249,7 @@ const PropertySubcontainer = styled.div`
     flex-direction: row;
     gap: 4px;
     & > div {
-        padding-right: 4px;
+        flex: 1;
     }
 `;
 

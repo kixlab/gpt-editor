@@ -18,6 +18,12 @@ function Lenses(props) {
         props.changeLens(props.lensId, "generationLength", val);
     }
 
+    function handleHoverGen(idx) {
+        setHoverGen(idx);
+        if(idx !== null)
+            props.toggleNewGeneration(idx);
+    }
+
     function handleChangeType(index, type) {
         if(currLens.types[index] === type) return;
         props.changeLensType(props.lensId, index, type);
@@ -52,7 +58,7 @@ function Lenses(props) {
                 var idx = indices[i];
                 var gen = generations[idx];
                 var propertiesStr = propertiesToStr(gen.properties);
-                if(prevProperties == propertiesStr) {
+                if(prevProperties == propertiesStr || propertiesStr in groups[inputText]) {
                     groups[inputText][propertiesStr].push(idx);
                 } else {
                     groups[inputText][propertiesStr] = [idx];
@@ -134,13 +140,13 @@ function Lenses(props) {
                         (currLens.types[0] === 'list' ?
                             <GenerationList 
                                 lens={currLens} switches={props.switches} pinGeneration={props.pinGeneration}
-                                copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
+                                copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={handleHoverGen}
                                 groupedGenerations={groupedGenerations} setTooltip={props.setTooltip}
                                 filter={props.filter} isTreatment={props.isTreatment}
                             /> :
                             <GenerationSpace 
                                 lens={currLens} switches={props.switches} 
-                                copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={setHoverGen}
+                                copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={handleHoverGen}
                                 groupedGenerations={groupedGenerations}
                                 filter={props.filter}
                             />
