@@ -156,6 +156,7 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
 
     @api.route('/api/generate-length', methods=['POST'])
     def generate_length():
+        user_id = request.json['userId']
         sentences = list(map(lambda txt: txt.strip(), get_sentences(request, request.json['length'])))
         #existing = request.json['existing']
 
@@ -201,17 +202,42 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 'properties': properties,
                 'inputText': input_text
             })
+        with open('./data/'+user_id+'_history.json', 'a') as f:
+            f.write(json.dumps({
+                'input': input_text,
+                'properties': properties,
+                'sentences': sentences,
+            }))
+            f.write('\n')
         return jsonify(result)
 
     @api.route('/api/get-similarity', methods=['POST'])
     def get_similarity():
+        user_id = request.json['userId']
         sentences = request.json['sentences']
+        text = request.json['text']
         sentences_text = list(map(lambda entry: entry['text'], sentences))
         embeddings, cossim = process_simcse(sst.model, sst.tokenizer, sentences_text)
         coord = draw_graph(sentences_text, cossim)
         for i in range(len(sentences)):
             sentences[i]['coordinates'] = {'x': coord[i][0], 'y': coord[i][1]}
+        with open('./data/'+user_id+'_recent.json' ,'w') as f:
+            f.write(json.dumps({
+                'generations': sentences, 
+                'text': text
+            }))
+            f.write('\n')
         return jsonify(sentences)
+
+    @api.route('/api/get-recent', methods=['POST'])
+    def get_recent():
+        user_id = request.json['userId']
+        if os.path.exists('./data/'+user_id+'_recent.json'):
+            with open('./data/'+user_id+'_recent.json', 'r') as f:
+                data = json.loads(f.read())
+                return jsonify(data)
+        else:
+            return jsonify({'text': '', 'generations': []})
 
 
     @api.route('/api/generate-multiple', methods=['POST'])

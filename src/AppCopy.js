@@ -22,6 +22,7 @@ get: (searchParams, prop) => searchParams.get(prop),
 });
 // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
 let isTreatment = parseInt(params.s) == 1; // "some_value"
+let userId = params.u;
 
 const colorWheel = ['#2BB115', '#FFAE50', '#BE6DE4', '#FF7A50', '#DAA06D', '#32D198', '#5A58E4', '#EA9EEC'];
 
@@ -197,6 +198,18 @@ function AppCopy() {
         }
     });
 
+    useEffect(() => {
+        var data = { userId: userId };
+        axios
+        .post(`http://localhost:5000/api/get-recent`, data)
+        .then((response) => {
+            var generations = response.data['generations'];
+            var text = response.data['text'];
+            lensesDispatch({type: "set-generations", lensId: 0, generations: generations});
+            setText(text);
+        });
+    }, []);
+
     function handleKeyDown(e) {
         if (e.key === "Meta") {
             setIsMeta(true);
@@ -314,6 +327,7 @@ function AppCopy() {
         data.n = 3;
         data.length = currLens.generationLength;
         data.switchId = switchId;
+        data.userId = userId;
         axios
         .post(`http://localhost:5000/api/generate-length`, data)
         .then((response) => {
@@ -331,7 +345,7 @@ function AppCopy() {
                 generations: newGenerations.filter(g => g.switchId === switchId && g.isNew).map(g => g.text)
             });
 
-            var nextData = { sentences: generations };
+            var nextData = { userId: userId, sentences: generations, text: text };
             axios
             .post(`http://localhost:5000/api/get-similarity`, nextData)
             .then((response) => {
@@ -441,7 +455,10 @@ function AppCopy() {
     }
 
     function copyGeneration(newText) {
-        setText(text + " " + newText);
+        if(text ===  "")
+            setText(newText);
+        else
+            setText(text + " " + newText);
     }
 
     function clearLens() {
