@@ -147,7 +147,7 @@ function GenerationSpace(props) {
                 var idx = subgroup[i];
                 var generation = props.lens.generations[idx];
                 var [x, y] = translateCoordinates(generation.coordinates, xRange, yRange);
-                var isFiltered = isInputFilter || isPropertyFilter;
+                var isFiltered = isInputFilter || isPropertyFilter || !generation.text.includes(props.filter.data.output);
                 pointsSvg.push(
                     <Circle
                         key={idx} cx={x} cy={y} r={props.hoverGen === idx || clickedGen == idx ? "10" : "5"} style={{cursor: "pointer"}}

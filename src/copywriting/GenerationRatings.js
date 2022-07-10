@@ -44,16 +44,22 @@ function GenerationRatings(props) {
         return false;
     }
 
+    var count = 0;
     for(var inputText in props.groupedGenerations) {
         var group = props.groupedGenerations[inputText];
         var isInputFilter = !inputText.includes(props.filter.data.input);
         if(isInputFilter) continue;
         for(var propertiesStr in group) {
-            var subgroup = group[propertiesStr];
+            var indices = group[propertiesStr];
             var isPropertyFilter = isFilteredByProperty(propertiesStr, props.filter.data);
             if(isPropertyFilter) continue;
-            for(var i = 0; i < subgroup.length; i++) {
-                var idx = subgroup[i];
+
+            var filteredIndices = indices.filter(index => {
+                return props.lens.generations[index].text.includes(props.filter.data.output);
+            });
+
+            for(var i = 0; i < filteredIndices.length; i++) {
+                var idx = filteredIndices[i];
                 var entry = props.lens.generations[idx];
                 ratingsHTML.push(
                     <Rating
@@ -64,11 +70,12 @@ function GenerationRatings(props) {
                 )
                 if(props.hoverGen == idx) {
                     ratingsHTML.push(
-                        <HoverText key="hover" style={{top: 48 + (80+72)*props.hoverGen + 64 + "px"}}>
+                        <HoverText key="hover" style={{top: 48 + (80+72)*count + 64 + "px"}}>
                             {drawRatingLabels()}
                         </HoverText>
                     )
                 }
+                count += 1;
             }
         }
     }

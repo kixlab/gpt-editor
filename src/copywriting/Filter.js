@@ -154,6 +154,16 @@ function Filter(props) {
                 {createInputRange("temperature")}
                 {createInputRange("presencePen")}
                 {createInputRange("bestOf")}
+                <InputContainer>
+                    <div style={{marginRight: "4px"}}>Output</div>
+                    <div style={{flex: "1"}}>
+                        <Input 
+                            placeholder="Type text to filter..." 
+                            value={props.filter.data.output}
+                            onChange={(e) => props.setFilterData('output', null, e.target.value)}
+                        />
+                    </div>
+                </InputContainer>
             </div>
         </FilterCont>
     )

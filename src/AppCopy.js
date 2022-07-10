@@ -194,7 +194,8 @@ function AppCopy() {
             engine: "all",
             temperature: [0.0, 1.0],
             presencePen: [0.0, 2.0],
-            bestOf: [1, 20]
+            bestOf: [1, 20],
+            output: ""
         }
     });
 
@@ -500,7 +501,8 @@ function AppCopy() {
                 engine: "all",
                 temperature: [0.0, 1.0],
                 presencePen: [0.0, 2.0],
-                bestOf: [1, 20]
+                bestOf: [1, 20],
+                output: ""
             }
         });
     }

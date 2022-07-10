@@ -322,12 +322,16 @@ function GenerationList(props) {
                 }
             }
 
-            for(let k = 0; k < indices.length; k++) {
-                var idx = indices[k];
+            var filteredIndices = indices.filter(index => {
+                return props.lens.generations[index].text.includes(props.filter.data.output);
+            });
+
+            for(let k = 0; k < filteredIndices.length; k++) {
+                var idx = filteredIndices[k];
                 var entry = props.lens.generations[idx];
 
                 var propsIsTop = k == 0;
-                var propsIsBot = k == indices.length - 1;
+                var propsIsBot = k == filteredIndices.length - 1;
                 inputIsTop = false;
                 inputIsBot = propsIsBot && j == subGroups.length - 1;
 
