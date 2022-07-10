@@ -369,7 +369,7 @@ function GenerationList(props) {
 
 
     return (
-        <Container>
+        <Container style={!props.isTreatment ? {paddingTop: "4px"} : {}}>
             {generations}
         </Container>
     );
