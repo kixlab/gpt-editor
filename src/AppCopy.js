@@ -320,12 +320,10 @@ function AppCopy() {
             var newGenerations = response.data;
             newGenerations.forEach(g => {
                 g.isNew = true;
-                g.isPinned = "";
+                g.isPinned = null;
             });
             var generations = currLens.generations.concat(newGenerations);
             lensesDispatch({type: "set-generations", lensId: 0, generations: generations});
-
-            console.log(generations);
 
             switchesDispatch({ 
                 type: 'track-generations', 
@@ -447,13 +445,21 @@ function AppCopy() {
     }
 
     function clearLens() {
-        var newGenerations = lenses[0].generations.filter(g => g.isPinned);
+        var newGenerations = lenses[0].generations.filter(g => g.isPinned !== null);
         lensesDispatch({type: "set-generations", lensId: 0, generations: newGenerations});
     }
 
-    function pinGeneration(idx) {
+    function pinGeneration(idx, type, value) {
         var isPinned = lenses[0].generations[idx].isPinned;
-        lensesDispatch({type: "pin-generation", lensId: 0, idx, isPinned: !isPinned});
+        if(type == "click") {
+            if(isPinned == null) { 
+                lensesDispatch({type: "pin-generation", lensId: 0, idx, isPinned: ""});
+            } else {
+                lensesDispatch({type: "pin-generation", lensId: 0, idx, isPinned: null});
+            }
+        } else {
+            lensesDispatch({type: "pin-generation", lensId: 0, idx, isPinned: value});
+        }
     }
 
     function toggleFilter() {

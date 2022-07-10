@@ -147,7 +147,7 @@ function Lenses(props) {
                             <GenerationSpace 
                                 lens={currLens} switches={props.switches} 
                                 copyGeneration={props.copyGeneration} hoverGen={hoverGen} setHoverGen={handleHoverGen}
-                                groupedGenerations={groupedGenerations}
+                                groupedGenerations={groupedGenerations} pinGeneration={props.pinGeneration}
                                 filter={props.filter}
                             />
                         )

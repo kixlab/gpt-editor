@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from "styled-components";
 
-import { PinButton } from './SVG'
+import Pin from './Pin';
 
 function GenerationTextContainer(props) {
     const contRef = useRef(null);
@@ -30,18 +30,6 @@ function GenerationTextContainer(props) {
         setIsHover(false);
     }
 
-    function handlePin(e) {
-        e.stopPropagation();
-        var curr = e.target;
-        var idx = curr.getAttribute("data-idx");
-        while(idx === null || idx === undefined) {
-            curr = curr.parentNode;
-            idx = curr.getAttribute("data-idx");
-        }
-        console.log(idx);
-        props.pinGeneration(idx);
-    }
-
     var isHovering = props.hoverGen === props.idx;
     var isPinned = props.lens.generations[props.idx].isPinned;
 
@@ -52,17 +40,11 @@ function GenerationTextContainer(props) {
             onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
         >
             {props.text}
-            {(isPinned || isHovering) &&
-                <PinBtn 
-                    data-idx={props.idx} onClick={handlePin}
-                    isPinned={isPinned}
-                >
-                    <svg width="16" height="16">
-                        <g transform="scale(1.0)">
-                            {PinButton}
-                        </g>
-                    </svg>
-                </PinBtn>
+            {(isPinned !== null || isHovering) &&
+                <Pin
+                    idx={props.idx} isPinned={isPinned}
+                    pinGeneration={props.pinGeneration}
+                />
             }
         </TextContainer>
     );
@@ -74,37 +56,12 @@ const TextContainer = styled.div`
     border-color: ${props => props.isHover ? "#0066FF" : "#ccc"};
     border-radius: 8px;
     padding: 4px 10px 4px 8px;
-    margin: 4px 0;
+    margin: 6px 0;
     flex: 1;
     cursor: pointer;
     position: relative;
     font-size: 14px;
     font-weight: ${props => props.isNew ? "bold" : "normal"};
-`;
-
-const PinBtn = styled.div`
-    cursor: pointer;
-    position: absolute;
-    right: 4px;
-    top: 4px;
-    z-index: 100;
-    height: 24px;
-    width: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    & > svg > g {
-        stroke: ${props => props.isPinned ? "#0066FF" : "#ccc"};
-        fill: ${props => props.isPinned ? "#0066FF" : "#ccc"};
-    }
-    &:hover {
-        background-color: #0066FF33;
-        & > svg > g {
-            stroke: ${props => props.isPinned ? "#0066FF" : "#619aff"};
-            fill: ${props => props.isPinned ? "#0066FF" : "#619aff"};
-        }
-    }
 `;
 
 export default GenerationTextContainer;

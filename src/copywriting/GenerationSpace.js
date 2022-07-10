@@ -1,5 +1,8 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import styled from "styled-components";
+
+import Pin from './Pin';
+import { PinButton } from './SVG';
 
 const propNameMap = {
     'engine': 'Engine',
@@ -30,6 +33,12 @@ function GenerationSpace(props) {
         }
     }, []);
 
+    useEffect(() => {
+        if(clickedGen !== -1 && props.lens.generations[clickedGen] == undefined) {
+            setClickedGen(-1);
+        }
+    }, [props.lens.generations]);
+
     function translateCoordinates(coordinates, xRange, yRange) {
         var {x, y} = coordinates;
         var [xLoOld, xHiOld] = xRange;
@@ -50,7 +59,13 @@ function GenerationSpace(props) {
     }
 
     function handleMouseEnter(e) {
-        var index = parseInt(e.target.getAttribute("data-idx"));
+        var curr = e.target;
+        var index = curr.getAttribute("data-idx");
+        while(!index) {
+            curr = curr.parentElement;
+            index = curr.getAttribute("data-idx");
+        }
+        index = parseInt(index);
         props.setHoverGen(index);
     }
 
@@ -59,7 +74,13 @@ function GenerationSpace(props) {
     }
 
     function handleGenClick(e) {
-        var index = parseInt(e.target.getAttribute("data-idx"));
+        var curr = e.target;
+        var index = curr.getAttribute("data-idx");
+        while(!index) {
+            curr = curr.parentElement;
+            index = curr.getAttribute("data-idx");
+        }
+        index = parseInt(index);
         if(index === clickedGen) 
             setClickedGen(-1);
         else
@@ -128,34 +149,50 @@ function GenerationSpace(props) {
                 var [x, y] = translateCoordinates(generation.coordinates, xRange, yRange);
                 var isFiltered = isInputFilter || isPropertyFilter;
                 pointsSvg.push(
-                    <circle
+                    <Circle
                         key={idx} cx={x} cy={y} r={props.hoverGen === idx || clickedGen == idx ? "10" : "5"} style={{cursor: "pointer"}}
-                        fill={clickedGen === idx || generation.isNew ? "#0066ff" : "#fff"} opacity={isFiltered ? 0.3 : 1}
-                        stroke={"#0066ff"} strokeWidth={clickedGen === idx ? "4" : "2"}
+                        isClicked={clickedGen == idx} isFiltered={isFiltered}
+                        isNew={props.lens.generations[idx].isNew}
                         data-text={generation.text} data-x={x} data-y={y}
                         data-idx={idx} onClick={handleGenClick}
                         onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
-                    />
+                        isPinned={generation.isPinned}
+                    >
+                        {generation.isPinned !== null ? 
+                            (generation.isPinned.length == 0 ? 
+                                <svg 
+                                    width={13} height={13}
+                                >
+                                    <g 
+                                        transform={`scale(${13/16})`}
+                                        stroke={clickedGen==idx ? "#fff" : "#0066FF"}
+                                        fill={clickedGen==idx ? "#fff" : "#0066FF"}
+                                    >
+                                        {PinButton}
+                                    </g>
+                                </svg>:
+                                generation.isPinned) :
+                            ""}
+                    </Circle>
                 )
             }
         }
     }  
 
-    var currentGen = props.hoverGen !== null ? props.lens.generations[props.hoverGen] : (clickedGen !== -1 ? props.lens.generations[clickedGen] : null);
+    var currentIdx = props.hoverGen !== null ? props.hoverGen : (clickedGen !== -1) ? clickedGen : -1;
+    var currentGen = props.lens.generations[currentIdx];
+    if(currentGen == undefined)
+        currentGen = null
 
     return (
         <div style={{display: "flex", flexDirection: "row", height: "100%"}}>
             <SpaceContainer ref={containerRef}>
-                {false && <foreignObject 
-                    x="0" y="0" width={containerDims[0]} height={containerDims[1]}
-                >
-                    <HoverText>
-                        <div>
-                            {currentGen !== null ? currentGen.text : ""}
-                        </div>
-                    </HoverText>
-                </foreignObject>}
                 {pointsSvg}
+                <HoverText>
+                    <div>
+                        {currentGen !== null ? currentGen.text : ""}
+                    </div>
+                </HoverText>
             </SpaceContainer>
             <InfoContainer>
                 <InfoSubcont>
@@ -182,8 +219,13 @@ function GenerationSpace(props) {
                     style={{border: clickedGen !== -1 ? ("solid 2px #0066ff") : "", cursor: "pointer"}}
                     onClick={handleItemClick}
                 >
-                    <div style={{paddingBottom: "4px"}}>
-                        <b>Generation</b> <span style={{color: "#666", fontSize: "10px"}}>Click to copy to editor...</span>
+                    <div style={{paddingBottom: "4px", display: "flex", alignItems: "center", justifyContent: "space-between"}}>
+                        <div><b>Generation</b></div>
+                        {currentGen !== null &&<Pin 
+                            idx={currentIdx} isPinned={currentGen.isPinned}
+                            pinGeneration={props.pinGeneration}
+                            type="space"
+                        />}
                     </div>
                     <TextCont style={{color: props.hoverGen !== null ? "#0066ffaa" : (clickedGen == -1 ? "#666" : "#333")}}>
                         {currentGen !== null ? 
@@ -196,16 +238,37 @@ function GenerationSpace(props) {
     )
 }
 
-const SpaceContainer = styled.svg`
+const SpaceContainer = styled.div`
     width: 65%;
     height: 100%;
+    position: relative;
+`;
+
+const Circle = styled.div`
+    position: absolute;
+    width: ${props => props.isPinned !== null ? "fit-content" : (props.r * 2)}px;
+    height: ${props => props.isPinned !== null ? "fit-content" : (props.r * 2)}px;
+    left: ${props => props.cx - (props.isPinned !== null ? 5 : props.r)}px;
+    top: ${props => props.cy - (props.isPinned !== null ? 5 : props.r)}px;
+    border-radius: ${props => props.isPinned !== null ? "16px" : "50%"};
+    background-color: ${props => props.isClicked || props.isNew ? "#0066FF" : "#fff"};
+    opacity: ${props => props.isFiltered ? 0.3 : 1};
+    border: solid 2px #0066FF;
+    padding: ${props => props.isPinned !== null ? (props.isPinned.length > 0 ? "0px 4px" : "2px") : "0px"};
+    font-size: 10px;
+    color: ${props => props.isClicked ? "#fff" : "#0066ff"};
+    font-weight: bold;
+    box-shadow: 0px 0px 0px 2px rgba(255, 255, 255, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 const HoverText = styled.div`
     display: flex;
     justify-content: center;
-    height: 100%;
-    width: 100%;
+    height: 98%;
+    width: 100 %;
     align-items: center;
     padding: 8px;
     color: #0066ff99;
@@ -220,6 +283,7 @@ const InfoContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    z-index: 100;
 `;
 
 const InfoSubcont = styled.div`
@@ -229,6 +293,7 @@ const InfoSubcont = styled.div`
     border: solid 1px #ccc;
     overflow-y: scroll;
     font-size: 14px;
+    background-color: #fff;
     &::-webkit-scrollbar {
         width: 4px;
     }
@@ -239,7 +304,6 @@ const InfoSubcont = styled.div`
 `;
 
 const TextCont = styled.div`
-    overflow-y: scroll;
     white-space: pre-wrap;
     font-size: 12px;
 `;
