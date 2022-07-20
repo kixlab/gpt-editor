@@ -40,23 +40,23 @@ function PromptLine(props) {
     }
 
     function handleClickContainer(e) {
-        if(!props.isTreatment) return;
         e.stopPropagation();
 
         switch (e.detail) {
             case 1:
                 clickTimer.current = setTimeout(() => {
+                    if(!props.isTreatment) return;
                     if(props.slots.path[props.depth] !== props.index) {
                         props.changePath(props.depth, props.index);
                     } else {
-                        props.changePath(props.depth, props.slots.path[props.depth].length - 1);
+                        props.changePath(props.depth, null);
                     }
                 }, 150);
                 break;
             case 2:
                 if(e.target.tagName === "TEXTAREA" || clickTimer.current == null) return;
                 clearTimeout(clickTimer.current);
-                if(!props.isTreatment || (props.selected.type === 'slots' && props.selected.data[0] === props.depth && props.selected.data[1] === props.index)) {
+                if(props.selected.type === 'slots' && props.selected.data[0] === props.depth && props.selected.data[1] === props.index) {
                     props.setSelected({type: null})
                 } else {
                     props.setSelected(

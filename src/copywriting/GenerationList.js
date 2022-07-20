@@ -207,7 +207,7 @@ function GenerationList(props) {
         var isInputFilter = !inputText.includes(props.filter.data.input);
 
         // show button here
-        if(props.isTreatment) {
+        if(true || props.isTreatment) {
             generations.push(
                 <Entry key={"input-button-" + i}>
                     <HistoryButton 
@@ -255,7 +255,7 @@ function GenerationList(props) {
             var inputIsTop = j == 0;
             var inputIsBot = false;
 
-            if(props.isTreatment) {
+            if(true || props.isTreatment) {
                 generations.push(
                     <Entry key={"property-button-" + propId}>
                         <Bar 
@@ -354,7 +354,7 @@ function GenerationList(props) {
 
                 generations.push(
                     <Entry key={idx}>
-                        {props.isTreatment && bars}
+                        {(true || props.isTreatment) && bars}
                         <GenerationTextContainer 
                             key={idx} idx={idx} text={entry.text}
                             hoverGen={props.hoverGen} setHoverGen={props.setHoverGen}
@@ -369,7 +369,7 @@ function GenerationList(props) {
 
 
     return (
-        <Container style={!props.isTreatment ? {paddingTop: "4px"} : {}}>
+        <Container style={!(true || props.isTreatment) ? {paddingTop: "4px"} : {}}>
             {generations}
         </Container>
     );

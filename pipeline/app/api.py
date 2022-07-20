@@ -9,6 +9,7 @@ import random
 import numpy as np
 from scipy.special import softmax
 from nltk.tokenize import sent_tokenize
+from datetime import datetime
 
 openai.api_key = os.getenv("OPEN_API_KEY")
 
@@ -204,6 +205,7 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
             })
         with open('./data/'+user_id+'_history.json', 'a') as f:
             f.write(json.dumps({
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'input': input_text,
                 'properties': properties,
                 'sentences': sentences,

@@ -11,7 +11,7 @@ const defaultProperties = {
     topP: 1,
     frequencyPen: 0,
     presencePen: 0,
-    bestOf: 1
+    bestOf: 3
 }
 
 function SwitchProperties(props) {
@@ -94,7 +94,7 @@ function SwitchProperties(props) {
                     break;
                 case "bestOf":
                     inputHTML = (
-                        <input className="slider" type="range" min="1" max="20" step="1" value={properties[name]} onChange={handleChange} data-property={name}/>
+                        <input className="slider" type="range" min="3" max="20" step="1" value={properties[name]} onChange={handleChange} data-property={name}/>
                     )
                     break;
             }

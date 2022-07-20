@@ -64,7 +64,7 @@ function Filter(props) {
                 if (isNaN(value) || value < 0 || value > 2) isValid = false;
                 break;
             case "bestOf":
-                if (isNaN(value) || value < 1 || value > 20) isValid = false;
+                if (isNaN(value) || value < 3 || value > 20) isValid = false;
                 value = parseInt(value);
                 break;
         }

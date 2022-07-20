@@ -65,7 +65,7 @@ function Tooltip(props) {
                 <b>
                     {props.tooltip.type == "input" ? 
                         "Input" : 
-                        (props.tooltip.type == "property" ? "Model Parameters" : "Parameter Change")}
+                        (props.tooltip.type == "property" ? "AI Configurations" : "Configuration Change")}
                 </b>
             </div>
             <div style={{color: "#666", paddingTop: "4px"}}>

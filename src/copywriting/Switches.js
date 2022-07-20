@@ -237,7 +237,7 @@ function Switches(props) {
             engine: 'text-davinci-001',
             temperature: 0.7,
             presencePen: 0,
-            bestOf: 1
+            bestOf: 3
         }
         var engineToLabel = {
             "text-davinci-002": "D2",

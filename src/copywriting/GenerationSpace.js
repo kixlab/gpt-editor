@@ -207,7 +207,7 @@ function GenerationSpace(props) {
                 </InfoSubcont>
                 <InfoSubcont style={{overflowY: "initial"}}>
                     <div style={{paddingBottom: "4px"}}>
-                        <b>Parameters</b>
+                        <b>Configurations</b>
                     </div>
                     <TextCont style={{color: props.hoverGen !== null ? "#0066ffaa" : (clickedGen == -1 ? "#666" : "#333")}}>
                         {currentGen !== null ? 

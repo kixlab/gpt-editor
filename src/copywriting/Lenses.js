@@ -96,7 +96,7 @@ function Lenses(props) {
                                 >
                                     {ClearButton}
                                 </ClearBtn>
-                                {props.isTreatment && 
+                                {(true || props.isTreatment) && 
                                     <ToggleBtn 
                                         id="filter-button"
                                         transform={`translate(50, 0) scale(${32/28})`} 

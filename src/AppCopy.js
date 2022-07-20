@@ -33,7 +33,6 @@ function AppCopy() {
             case 'create':
                 var { newText, depth } = action;
                 newSlots.entries[depth].splice(-1, 0, newText);
-                newSlots.path[depth] = 0;
                 return newSlots;
             case 'change':
                 var { changedText, depth, index } = action;
@@ -66,12 +65,22 @@ function AppCopy() {
                 throw new Error();
         }
     }, []);
-    const [slots, slotsDispatch] = useReducer(slotsReducer, 
-        {entries: [
+
+    const initialSlots = isTreatment ? 
+        [
             ['Write an ad for the following product', null ],
-            ["Product: AITeacher is a smart assistant that helps students succeed in school.", "Product: Forever Tumbler, an always-cold tumbler that automatically refills with coffee.", null],
-            ["Tone: catchy, engaging", null]
-        ],
+            ["Product: LangLang is an app that connects you to language teachers across the world.", "App: LangLang is an app that (1) allows you to track your language development, and (2) finds teachers that match what you need to improve on.", null],
+            ["Tone: informative, friendly", "Tone: comical, informative", null],
+            ["Audience: college students", "Audience: busy parents", null]
+        ] :
+        [
+            ['Write an ad for the following product', null ],
+            ["Product: LangLang is an app that connects you to language teachers across the world.", null],
+            ["Tone: informative, friendly", null],
+            ["Audience: college students", null]
+        ]
+    const [slots, slotsDispatch] = useReducer(slotsReducer, 
+        {entries: initialSlots,
         path: [0, 0, 0]}
     );
 
@@ -194,7 +203,7 @@ function AppCopy() {
             engine: "all",
             temperature: [0.0, 1.0],
             presencePen: [0.0, 2.0],
-            bestOf: [1, 20],
+            bestOf: [3, 20],
             output: ""
         }
     });
@@ -249,6 +258,7 @@ function AppCopy() {
     }
     
     function copySlots(data) {
+        if(!isTreatment) return;
         var depth = data[0];
         var index = data[1];
         var newText = slots.entries[depth][index];
@@ -278,6 +288,7 @@ function AppCopy() {
         var index = data[1];
         setSelected({type: null});
         slotsDispatch({ type: "remove", depth, index });
+        return;
         var switchIds = Object.keys(switches).filter(id => id !== 'colorIndex');
         switchIds.forEach(id => {
             if(switches[id].path && switches[id].path[depth] === index) {
@@ -300,8 +311,10 @@ function AppCopy() {
 
     function textify(path) {
         var result = "";
+        console.log(slots.path);
         for(var i = 0; i < slots.path.length; i++) {
             var index = slots.path[i];
+            if(index === null) continue;
             var entry = slots.entries[i][index];
             if(entry === null) continue;
             result += entry + "\n\n";
@@ -365,7 +378,7 @@ function AppCopy() {
             engine: 'text-davinci-001',
             temperature: 0.7,
             presencePen: 0,
-            bestOf: 1
+            bestOf: 3
         }
         if(value == "") {
             value = defaultValues[property];
@@ -385,7 +398,7 @@ function AppCopy() {
                 break;
             case "bestOf":
                 value = parseInt(value);
-                if (isNaN(value) || value < 1 || value > 20) return;
+                if (isNaN(value) || value < 3 || value > 20) return;
                 break;
         }
         switchesDispatch({ type: 'change', switchId, property, value });
@@ -399,7 +412,7 @@ function AppCopy() {
             topP: 1,
             frequencyPen: 0,
             presencePen: 0,
-            bestOf: 1
+            bestOf: 3
         }
         switchesDispatch({ 
             type: 'create', switchId: newSwitchId,
@@ -501,7 +514,7 @@ function AppCopy() {
                 engine: "all",
                 temperature: [0.0, 1.0],
                 presencePen: [0.0, 2.0],
-                bestOf: [1, 20],
+                bestOf: [3, 20],
                 output: ""
             }
         });
