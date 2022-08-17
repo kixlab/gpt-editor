@@ -21,6 +21,7 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 get: (searchParams, prop) => searchParams.get(prop),
 });
 // Get the value of "some_key" in eg "https://example.com/?some_key=some_value"
+const HOST_NAME = window.location.host;
 let isTreatment = parseInt(params.s) == 1; // "some_value"
 let userId = params.u;
 
@@ -66,22 +67,31 @@ function AppCopy() {
         }
     }, []);
 
+    var temp = userId.split("-");
+    const userIdType = temp[temp.length - 1];
     const initialSlots = isTreatment ? 
         [
             ['Write an ad for the following product', null ],
             ["Product: LangLang is an app that connects you to language teachers across the world.", "App: LangLang is an app that (1) allows you to track your language development, and (2) finds teachers that match what you need to improve on.", null],
-            ["Tone: informative, friendly", "Tone: comical, informative", null],
+            ["Tone: informative, friendly", "Tone: comical, humorous", null],
             ["Audience: college students", "Audience: busy parents", null]
-        ] :
-        [
-            ['Write an ad for the following product', null ],
-            ["Product: LangLang is an app that connects you to language teachers across the world.", null],
-            ["Tone: informative, friendly", null],
-            ["Audience: college students", null]
-        ]
+        ] : (userIdType !== "2" ? 
+                [
+                    ['Write an ad for the following product', null ],
+                    ["Product: LangLang is an app that connects you to language teachers across the world.", null],
+                    ["Tone: informative, friendly", null],
+                    ["Audience: college students", null]
+                ] :
+                [
+                    ['Write an ad for the following product', null ],
+                    ["App: LangLang is an app that (1) allows you to track your language development, and (2) finds teachers that match what you need to improve on.", null],
+                    ["Tone: comical, humorous", null],
+                    ["Audience: busy parents", null]
+                ] 
+            )
     const [slots, slotsDispatch] = useReducer(slotsReducer, 
         {entries: initialSlots,
-        path: [0, 0, 0]}
+        path: [0, 0, 0, 0]}
     );
 
     const switchesReducer = useCallback((switches, action) => {
@@ -211,7 +221,7 @@ function AppCopy() {
     useEffect(() => {
         var data = { userId: userId };
         axios
-        .post(`http://localhost:5000/api/get-recent`, data)
+        .post(`http://${HOST_NAME}/api/get-recent`, data)
         .then((response) => {
             var generations = response.data['generations'];
             var text = response.data['text'];
@@ -343,7 +353,7 @@ function AppCopy() {
         data.switchId = switchId;
         data.userId = userId;
         axios
-        .post(`http://localhost:5000/api/generate-length`, data)
+        .post(`http://${HOST_NAME}/api/generate-length`, data)
         .then((response) => {
             var newGenerations = response.data;
             newGenerations.forEach(g => {
@@ -361,7 +371,7 @@ function AppCopy() {
 
             var nextData = { userId: userId, sentences: generations, text: text };
             axios
-            .post(`http://localhost:5000/api/get-similarity`, nextData)
+            .post(`http://${HOST_NAME}/api/get-similarity`, nextData)
             .then((response) => {
                 var generations = response.data;
                 lensesDispatch({type: "set-generations", lensId: 0, generations: generations});
