@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from app.api import create_api
 from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification
+# from pyngrok import ngrok
 
 # Import our models. The package will take care of downloading the models automatically
 class SST:
@@ -29,7 +30,9 @@ def start():
 
     app.register_blueprint(create_api(SST(), Sentiment(), Emotion()), url_prefix='/')
 
-    app.run(host='76.28.247.222', port=5000)
+    app.run(host='0.0.0.0', port=8080)
 
 if __name__ == '__main__':
+    # tunnel = ngrok.connect(8080)
+    # print(tunnel)
     start()

@@ -1,22 +1,35 @@
-### Set up
+## Client-side
+
+Instructions to setup the front-end.
 
 Install all the needed packages through:
 
 ### `npm install`
 
-## Client-side
+Build the front-end by running:
 
-In the project directory, run the client through:
-
-### `npm run start`
+### `npm run build`
 
 ## Server-side
 
-In the directory `/src`, run the server by running:
+Create conda environment with the required packages by running:
 
-### `node server.js`
+### `conda env create -f environment.yml`
 
-To use the OpenAI API, store your API key in a new file called `/src/config.js`.
-Use the following format:
+Activate the environment by running:
 
-#### `module.exports = { key: YOUR_API_KEY }`
+### `conda activate genwidget`
+
+Then, set the environment variable with the OpenAI API key by running the following where `YOUR_KEY_HERE` is replaced by your key:
+
+### `export OPEN_API_KEY="YOUR_KEY_HERE"`
+
+Finally, in the directory `/pipeline`, run the following to start the server:
+
+### `python server.py`
+
+## Acessing the Prototype
+
+In your browser, use the following address to access the prototype:
+
+#### `https://localhost:8080/?u=p1-test`
