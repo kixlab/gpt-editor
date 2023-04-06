@@ -1,1 +1,605 @@
-{"generations": [{"coordinates": {"x": -0.9997393711195345, "y": 0.049048244523011424}, "emotion": [3, 53, 41, 3], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison\n\nAudience: fitness enthusiasts \n\n", "isNew": false, "isPinned": "", "properties": {"bestOf": 3, "engine": "text-davinci-001", "frequencyPen": 0, "presencePen": 0, "temperature": 0.7, "topP": 1}, "sentiment": [0, 4, 96], "switchId": "syaangic3t4", "text": "Looking for a healthy snack alternative that doesn't skimp on protein? Look no further than our plant-based beef jerky! With zero cholesterol and the same amount of protein as natural beef jerky, this snack is perfect for fitness enthusiasts looking for a post-workout meal. Plus, our jerky is made with all natural ingredients, so you can rest assured that you're getting the healthiest snack possible."}, {"coordinates": {"x": 0.5535161819880726, "y": 0.8015318015232676}, "emotion": [4, 36, 57, 4], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": "", "properties": {"bestOf": 10, "engine": "text-babbage-001", "frequencyPen": 0, "presencePen": 0, "temperature": 0.7, "topP": 1}, "sentiment": [1, 15, 84], "switchId": "syaangic3t4", "text": "Looking for a healthy, plant-based jerky alternative? Look no further than ourzero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout \u2013 perfect for any athlete looking for a healthy snack."}, {"coordinates": {"x": 0.9854723011749903, "y": -0.10815793091387665}, "emotion": [2, 92, 6, 1], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-curie-001", "frequencyPen": 0, "presencePen": 0, "temperature": 0.7, "topP": 1}, "sentiment": [0, 3, 97], "switchId": "syaangic3t4", "text": "Looking for a healthy snack after a workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is perfect for anyone looking for a healthy meal. Not to mention, it's hilarious to compare the two!"}, {"coordinates": {"x": 0.44636111691700997, "y": -0.2192410019308755}, "emotion": [3, 59, 35, 2], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-curie-001", "frequencyPen": 0, "presencePen": 0, "temperature": 0.7, "topP": 1}, "sentiment": [0, 3, 97], "switchId": "syaangic3t4", "text": "Looking for a healthy meal after a workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is perfect for anyone looking to feel their best. Plus, it's free of artificial ingredients, so it's a healthy meal you can feel good about."}, {"coordinates": {"x": 0.016693348903079275, "y": -0.3855635898710362}, "emotion": [3, 47, 47, 3], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-curie-001", "frequencyPen": 0, "presencePen": 0, "temperature": 0.7, "topP": 1}, "sentiment": [0, 4, 96], "switchId": "syaangic3t4", "text": "Looking for a healthy meal after a workout? Try our plant-based beef jerky! It's made with zero cholesterol and the same amount of protein as its natural beef counterpart, so it's a healthy meal you can feel good about. Plus, it's free of artificial ingredients, so you can feel good about eating it, too."}, {"coordinates": {"x": 0.6096646268707107, "y": 0.1874102720676819}, "emotion": [3, 48, 46, 3], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-curie-001", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 4, 96], "switchId": "syaangic3t4", "text": "Looking for a healthy meal after a workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is the perfect way to refuel your body after a hard workout. Plus, it's free of artificial ingredients, so you can feel good about eating it."}, {"coordinates": {"x": -0.6643232207007982, "y": -0.6074872081542368}, "emotion": [3, 51, 43, 3], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-curie-001", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 5, 95], "switchId": "syaangic3t4", "text": "Are you looking for a healthy, high protein snack? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is perfect after a workout or anytime you need a nutritious snack."}, {"coordinates": {"x": 0.4286102934335654, "y": -0.8166026613064943}, "emotion": [3, 34, 59, 3], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-curie-001", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 3, 97], "switchId": "syaangic3t4", "text": "Looking for a healthy snack after a tough workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as natural beef, our jerky is the perfect meal after a hard day at the gym. Plus, it's made with only natural ingredients, so you can feel good about eating it."}, {"coordinates": {"x": -0.3659949292902, "y": -0.1028814969770942}, "emotion": [4, 51, 41, 3], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 8, 91], "switchId": "syaangic3t4", "text": "Looking for a beef jerky alternative that's healthier for you? Look no further than our plant-based beef jerky. It has zero cholesterol and the same amount of protein as regular beef jerky, but without any of the artificial ingredients. So it's the perfect snack to have after a workout."}, {"coordinates": {"x": 0.013513895115695276, "y": 0.18386883803047602}, "emotion": [3, 59, 36, 2], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 3, 97], "switchId": "syaangic3t4", "text": "Looking for a delicious and healthy alternative to beef jerky? Look no further than our plant-based beef jerky! With zero cholesterol and the same amount of protein as regular beef jerky, our jerky is a great choice for fitness enthusiasts and meat lovers alike. Plus, our all-natural ingredients make it a healthy meal after a workout."}, {"coordinates": {"x": 0.19629775154433987, "y": 0.6460590786257583}, "emotion": [4, 62, 31, 3], "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 5, 95], "switchId": "syaangic3t4", "text": "Looking for an alternative to beef jerky that's just as delicious and packed with protein? Look no further than our plant-based beef jerky! With zero cholesterol and no artificial ingredients, it's a healthy option for post-workout snacking."}, {"coordinates": {"x": -0.7982667850209523, "y": -0.33660498745011014}, "emotion": [3, 76, 20, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 2, 97], "switchId": "syaangic3t4", "text": "Looking for a delicious, healthy snack that will keep you going after a workout? Look no further than our Perfectly Seasoned Plant Based Beef Jerky! With the same amount of protein as its natural beef counterpart, and zero cholesterol, this jerky is a perfect choice for health-conscious snackers. And because it contains no artificial ingredients, you can be sure you're getting a healthy snack that will taste great too!"}, {"coordinates": {"x": 0.08894793780616686, "y": -0.9137932670547531}, "emotion": [3, 76, 20, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 3, 97], "switchId": "syaangic3t4", "text": "Looking for a beef jerky alternative that's just as delicious, but without the cholesterol? Look no further than our Perfectly Seasoned Plant Based Beef Jerky! Made with zero cholesterol and same amount of protein as its natural beef counterpart, this jerky is perfect for fitness enthusiasts and meat lovers alike. Plus, its healthy ingredients make it a great meal after a workout."}, {"coordinates": {"x": 1.0, "y": 0.4185817013426818}, "emotion": [6, 32, 60, 3], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 11, 88], "switchId": "syaangic3t4", "text": "Looking for a perfectly seasoned, healthy beef jerky alternative? Look no further! Our plant based beef jerky has zero cholesterol and the same amount of protein as its natural beef counterpart. Plus, no artificial ingredients makes it a healthy meal after a workout."}, {"coordinates": {"x": -0.3772217361832123, "y": -0.8470373397836813}, "emotion": [3, 57, 37, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 6, 94], "switchId": "syaangic3t4", "text": "Looking for a healthier alternative to beef jerky that still satisfies your cravings? Look no further than our Perfectly Seasoned Plant Based Beef Jerky! It's got all the flavor of the real thing with none of the cholesterol, and it's packed with protein to help you recover after a workout. Plus, our all-natural ingredients make it a healthy choice for snack time."}, {"coordinates": {"x": -0.34488736487679195, "y": 0.5582313041227597}, "emotion": [3, 71, 24, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": false, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 3, 97], "switchId": "syaangic3t4", "text": "Looking for a delicious and healthy snack that will satisfy your hunger without weighing you down? Look no further than our Perfectly Seasoned Plant-Based Beef Jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this jerky is perfect for fitness enthusiasts and meat lovers alike. Plus, our use of only natural ingredients makes this a healthy meal option after a workout."}, {"coordinates": {"x": -0.7530997203509561, "y": 0.3050159671570607}, "emotion": [3, 61, 33, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n", "isNew": true, "isPinned": null, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 4, 96], "switchId": "syaangic3t4", "text": "Looking for a delicious and healthy snack that will give you the protein you need after a workout? Look no further than our perfectly seasoned plant based beef jerky! With zero cholesterol and same amount of protein as regular beef jerky, our jerky is a healthy alternative for meat lovers. Plus, our all-natural ingredients make it a healthy choice for fitness enthusiasts."}, {"coordinates": {"x": -0.6632954227895742, "y": 0.7030133027179615}, "emotion": [3, 75, 21, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: meat lovers \n\n", "isNew": true, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 3, 97], "switchId": "syaangic3t4", "text": "Looking for a delicious, healthy snack that will satisfy your meat cravings? Look no further than our perfectly seasoned plant-based beef jerky! With zero cholesterol and the same amount of protein as regular beef jerky, our jerky is a great choice for a healthy snack or post-workout meal. Plus, our all-natural ingredients make our jerky a healthier option than other processed snacks.", "isPinned": null}, {"coordinates": {"x": 0.7257396220638601, "y": -0.49801472947634967}, "emotion": [4, 62, 31, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: meat lovers \n\n", "isNew": true, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 6, 94], "switchId": "syaangic3t4", "text": "Looking for a delicious and healthy alternative to beef jerky? Look no further than our plant based beef jerky! It's perfectly seasoned with zero cholesterol and same amount of protein as its natural beef counterpart. Plus, no artificial ingredients makes it a healthy meal after a workout.", "isPinned": null}, {"coordinates": {"x": -0.09798852548548251, "y": 0.9826237028078465}, "emotion": [3, 63, 31, 2], "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: meat lovers \n\n", "isNew": true, "properties": {"bestOf": 10, "engine": "text-davinci-002", "frequencyPen": 0, "presencePen": 0.43, "temperature": 0.7, "topP": 1}, "sentiment": [0, 4, 96], "switchId": "syaangic3t4", "text": "Looking for a delicious and healthy snack? Look no further than our perfectly seasoned plant based beef jerky! With zero cholesterol and same amount of protein as its natural beef counterpart, our beef jerky is a healthy meal after a workout. Plus, no artificial ingredients makes it a healthy choice for everyone!", "isPinned": null}], "text": "Looking for a healthy snack alternative that doesn't skimp on protein and takes your health into consideration? Look no further than our plant-based beef jerky! With zero cholesterol and the same amount of protein as natural beef jerky, this snack is perfect for fitness enthusiasts looking for a post-workout meal or the average jo looking for a bite to eat. Plus, our jerky is made with all natural ingredients, so you can enjoy this guilt free \"guilty pleasure\". Finally, something vegan and meat-lovers can agree on.\n\n"}
+{
+    "generations": [
+        {
+            "coordinates": {
+                "x": -0.9997393711195345,
+                "y": 0.049048244523011424
+            },
+            "emotion": [
+                3,
+                53,
+                41,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison\n\nAudience: fitness enthusiasts \n\n",
+            "isNew": false,
+            "isPinned": "",
+            "properties": {
+                "bestOf": 3,
+                "engine": "text-davinci-001",
+                "frequencyPen": 0,
+                "presencePen": 0,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                4,
+                96
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthy snack alternative that doesn't skimp on protein? Look no further than our plant-based beef jerky! With zero cholesterol and the same amount of protein as natural beef jerky, this snack is perfect for fitness enthusiasts looking for a post-workout meal. Plus, our jerky is made with all natural ingredients, so you can rest assured that you're getting the healthiest snack possible."
+        },
+        {
+            "coordinates": {
+                "x": 0.5535161819880726,
+                "y": 0.8015318015232676
+            },
+            "emotion": [
+                4,
+                36,
+                57,
+                4
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": "",
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-babbage-001",
+                "frequencyPen": 0,
+                "presencePen": 0,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                1,
+                15,
+                84
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthy, plant-based jerky alternative? Look no further than ourzero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout – perfect for any athlete looking for a healthy snack."
+        },
+        {
+            "coordinates": {
+                "x": 0.9854723011749903,
+                "y": -0.10815793091387665
+            },
+            "emotion": [
+                2,
+                92,
+                6,
+                1
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-curie-001",
+                "frequencyPen": 0,
+                "presencePen": 0,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                3,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthy snack after a workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is perfect for anyone looking for a healthy meal. Not to mention, it's hilarious to compare the two!"
+        },
+        {
+            "coordinates": {
+                "x": 0.44636111691700997,
+                "y": -0.2192410019308755
+            },
+            "emotion": [
+                3,
+                59,
+                35,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-curie-001",
+                "frequencyPen": 0,
+                "presencePen": 0,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                3,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthy meal after a workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is perfect for anyone looking to feel their best. Plus, it's free of artificial ingredients, so it's a healthy meal you can feel good about."
+        },
+        {
+            "coordinates": {
+                "x": 0.016693348903079275,
+                "y": -0.3855635898710362
+            },
+            "emotion": [
+                3,
+                47,
+                47,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-curie-001",
+                "frequencyPen": 0,
+                "presencePen": 0,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                4,
+                96
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthy meal after a workout? Try our plant-based beef jerky! It's made with zero cholesterol and the same amount of protein as its natural beef counterpart, so it's a healthy meal you can feel good about. Plus, it's free of artificial ingredients, so you can feel good about eating it, too."
+        },
+        {
+            "coordinates": {
+                "x": 0.6096646268707107,
+                "y": 0.1874102720676819
+            },
+            "emotion": [
+                3,
+                48,
+                46,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-curie-001",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                4,
+                96
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthy meal after a workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is the perfect way to refuel your body after a hard workout. Plus, it's free of artificial ingredients, so you can feel good about eating it."
+        },
+        {
+            "coordinates": {
+                "x": -0.6643232207007982,
+                "y": -0.6074872081542368
+            },
+            "emotion": [
+                3,
+                51,
+                43,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-curie-001",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                5,
+                95
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Are you looking for a healthy, high protein snack? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this snack is perfect after a workout or anytime you need a nutritious snack."
+        },
+        {
+            "coordinates": {
+                "x": 0.4286102934335654,
+                "y": -0.8166026613064943
+            },
+            "emotion": [
+                3,
+                34,
+                59,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-curie-001",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                3,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthy snack after a tough workout? Look no further than our plant-based beef jerky! Made with zero cholesterol and the same amount of protein as natural beef, our jerky is the perfect meal after a hard day at the gym. Plus, it's made with only natural ingredients, so you can feel good about eating it."
+        },
+        {
+            "coordinates": {
+                "x": -0.3659949292902,
+                "y": -0.1028814969770942
+            },
+            "emotion": [
+                4,
+                51,
+                41,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                8,
+                91
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a beef jerky alternative that's healthier for you? Look no further than our plant-based beef jerky. It has zero cholesterol and the same amount of protein as regular beef jerky, but without any of the artificial ingredients. So it's the perfect snack to have after a workout."
+        },
+        {
+            "coordinates": {
+                "x": 0.013513895115695276,
+                "y": 0.18386883803047602
+            },
+            "emotion": [
+                3,
+                59,
+                36,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                3,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a delicious and healthy alternative to beef jerky? Look no further than our plant-based beef jerky! With zero cholesterol and the same amount of protein as regular beef jerky, our jerky is a great choice for fitness enthusiasts and meat lovers alike. Plus, our all-natural ingredients make it a healthy meal after a workout."
+        },
+        {
+            "coordinates": {
+                "x": 0.19629775154433987,
+                "y": 0.6460590786257583
+            },
+            "emotion": [
+                4,
+                62,
+                31,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                5,
+                95
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for an alternative to beef jerky that's just as delicious and packed with protein? Look no further than our plant-based beef jerky! With zero cholesterol and no artificial ingredients, it's a healthy option for post-workout snacking."
+        },
+        {
+            "coordinates": {
+                "x": -0.7982667850209523,
+                "y": -0.33660498745011014
+            },
+            "emotion": [
+                3,
+                76,
+                20,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                2,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a delicious, healthy snack that will keep you going after a workout? Look no further than our Perfectly Seasoned Plant Based Beef Jerky! With the same amount of protein as its natural beef counterpart, and zero cholesterol, this jerky is a perfect choice for health-conscious snackers. And because it contains no artificial ingredients, you can be sure you're getting a healthy snack that will taste great too!"
+        },
+        {
+            "coordinates": {
+                "x": 0.08894793780616686,
+                "y": -0.9137932670547531
+            },
+            "emotion": [
+                3,
+                76,
+                20,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                3,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a beef jerky alternative that's just as delicious, but without the cholesterol? Look no further than our Perfectly Seasoned Plant Based Beef Jerky! Made with zero cholesterol and same amount of protein as its natural beef counterpart, this jerky is perfect for fitness enthusiasts and meat lovers alike. Plus, its healthy ingredients make it a great meal after a workout."
+        },
+        {
+            "coordinates": {
+                "x": 1,
+                "y": 0.4185817013426818
+            },
+            "emotion": [
+                6,
+                32,
+                60,
+                3
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: comparison, humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                11,
+                88
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a perfectly seasoned, healthy beef jerky alternative? Look no further! Our plant based beef jerky has zero cholesterol and the same amount of protein as its natural beef counterpart. Plus, no artificial ingredients makes it a healthy meal after a workout."
+        },
+        {
+            "coordinates": {
+                "x": -0.3772217361832123,
+                "y": -0.8470373397836813
+            },
+            "emotion": [
+                3,
+                57,
+                37,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                6,
+                94
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a healthier alternative to beef jerky that still satisfies your cravings? Look no further than our Perfectly Seasoned Plant Based Beef Jerky! It's got all the flavor of the real thing with none of the cholesterol, and it's packed with protein to help you recover after a workout. Plus, our all-natural ingredients make it a healthy choice for snack time."
+        },
+        {
+            "coordinates": {
+                "x": -0.34488736487679195,
+                "y": 0.5582313041227597
+            },
+            "emotion": [
+                3,
+                71,
+                24,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": false,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                3,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a delicious and healthy snack that will satisfy your hunger without weighing you down? Look no further than our Perfectly Seasoned Plant-Based Beef Jerky! Made with zero cholesterol and the same amount of protein as its natural beef counterpart, this jerky is perfect for fitness enthusiasts and meat lovers alike. Plus, our use of only natural ingredients makes this a healthy meal option after a workout."
+        },
+        {
+            "coordinates": {
+                "x": -0.7530997203509561,
+                "y": 0.3050159671570607
+            },
+            "emotion": [
+                3,
+                61,
+                33,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: fitness enthusiasts, meat lovers \n\n",
+            "isNew": true,
+            "isPinned": null,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                4,
+                96
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a delicious and healthy snack that will give you the protein you need after a workout? Look no further than our perfectly seasoned plant based beef jerky! With zero cholesterol and same amount of protein as regular beef jerky, our jerky is a healthy alternative for meat lovers. Plus, our all-natural ingredients make it a healthy choice for fitness enthusiasts."
+        },
+        {
+            "coordinates": {
+                "x": -0.6632954227895742,
+                "y": 0.7030133027179615
+            },
+            "emotion": [
+                3,
+                75,
+                21,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: meat lovers \n\n",
+            "isNew": true,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                3,
+                97
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a delicious, healthy snack that will satisfy your meat cravings? Look no further than our perfectly seasoned plant-based beef jerky! With zero cholesterol and the same amount of protein as regular beef jerky, our jerky is a great choice for a healthy snack or post-workout meal. Plus, our all-natural ingredients make our jerky a healthier option than other processed snacks.",
+            "isPinned": null
+        },
+        {
+            "coordinates": {
+                "x": 0.7257396220638601,
+                "y": -0.49801472947634967
+            },
+            "emotion": [
+                4,
+                62,
+                31,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: meat lovers \n\n",
+            "isNew": true,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                6,
+                94
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a delicious and healthy alternative to beef jerky? Look no further than our plant based beef jerky! It's perfectly seasoned with zero cholesterol and same amount of protein as its natural beef counterpart. Plus, no artificial ingredients makes it a healthy meal after a workout.",
+            "isPinned": null
+        },
+        {
+            "coordinates": {
+                "x": -0.09798852548548251,
+                "y": 0.9826237028078465
+            },
+            "emotion": [
+                3,
+                63,
+                31,
+                2
+            ],
+            "inputText": "Write an ad for the following product\n\nProduct: Perfectly seasoned plant based beef jerky with zero cholesterol and same amount of protein as its natural beef counterpart. No artificial ingredients makes it a healthy meal after a workout.\n\nTone: humorous \n\nAudience: meat lovers \n\n",
+            "isNew": true,
+            "properties": {
+                "bestOf": 10,
+                "engine": "text-davinci-002",
+                "frequencyPen": 0,
+                "presencePen": 0.43,
+                "temperature": 0.7,
+                "topP": 1
+            },
+            "sentiment": [
+                0,
+                4,
+                96
+            ],
+            "switchId": "syaangic3t4",
+            "text": "Looking for a delicious and healthy snack? Look no further than our perfectly seasoned plant based beef jerky! With zero cholesterol and same amount of protein as its natural beef counterpart, our beef jerky is a healthy meal after a workout. Plus, no artificial ingredients makes it a healthy choice for everyone!",
+            "isPinned": null
+        }
+    ],
+    "text": "Looking for a healthy snack alternative that doesn't skimp on protein and takes your health into consideration? Look no further than our plant-based beef jerky! With zero cholesterol and the same amount of protein as natural beef jerky, this snack is perfect for fitness enthusiasts looking for a post-workout meal or the average jo looking for a bite to eat. Plus, our jerky is made with all natural ingredients, so you can enjoy this guilt free \"guilty pleasure\". Finally, something vegan and meat-lovers can agree on.\n\n"
+}
