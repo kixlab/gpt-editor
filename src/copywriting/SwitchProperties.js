@@ -99,7 +99,7 @@ function SwitchProperties(props) {
                     break;
             }
             result.push(
-                <PropertyContainer key={name} style={{borderColor: "#0066FF"}}>
+                <PropertyContainer key={name} style={{borderColor: currSwitch.color}}>
                     <PropertyHeader>
                         <div>{propertyToText(name)}</div>
                         {name !== "engine" ?
@@ -140,6 +140,7 @@ const PropertyContainer = styled.div`
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     padding: 0px 8px 0 8px;
     font-size: 14px;
+    opacity: 0.95;
 `;
 
 const PropertyHeader = styled.div`

@@ -8,6 +8,7 @@ import React, { useState, useReducer, useCallback, useEffect } from 'react';
 import TextEditor from './emailing/TextEditor';
 import Buttons from './emailing/Buttons';
 import HoverLens from './emailing/HoverLens';
+import SwitchProperties from './copywriting/SwitchProperties';
 
 function generateId() {
     return Math.random().toString(36).slice(2, 12);
@@ -579,6 +580,13 @@ function AppEmail() {
                     createSwitch={createSwitch} onPropertyChange={onPropertyChange}
                     changeLens={changeLens}
                 />
+                {selected && selected.type == "property" ?
+                    <SwitchProperties
+                        switches={switches} switchId={selected.data.switchId}
+                        property={selected.data.property} value={switches[selected.data.switchId].properties[selected.data.property]}
+                        onPropertyChange={onPropertyChange}
+                    /> : ""
+                }
                 <HoverLens
                     lenses={lenses} activeLens={activeLens} hideLens={hideLens}
                     showGeneration={showGeneration} switches={switches}
