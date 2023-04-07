@@ -10,8 +10,10 @@ import numpy as np
 from scipy.special import softmax
 from nltk.tokenize import sent_tokenize
 from datetime import datetime
+from keybert import KeyBERT
 
 openai.api_key = os.getenv("OPEN_API_KEY")
+kw_model = KeyBERT()
 
 def findSentenceEnding(text, startIdx):
     idx = startIdx
@@ -274,6 +276,24 @@ def create_api(sst, sentiment, emotion) -> Blueprint:
                 "isNew": True
             })
         return jsonify(result)
+
+
+    @api.route('/api/get-keyword', methods=['POST'])
+    def get_keyword():
+        slot_id = request.json['slotId']
+        text = request.json['text']
+        existing = request.json['existing']
+
+        kw = ""
+        keywords = kw_model.extract_keywords(text)
+        for entry in keywords:
+            if entry[0] not in existing:
+                kw = entry[0]
+                break
+        if kw == "":
+            kw = keywords[0][0]
+        return jsonify({'slotId': slot_id, 'keyword': kw})
+
 
     return api
 

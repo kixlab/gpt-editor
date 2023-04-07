@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 
-const SWITCH_HEIGHT = 50;
+const SWITCH_HEIGHT = 128;
 
 function SwitchHistory(props) {
     const currSwitch = props.switches[props.switchId];
@@ -119,8 +119,8 @@ function SwitchHistory(props) {
         return html;
     }
 
-    var top = props.switchIdx*(SWITCH_HEIGHT + 12);
-    var left = 62;
+    var top = props.switchIdx*(SWITCH_HEIGHT + 28);
+    var left = 128 + 8;
 
     return (
         <HistoryContainer 
@@ -154,6 +154,7 @@ const HistoryContainer = styled.div`
         border-radius: 4px;
     }
     z-index: 10;
+    opacity: 0.9;
 `;
 
 const PropertyEntry = styled.div`

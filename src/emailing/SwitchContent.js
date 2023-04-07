@@ -24,13 +24,13 @@ function SwitchContent(props) {
         var currSwitch = props.switches[switchId];
 
         var xPosition = 4;
-        var yPosition = 4 + switchIdx*(SWITCH_SIZE + SWITCH_Y_OFFSET);
+        var yPosition = 4 + switchIdx*(SWITCH_SIZE + 18 + SWITCH_Y_OFFSET);
 
         var isSelected = props.selected && props.selected.type === "switch" && props.selected.data === switchId;
         var selectionRing = (
             <rect
                 className="switch-selection" x={xPosition - 3} y={yPosition - 3}
-                width={SWITCH_SIZE + 18 + 6} height={SWITCH_SIZE + 8} rx="4"
+                width={SWITCH_SIZE + 6} height={SWITCH_SIZE + 8 + 18} rx="4"
                 fill="none" stroke="#00C2FF" strokeWidth="2px"
             />
         )
@@ -74,17 +74,16 @@ function SwitchContent(props) {
         var textOrLoadingSvg = (
             <text
                 key={switchId + "-text"}
-                x={- yPosition - SWITCH_SIZE / 2} y={18}
+                x={xPosition + SWITCH_SIZE / 2 } y={yPosition + 12}
                 textAnchor="middle" alignmentBaseline="middle"
                 fontSize={"14px"} 
                 fontFamily="Roboto" fontWeight="bold" fill="#fff"
-                transform="rotate(-90)"
             >
                 {currSwitch.model}
             </text>
         )
 
-        var propertiesSvg = createPropertySvg(switchId, currSwitch, xPosition + 18, yPosition);
+        var propertiesSvg = createPropertySvg(switchId, currSwitch, xPosition, yPosition + 18);
 
         return (
             <g key={switchId+"group"}>
@@ -96,7 +95,7 @@ function SwitchContent(props) {
                         id={"switch-" + switchId}
                         className={"switch"} 
                         x={xPosition} y={yPosition}
-                        width={SWITCH_SIZE+18} height={SWITCH_SIZE} rx="4"
+                        width={SWITCH_SIZE} height={SWITCH_SIZE + 18} rx="4"
                         fill={currSwitch.color}
                     />
                     {isSelected ? selectionRing : ""}
@@ -104,7 +103,7 @@ function SwitchContent(props) {
                     <rect
                         data-type="switch" data-id={switchId}
                         x={xPosition - 4} y={yPosition - 4}
-                        width={SWITCH_SIZE + 18 + 8} height={SWITCH_SIZE + 8}
+                        width={SWITCH_SIZE + 8} height={SWITCH_SIZE + 8 + 18}
                         fill="#00000000" style={{ cursor: "pointer" }}
                     />
                     {propertiesSvg}
@@ -192,7 +191,7 @@ function SwitchContent(props) {
 
     return (
         <div style={{position: 'relative'}}>
-            <svg width={SWITCH_SIZE + 18 + 8} height={(switchIds.length)*(SWITCH_SIZE+SWITCH_Y_OFFSET) + 48 + SWITCH_Y_OFFSET}>
+            <svg width={SWITCH_SIZE + 8} height={(switchIds.length)*(SWITCH_SIZE+18+SWITCH_Y_OFFSET) + 48 + SWITCH_Y_OFFSET}>
                 {switchIds.map((switchId, switchIdx) => drawOneSwitch(switchId, switchIdx))}
                 {drawOneSwitch(-1, switchIds.length)}
             </svg>
@@ -222,8 +221,8 @@ function SwitchContent(props) {
 }
 
 function SideButtons(props) {
-    var top = props.switchIdx*(SWITCH_SIZE + 12) + 4;
-    var left = SWITCH_SIZE + 18 + 8;
+    var top = props.switchIdx*(SWITCH_SIZE + 18 + 10) + 4;
+    var left = SWITCH_SIZE + 8;
 
     function handleClickSideBtn(e, type) {
         e.stopPropagation();

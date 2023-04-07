@@ -118,19 +118,19 @@ function ListSpaceLens(props) {
             {lens.type === 'list' ? ListBig : SpaceBig}
             {drawLensContent()}
             <ButtonContainer 
-                transform="translate(188, 10) scale(1.44)" 
+                transform="translate(248, 10) scale(1.44)" 
                 onClick={handleCollapseClick}
             >
                 {Collapse}
             </ButtonContainer>
             <ButtonContainer
-                transform="translate(100, 10) scale(1.5)"
+                transform="translate(136, 10) scale(1.5)"
                 onClick={handleAlternateClick}
             >
                 {lens.type === 'list' ? SpaceButton : ListButton}
             </ButtonContainer>
             <ButtonContainer
-                transform="translate(16, 10) scale(1.2)"
+                transform="translate(20, 10) scale(1.2)"
                 onClick={() => props.clearLens(props.lensId)}
             >
                 {ClearButton}

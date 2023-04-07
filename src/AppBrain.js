@@ -68,6 +68,10 @@ function AppBrain() {
                 var index = slotSwitches.indexOf(switchId);
                 slotSwitches.splice(index, 1);
                 return newSlots;
+            case 'add-keyword':
+                var { slotId, keyword } = action;
+                newSlots[slotId].keyword = keyword;
+                return newSlots;
             default:
                 throw new Error();
         }
@@ -257,10 +261,12 @@ function AppBrain() {
                 parent: lastSlot,
                 type: "text",
                 text: value,
+                keyword: "...",
                 children: [],
                 switches: [] //newSwitchId]
             }
         });
+        getKeyword(newSlotId, value);
         
         /*
         switchesDispatch({type: "create", switchId: newSwitchId,
@@ -340,6 +346,7 @@ function AppBrain() {
                 parent: toCopy.parent,
                 type: toCopy.type,
                 text: toCopy.text,
+                keyword: toCopy.keyword,
                 children: [],
                 switches: []
             }
@@ -383,7 +390,7 @@ function AppBrain() {
             slotsDispatch({ type: 'attach-switch', slotId: slotId, switchId: newSwitchId });
         
         var properties = {
-            engine: "davinci",
+            engine: "text-davinci-001",
             temperature: 0.7,
             topP: 1,
             frequencyPen: 0,
@@ -549,10 +556,12 @@ function AppBrain() {
                         parent: currSwitch.slot,
                         type: "text",
                         text: response.data[0].text,
+                        keyword: "...",
                         children: [],
                         switches: []
                     }
                 });
+                getKeyword(newSlotId, response.data[0].text);
                 
                 setLastSlot(newSlotId);
             });
@@ -627,10 +636,12 @@ function AppBrain() {
                     parent: parentSlot,
                     type: "text",
                     text: values[i],
+                    keyword: "...",
                     children: [],
                     switches: []
                 }
             });
+            getKeyword(newSlotId, values[i]);
             parentSlot = newSlotId;
         }
         setLastSlot(newSlotId);
@@ -642,6 +653,19 @@ function AppBrain() {
 
     function clearLens(lensId) {
         lensesDispatch({type: "set-generations", lensId: lensId, generations: []});
+    }
+
+    function getKeyword(slotId, text) {
+        var existingKeywords = Object.values(slots).map(s => s.keyword);
+        var data = { slotId, text , existing: existingKeywords};
+        axios
+        .post(`http://localhost:5000/api/get-keyword`, data)
+        .then((response) => {
+            var slotId = response.data.slotId;
+            var keyword = response.data.keyword;
+            slotsDispatch({ type: 'add-keyword', slotId, keyword });
+            return keyword;
+        });
     }
 
     return (

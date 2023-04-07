@@ -344,8 +344,8 @@ const Text = props => {
   }
 
 const SuperContainer = styled.div`
-    flex-basis: 45%; 
-    margin: 60px 60px 60px 60px;
+    flex-basis: 35%; 
+    margin: 40px 40px 40px 40px;
     box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.25);
 `;
 

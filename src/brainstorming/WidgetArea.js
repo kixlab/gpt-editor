@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 
 import Slots from './Slots';
-import SwitchProperties from './SwitchProperties';
+import SwitchProperties from '../copywriting/SwitchProperties';
 import SwitchHistory from './SwitchHistory';
 
 function WidgetArea(props) {
@@ -138,13 +138,14 @@ function WidgetArea(props) {
 
     var hoverItem = "";
     if(selected) {
-        if(selected.isSideOpen === 'properties') {
+        if(selected.type == "property") {
             hoverItem = (
                 <SwitchProperties
-                    switches={props.switches} switchId={selected.data}
+                    switches={props.switches} switchId={selected.data.switchId}
+                    property={selected.data.property} value={props.switches[selected.data.switchId].properties[selected.data.property]}
                     onPropertyChange={props.onPropertyChange}
                 />
-            )
+            );
         } else if(selected.isSideOpen === 'history') {
             hoverItem = (
                 <SwitchHistory
@@ -152,6 +153,13 @@ function WidgetArea(props) {
                 />
             )
         }
+        // if(selected.isSideOpen === 'properties') {
+        //     hoverItem = (
+        //         <SwitchProperties
+        //             switches={props.switches} switchId={selected.data}
+        //             onPropertyChange={props.onPropertyChange}
+        //         />
+        //     )
     }
 
     return (

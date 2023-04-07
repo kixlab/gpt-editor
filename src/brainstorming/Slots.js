@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SLOT_X_OFFSET, SLOT_Y_OFFSET, SLOT_X_SPACE, SLOT_Y_SPACE, SLOT_SIZE } from './Sizes';
+import { SLOT_X_OFFSET, SLOT_Y_OFFSET, SLOT_X_SPACE, SLOT_Y_SPACE, SLOT_WIDTH, SLOT_HEIGHT } from './Sizes';
 
 import Switches from './Switches';
 
@@ -48,16 +48,13 @@ function Slots(props) {
 
         if(depth !== -1 && numInLevel[depth] == undefined) numInLevel.push(0);
 
-        var coords = [SLOT_X_OFFSET + SLOT_X_SPACE * numInLevel[depth], SLOT_Y_OFFSET + SLOT_Y_SPACE * depth]
+        var coords = [SLOT_X_OFFSET + (SLOT_WIDTH + SLOT_X_SPACE) * numInLevel[depth], SLOT_Y_OFFSET + (SLOT_HEIGHT + SLOT_Y_SPACE) * depth]
 
         var node = props.slots[slotId];
         if(depth !== -1) {
-            var currSize = SLOT_SIZE;
             // TODO: check if slot's switch's lens is pinned];
             var inDepth = props.currentDepth == depth;
             var isPath = slotPath.includes(slotId);
-
-            currSize += inDepth && isPath ? 4 : 0;
 
             if(node !== undefined) {
                 for(var i = 0; i < node.switches.length; i++) {
@@ -66,26 +63,37 @@ function Slots(props) {
                     elements.push(
                         <rect
                             key={slotId+"-switch-"+switchId} id={slotId+"-switch-"+switchId}
-                            x={coords[0] + currSize + 1 + 1} y={coords[1] - currSize + i*9}
+                            x={coords[0] + SLOT_WIDTH + 1 + 1} y={coords[1] + i*9}
                             width="8" height="8" fill={props.switches[switchId].color}
                             rx="1"
                         />
                     )
                 }
-                elements.push(
-                    <circle 
+                elements.push([
+                    <rect 
                         key={slotId} data-type="slot" data-id={slotId}
                         onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
-                        cx={coords[0]} cy={coords[1]} r={currSize}
-                        fill={isPath ? "#0066FF" : (slotHoverPath.includes(slotId) ? "rgba(0, 102, 255, 0.4)" : "#fff")} 
-                        stroke="#0066FF" strokeWidth="2px" style={{cursor: "pointer"}}
-                    />
-                );
+                        x={coords[0]} y={coords[1]} rx={4}
+                        width={SLOT_WIDTH} height={SLOT_HEIGHT}
+                        fill={isPath ? (inDepth ? "#0066FF" : "#6191F4") : (slotHoverPath.includes(slotId) ? "rgba(0, 102, 255, 0.4)" : "#fff")} 
+                        stroke={isPath && inDepth ? "#0066FF" : "#6191F4"} strokeWidth="2px" style={{cursor: "pointer"}}
+                    />,
+                    <text
+                        key={slotId+"-text"} data-type="slot" data-id={slotId}
+                        onClick={handleClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+                        x={coords[0] + SLOT_WIDTH/2} y={coords[1] + SLOT_HEIGHT/2}
+                        textAnchor="middle" alignmentBaseline="central"
+                        fill={isPath ? "#fff" : "#0066FF"} fontSize="14px" style={{cursor: "pointer"}}
+                    >
+                        {node.keyword}
+                    </text>
+                ]);
             } else {
                 elements.push(
-                    <circle 
+                    <rect 
                         key={slotId} data-id={slotId}
-                        cx={coords[0]} cy={coords[1]} r={currSize}
+                        x={coords[0]} y={coords[1]} rx={4}
+                        width={SLOT_WIDTH} height={SLOT_HEIGHT}
                         fill={"rgba(0, 102, 255, 0.2)"} stroke="rgba(0, 102, 255, 0.2)" strokeWidth="2px"
                     />
                 );
@@ -93,9 +101,10 @@ function Slots(props) {
 
             if(props.selected && props.selected.type === "slot" && slotId === props.selected.data) {
                 elements.push(
-                    <circle
+                    <rect
                         key="selection-ring"
-                        cx={coords[0]} cy={coords[1]} r={currSize + 2*3}
+                        x={coords[0] - 3} y={coords[1] - 3} rx={4}
+                        width={SLOT_WIDTH + 6} height={SLOT_HEIGHT + 6}
                         fill="none" stroke="#00C2FF" strokeWidth="2px"
                         style={{filter: "url(#shadow)"}}
                     />
@@ -116,7 +125,7 @@ function Slots(props) {
             if(depth === -1)
                 continue;
             
-            var endCoords = [SLOT_X_OFFSET + SLOT_X_SPACE * (numInLevel[depth + 1] - 1), SLOT_Y_OFFSET + SLOT_Y_SPACE * (depth + 1)];
+            var endCoords = [SLOT_X_OFFSET + (SLOT_WIDTH + SLOT_X_SPACE) * (numInLevel[depth + 1] - 1), SLOT_Y_OFFSET + (SLOT_HEIGHT + SLOT_Y_SPACE) * (depth + 1)];
             var strokeColor = slotPath.includes(slotId) && slotPath.includes(childSlotId) ? "rgba(0, 102, 255, 1.0)" : "rgba(0, 102, 255, 0.2)";
             var edgeStr = slotId + "-" + childSlotId;
 
@@ -124,7 +133,7 @@ function Slots(props) {
                 elements.unshift(
                     <line
                         key={edgeStr} data-path={edgeStr} 
-                        x1={coords[0]} y1={coords[1] + 8} x2={endCoords[0]} y2={endCoords[1] - 8}
+                        x1={coords[0] + SLOT_WIDTH/2} y1={coords[1] + SLOT_HEIGHT} x2={endCoords[0] + SLOT_WIDTH/2} y2={endCoords[1]}
                         stroke={strokeColor} strokeWidth="2px" strokeDasharray={"3,3"}
                     />
                 )
@@ -132,7 +141,7 @@ function Slots(props) {
                 elements.unshift(
                     <line
                         key="selection-ring" data-type="slot-edge" data-id={edgeStr}
-                        x1={coords[0]} y1={coords[1] + 8} x2={endCoords[0]} y2={endCoords[1] - 8}
+                        x1={coords[0] + SLOT_WIDTH/2} y1={coords[1] + SLOT_HEIGHT} x2={endCoords[0] + SLOT_WIDTH/2} y2={endCoords[1]}
                         stroke="#00C2FF" strokeWidth="4px"
                     />
                 )
@@ -140,7 +149,7 @@ function Slots(props) {
                 elements.unshift(
                     <line
                         key={edgeStr+"-area"}
-                        x1={coords[0]} y1={coords[1] + 8} x2={endCoords[0]} y2={endCoords[1] - 8}
+                        x1={coords[0] + SLOT_WIDTH/2} y1={coords[1] + SLOT_HEIGHT} x2={endCoords[0] + SLOT_WIDTH/2} y2={endCoords[1]}
                         stroke={strokeColor} strokeWidth="2px"
                     />
                 )
